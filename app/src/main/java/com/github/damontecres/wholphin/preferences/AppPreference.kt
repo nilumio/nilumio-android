@@ -642,6 +642,7 @@ sealed interface AppPreference<Pref, T> {
             AppDestinationPreference<AppPreferences>(
                 title = R.string.license_info,
                 destination = Destination.License,
+                summary = R.string.license_info_origin,
             )
 
         val AdvancedSettings =
