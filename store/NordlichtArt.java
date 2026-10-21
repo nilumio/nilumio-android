@@ -127,9 +127,9 @@ public class NordlichtArt {
         if (withText) {
             double tx = x0 + s * 1.12, avail = w * 0.92 - tx, size = h * 0.20;
             Font f = new Font("Avenir Next", Font.BOLD, (int) size);
-            double tw = g.getFontMetrics(f).stringWidth("Nordlicht");
+            double tw = g.getFontMetrics(f).stringWidth("nordlicht");
             if (tw > avail) size *= avail / tw;
-            wordmark(g, "Nordlicht", tx, h / 2 + size * 0.36, size);
+            wordmark(g, "nordlicht", tx, h / 2 + size * 0.36, size);
         }
         g.dispose();
         return im;
@@ -142,7 +142,7 @@ public class NordlichtArt {
         aurora(g, w * 0.70, h * 0.18, h * 0.64, h * 0.64);
         g.setPaint(new GradientPaint(0, 0, withAlpha(BG_BOTTOM, 235), (float) (w * 0.62), 0, withAlpha(BG_BOTTOM, 0)));
         g.fillRect(0, 0, w, h);
-        wordmark(g, "Nordlicht", w * 0.07, h * 0.50, h * 0.19);
+        wordmark(g, "nordlicht", w * 0.07, h * 0.50, h * 0.19);
         g.setFont(g.getFont().deriveFont(Font.PLAIN, (float) (h * 0.065)));
         g.setPaint(new Color(0xB8C2CF));
         g.drawString("Deine Jellyfin-Mediathek auf dem Fernseher", (float) (w * 0.07), (float) (h * 0.64));

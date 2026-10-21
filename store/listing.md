@@ -9,7 +9,7 @@ Regeln, an die sich der Text hält:
 
 ## Deutsch (de-DE)
 
-**Titel (30):** Nordlicht – TV Media Player
+**Titel (30):** nordlicht – TV Media Player
 
 **Kurzbeschreibung (80):** Deine Jellyfin-Mediathek auf dem Fernseher: schnell, übersichtlich, kinoreif.
 
@@ -38,7 +38,7 @@ Nordlicht ist ein unabhängiges Projekt und steht in keiner Verbindung zum Jelly
 
 ## English (en-GB)
 
-**Title (30):** Nordlicht – TV Media Player
+**Title (30):** nordlicht – TV Media Player
 
 **Short description (80):** Your Jellyfin library on the big screen: fast, tidy and cinematic.
 
