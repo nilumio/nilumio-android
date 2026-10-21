@@ -83,6 +83,17 @@ configure<ApplicationExtension> {
     }
 
     signingConfigs {
+        // Nordlicht-Upload-Schlüssel liegt außerhalb des Repos
+        val nordlichtKeystore = File(System.getProperty("user.home"), ".config/nordlicht/keystore.properties")
+        if (nordlichtKeystore.exists()) {
+            val p = Properties().apply { nordlichtKeystore.inputStream().use { load(it) } }
+            create("nordlicht") {
+                storeFile = file(p.getProperty("storeFile"))
+                storePassword = p.getProperty("storePassword")
+                keyAlias = p.getProperty("keyAlias")
+                keyPassword = p.getProperty("keyPassword")
+            }
+        }
         if (shouldSign.get()) {
             create("ci") {
                 file("ci.keystore").writeBytes(
