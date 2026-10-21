@@ -1,5 +1,6 @@
 package com.github.damontecres.wholphin.ui.cards
 
+import com.github.damontecres.wholphin.ui.components.NordlichtColors
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -271,7 +272,7 @@ fun ItemCardImageOverlay(
                     Modifier
                         .align(Alignment.BottomStart)
                         .background(
-                            MaterialTheme.colorScheme.tertiary,
+                            NordlichtColors.Progress,
                         ).clip(RectangleShape)
                         .height(Cards.playedPercentHeight)
                         .fillMaxWidth((watchedPercent / 100.0).toFloat()),

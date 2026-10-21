@@ -1,5 +1,6 @@
 package com.github.damontecres.wholphin.ui.cards
 
+import com.github.damontecres.wholphin.ui.components.NordlichtColors
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -188,7 +189,7 @@ fun BannerCard(
                         Modifier
                             .align(Alignment.BottomStart)
                             .background(
-                                MaterialTheme.colorScheme.tertiary,
+                                NordlichtColors.Progress,
                             ).clip(RectangleShape)
                             .height(Cards.playedPercentHeight)
                             .fillMaxWidth((playPercent / 100).toFloat()),
