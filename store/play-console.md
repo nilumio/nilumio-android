@@ -9,7 +9,7 @@ Stand 22.10.2026. Grundlage ist der Code auf Branch `nordlicht`, Flavor `appstor
 | App-Bundle | `store/release/nilumio-<version>-appstore-release.aab` (nicht im Repo) |
 | targetSdk | 37 (Pflicht seit 31.08.2026: Smartphone-Apps 36, reine TV-Apps 34; passt) |
 | minSdk | 23 (Android 6.0) |
-| Signatur | Upload-Schlüssel aus `~/.config/nordlicht/keystore.properties`; Play App Signing beim ersten Upload aktivieren |
+| Signatur | Upload-Schlüssel aus einer lokalen `keystore.properties` außerhalb des Repos (siehe `app/build.gradle.kts`); Play App Signing beim ersten Upload aktivieren |
 | Datenschutzerklärung | `store/website/datenschutz/index.html`, muss öffentlich erreichbar sein, z. B. `https://nilumio.com/datenschutz/` |
 | Anschrift im Impressum/Datenschutz | **offen** (Platzhalter, siehe Abschnitt 9) |
 | TV-Screenshots | **offen** (Abschnitt 7) |
@@ -108,7 +108,7 @@ No in-app purchases or accounts with us are required.
 
 Damit Prüfungen nicht vom Jellyfin-Demo abhängen:
 
-1. Auf dem Hetzner-Server einen Jellyfin-Container starten, z. B. unter `demo.nilumio.com` (HTTPS über den bestehenden Reverse Proxy). Domain und Server sind schon vorhanden; falls ein neuer Dienst/eine neue Domain dazukommt, in held0/admin eintragen.
+1. Auf dem eigenen Server einen Jellyfin-Container starten, z. B. unter `demo.nilumio.com` (HTTPS über den bestehenden Reverse Proxy). Domain und Server sind schon vorhanden; falls ein neuer Dienst/eine neue Domain dazukommt, in held0/admin eintragen.
 2. Bibliothek „Filme“ mit Blender-Open-Movies füllen (Liste und Lizenzen in Abschnitt 8). Die Dateien direkt von studio.blender.org bzw. download.blender.org holen; Nutzung ist durch CC BY erlaubt, Namensnennung in der Beschreibung der Bibliothek eintragen.
 3. Benutzer `review` anlegen: kein Admin, kein Löschen, kein Herunterladen, Transkodierung erlaubt, nur Lesezugriff auf die Demo-Bibliothek, sicheres Passwort (nur in der Play Console hinterlegen, nicht ins Repo).
 4. Sitzungen begrenzen (z. B. max. 2 gleichzeitige Streams), Remote-Bitrate begrenzen.
