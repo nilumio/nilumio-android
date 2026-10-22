@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -164,6 +165,10 @@ fun HomeSettingsPage(
                                                 addRow { viewModel.addRow(it) }
                                             }
 
+                                            MetaRowType.BY_GENRE -> {
+                                                backStack.add(HomeSettingsDestination.ChooseGenre)
+                                            }
+
                                             MetaRowType.FAVORITES -> {
                                                 backStack.add(HomeSettingsDestination.ChooseFavorite)
                                             }
@@ -263,6 +268,18 @@ fun HomeSettingsPage(
 
                             HomeSettingsDestination.ChooseDiscover -> {
                                 TODO()
+                            }
+
+                            HomeSettingsDestination.ChooseGenre -> {
+                                val genres by viewModel.genres.collectAsState()
+                                LaunchedEffect(Unit) { viewModel.loadGenres() }
+                                HomeSettingsGenreList(
+                                    genres = genres,
+                                    onAdd = { selected ->
+                                        addRow { viewModel.addGenreRows(selected) }
+                                    },
+                                    modifier = destModifier,
+                                )
                             }
 
                             HomeSettingsDestination.ChooseFavorite -> {

@@ -31,6 +31,9 @@ sealed interface HomeSettingsDestination : NavKey {
     data object ChooseDiscover : HomeSettingsDestination
 
     @Serializable
+    data object ChooseGenre : HomeSettingsDestination
+
+    @Serializable
     data object GlobalSettings : HomeSettingsDestination
 
     @Serializable

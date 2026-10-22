@@ -65,6 +65,7 @@ fun HomeSettingsAddRow(
             }
             itemsIndexed(
                 listOf(
+                    MetaRowType.BY_GENRE,
                     MetaRowType.FAVORITES,
                     MetaRowType.COLLECTION,
                     MetaRowType.PLAYLIST,
@@ -97,6 +98,7 @@ enum class MetaRowType(
     CONTINUE_WATCHING(R.string.continue_watching),
     NEXT_UP(R.string.next_up),
     COMBINED_CONTINUE_WATCHING(R.string.combine_continue_next),
+    BY_GENRE(R.string.by_genre),
     FAVORITES(R.string.favorites),
     DISCOVER(R.string.discover),
     COLLECTION(R.string.collection),
