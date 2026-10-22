@@ -39,9 +39,9 @@
 
     <application
         android:allowBackup="true"
-        android:banner="@mipmap/ic_nordlicht_banner"
-        android:icon="@mipmap/ic_nordlicht"
-        android:roundIcon="@mipmap/ic_nordlicht_round"
+        android:banner="@mipmap/ic_nilumio_banner"
+        android:icon="@mipmap/ic_nilumio"
+        android:roundIcon="@mipmap/ic_nilumio_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Wholphin"
