@@ -188,6 +188,8 @@ Nur die Filme nennen, die tatsächlich auf den Screenshots zu sehen sind. Lizenz
 4. **Screenshots** nach Abschnitt 7.
 5. **GitHub-Link** zum Quellcode in `store/listing.md` nachtragen (GPL-2.0 verlangt Zugang zum Quellcode).
 6. **Privacy-Seite veröffentlichen** unter einer festen URL, die in der Console eingetragen wird.
+7. **Einladungsseite `website/einladung/index.html`** lädt Outfit von Google Fonts. Damit geht die IP-Adresse jedes Besuchers an Google (in Deutschland abmahnfähig, LG München I, 2022). Schrift wie in der Datenschutzseite einbetten oder selbst ausliefern; die Datenschutzerklärung sagt „keine Inhalte von fremden Servern“.
+8. **App Links (`/.well-known/assetlinks.json`):** Nach dem ersten Upload den SHA-256-Fingerabdruck des **Play-App-Signaturschlüssels** (Console → App-Integrität) zusätzlich eintragen. Sonst öffnen sich `https://nilumio.com/einladung`-Links bei Play-Installationen nicht direkt in der App.
 
 ## 10. Geschlossener Test (Pflicht für neue private Entwicklerkonten)
 
