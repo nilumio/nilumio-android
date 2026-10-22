@@ -24,7 +24,7 @@ def category(path):
         return "UI texts and translations"
     if p.endswith((".png", ".webp", ".jpg", ".jpeg", ".svg", ".mp4", ".wav", ".ttf", ".otf")) or ".xcassets/" in p or "/mipmap-" in p:
         return "images and media"
-    if p.endswith((".md", ".txt")) or p.startswith(("docs/", "store/")) and p.endswith((".html", ".md")):
+    if p.startswith((".github/issue_template", ".github/pull_request")) or p.endswith((".md", ".txt")) or p.startswith(("docs/", "store/")) and p.endswith((".html", ".md")):
         return "documentation and store texts"
     if p.endswith((".html", ".json")) and p.startswith(("website/", "store/website/")):
         return "website"
