@@ -513,7 +513,8 @@ fun PlaybackPageContent(
                 remember(subtitleSettings) { subtitleSettings.imageSubtitleOpacity / 100f }
 
             // Subtitles
-            val subtitleMaxSize by animateFloatAsState(if (controllerViewState.controlsVisible) .7f else 1f)
+            // nilumio: bei offener Steuerung über den Titel (Vorlage: Untertitel bei 56 % von unten)
+            val subtitleMaxSize by animateFloatAsState(if (controllerViewState.controlsVisible) .5f else 1f)
             val isImageSubtitles =
                 remember(state.subtitleCues) { state.subtitleCues.firstOrNull()?.bitmap != null }
 
@@ -582,8 +583,14 @@ fun PlaybackPageContent(
                 },
                 modifier =
                     Modifier
-                        .fillMaxSize(subtitleMaxSize)
-                        .align(Alignment.TopCenter)
+                        // nilumio: Text-Untertitel behalten die volle Breite, Bilduntertitel skalieren wie bisher
+                        .then(
+                            if (isImageSubtitles) {
+                                Modifier.fillMaxSize(subtitleMaxSize)
+                            } else {
+                                Modifier.fillMaxWidth().fillMaxHeight(subtitleMaxSize)
+                            },
+                        ).align(Alignment.TopCenter)
                         .background(Color.Transparent)
                         .graphicsLayer {
                             alpha =

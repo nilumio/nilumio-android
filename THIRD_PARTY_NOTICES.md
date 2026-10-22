@@ -31,7 +31,7 @@ components (libmpv, libass, dav1d, libunibreak and others) are in `app/config/li
 
 | Material | Origin | Licence | Where |
 |---|---|---|---|
-| Outfit typeface | [Outfit Fonts](https://github.com/Outfitio/Outfit-Fonts), The Outfit Project Authors | SIL Open Font License 1.1 (`store/brand/Outfit-OFL.txt`) | Wordmark in `store/brand/*.svg` |
+| Outfit typeface | [Outfit Fonts](https://github.com/Outfitio/Outfit-Fonts), The Outfit Project Authors | SIL Open Font License 1.1 (`store/brand/Outfit-OFL.txt`) | Wordmark in `store/brand/*.svg`; static 300/400 instances in `app/src/main/res/font/outfit_*.ttf` (player controls) |
 | nilumio logo, icons, banners, intro video and sound | made for nilumio | All rights reserved, not licensed for use in other apps | `store/brand/`, `store/play/`, `app/src/main/res/mipmap-*/ic_nilumio*`, `app/src/main/res/raw/nilumio_intro.mp4`, `app/src/main/res/drawable-nodpi/nilumio_intro_final.png` |
 
 ## Trademarks

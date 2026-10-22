@@ -3,6 +3,15 @@
 package com.github.damontecres.wholphin.ui.playback.overlay
 
 import android.view.Gravity
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.LineHeightStyle
+import com.github.damontecres.wholphin.ui.components.NilumioOutfit
+import java.util.Locale
 import androidx.annotation.DrawableRes
 import androidx.annotation.OptIn
 import androidx.annotation.StringRes
@@ -16,6 +25,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -45,7 +55,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -75,7 +84,6 @@ import com.github.damontecres.wholphin.ui.components.Button
 import com.github.damontecres.wholphin.ui.components.NilumioColors
 import com.github.damontecres.wholphin.ui.components.SelectedLeadingContent
 import com.github.damontecres.wholphin.ui.components.TextButton
-import com.github.damontecres.wholphin.ui.formatDuration
 import com.github.damontecres.wholphin.ui.indexOfFirstOrNull
 import com.github.damontecres.wholphin.ui.playback.ControllerViewState
 import com.github.damontecres.wholphin.ui.playback.PlaybackDialogType
@@ -165,10 +173,18 @@ fun PlaybackControls(
             initialFocusRequester.tryRequestFocus()
         }
     }
+    // nilumio „Lichtkante“: Linie über volle Breite, darunter eine Zeile: Zeit, Wiedergabe, rechts Spuren und Einstellungen
+    var positionMs by remember(player) { mutableLongStateOf(player.currentPosition) }
+    LaunchedEffect(player) {
+        while (isActive) {
+            positionMs = player.currentPosition
+            delay(250L)
+        }
+    }
     Column(
         modifier = modifier.bringIntoViewRequester(bringIntoViewRequester),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(0.dp),
+        // Mitte der Knopfzeile bleibt an der Stelle der Vorlage, auch wenn die Knöpfe kleiner sind
+        verticalArrangement = Arrangement.spacedBy((10.22f * LICHTKANTE_K + 11.3f * (LICHTKANTE_K - LICHTKANTE_BUTTON_K)).dp),
     ) {
         SeekBar(
             player = player,
@@ -179,23 +195,25 @@ fun PlaybackControls(
             intervals = seekBarIntervals,
             seekBack = seekBack,
             seekForward = seekForward,
+            // nilumio: Leiste randlos über die ganze Bildbreite, der Rest behält den Rand
             modifier =
-                Modifier
-                    .padding(vertical = 0.dp)
-                    .fillMaxWidth(.95f),
+                Modifier.layout { measurable, constraints ->
+                    val edge = LichtkanteEdge.roundToPx()
+                    val width = constraints.maxWidth + 2 * edge
+                    val placeable = measurable.measure(constraints.copy(minWidth = width, maxWidth = width))
+                    layout(constraints.maxWidth, placeable.height) { placeable.place(-edge, 0) }
+                },
         )
+        // nilumio: Zeit links, Wiedergabe-Knöpfe mittig (Play/Pause genau in der Bildmitte), Spuren und Einstellungen rechts
         Box(
-            modifier =
-                Modifier
-                    .padding(horizontal = 8.dp)
-                    .fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            LeftPlaybackButtons(
-                onControllerInteraction = onControllerInteraction,
-                onClickPlaybackDialogType = onClickPlaybackDialogType,
+            SeekTimecodes(
+                positionMs = positionMs,
+                durationMs = player.duration,
                 modifier = Modifier.align(Alignment.CenterStart),
             )
-
             PlaybackButtons(
                 player = player,
                 initialFocusRequester = initialFocusRequester,
@@ -207,10 +225,9 @@ fun PlaybackControls(
                 seekBack = seekBack,
                 seekForward = seekForward,
                 skipBackOnResume = skipBackOnResume,
-                modifier = Modifier.align(Alignment.Center),
             )
-
             Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.align(Alignment.CenterEnd),
             ) {
                 currentSegment?.let { segment ->
@@ -219,16 +236,14 @@ fun PlaybackControls(
                         onClick = {
                             player.seekTo(segment.endTicks.ticks.inWholeMilliseconds)
                         },
-                        modifier =
-                            Modifier
-                                .align(Alignment.CenterVertically)
-                                .padding(end = 32.dp),
+                        modifier = Modifier.padding(end = 24.dp),
                     )
                 }
                 RightPlaybackButtons(
                     onControllerInteraction = onControllerInteraction,
                     onClickPlaybackDialogType = onClickPlaybackDialogType,
-                    modifier = Modifier,
+                    // Symbol bündig mit dem Rand von Titel und Zeit, nicht die Knopffläche
+                    modifier = Modifier.offset(x = (2.5f * LICHTKANTE_BUTTON_K).dp),
                 )
             }
         }
@@ -249,12 +264,10 @@ fun SeekBar(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
     var bufferedProgress by remember(player) { mutableFloatStateOf(player.bufferedPosition.toFloat() / player.duration) }
-    var position by remember(player) { mutableLongStateOf(player.currentPosition) }
     var progress by remember(player) { mutableFloatStateOf(player.currentPosition.toFloat() / player.duration) }
     LaunchedEffect(player) {
         while (isActive) {
             bufferedProgress = player.bufferedPosition.toFloat() / player.duration
-            position = player.currentPosition
             progress = player.currentPosition.toFloat() / player.duration
             delay(250L)
         }
@@ -278,11 +291,6 @@ fun SeekBar(
             seekBack = seekBack,
             seekForward = seekForward,
         )
-        SeekTimecodes(
-            positionMs = position,
-            durationMs = player.duration,
-            modifier = Modifier.fillMaxWidth(),
-        )
     }
 }
 
@@ -292,67 +300,49 @@ fun SeekTimecodes(
     durationMs: Long,
     modifier: Modifier = Modifier,
 ) {
-    val currentLayoutDirection = LocalLayoutDirection.current
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        Row(
-            modifier = modifier,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            val resources = LocalResources.current
-            val positionSec = positionMs / 1000
-            val remainingSec = (durationMs - positionMs) / 1000
-            val positionText =
-                remember(positionSec) { resources.formatDuration(positionSec.seconds) }
-            val remainingText =
-                remember(remainingSec) { "-${resources.formatDuration(remainingSec.seconds)}" }
-            CompositionLocalProvider(LocalLayoutDirection provides currentLayoutDirection) {
-                Text(
-                    text = positionText,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier =
-                        Modifier
-                            .padding(8.dp),
-                )
-            }
-            CompositionLocalProvider(LocalLayoutDirection provides currentLayoutDirection) {
-                Text(
-                    text = remainingText,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier =
-                        Modifier
-                            .padding(8.dp),
-                )
-            }
+    // nilumio „Lichtkante“: eine Angabe „4:31 / 12:14“ mit festen Ziffernbreiten statt „4m 31s“ links und Restzeit rechts
+    val positionSec = positionMs / 1000
+    val durationSec = durationMs / 1000
+    val text =
+        remember(positionSec, durationSec) {
+            if (durationMs > 0) "${formatTimecode(positionSec)} / ${formatTimecode(durationSec)}" else formatTimecode(positionSec)
         }
-    }
-}
-
-val buttonSpacing = 12.dp
-
-@Composable
-fun LeftPlaybackButtons(
-    onControllerInteraction: () -> Unit,
-    onClickPlaybackDialogType: (PlaybackDialogType) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier.focusGroup(),
-        horizontalArrangement = Arrangement.spacedBy(buttonSpacing),
-    ) {
-        PlaybackButton(
-            iconRes = R.drawable.vector_settings,
-            onClick = {
-                onControllerInteraction.invoke()
-                onClickPlaybackDialogType.invoke(PlaybackDialogType.SETTINGS)
-            },
-            enabled = true,
-            onControllerInteraction = onControllerInteraction,
-            modifier = Modifier,
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        Text(
+            text = text,
+            color = LichtkanteMuted,
+            fontFamily = NilumioOutfit,
+            fontSize = (8.8f * LICHTKANTE_BUTTON_K).sp,
+            style = TextStyle(fontFeatureSettings = "tnum"),
+            modifier = modifier,
         )
     }
 }
+
+private fun formatTimecode(totalSec: Long): String {
+    val h = totalSec / 3600
+    val m = totalSec % 3600 / 60
+    val sec = totalSec % 60
+    return if (h > 0) String.format(Locale.ROOT, "%d:%02d:%02d", h, m, sec) else String.format(Locale.ROOT, "%d:%02d", m, sec)
+}
+
+/** nilumio „Lichtkante“: gedämpftes Weiß wie --muted der Vorlage. */
+internal val LichtkanteMuted = Color(0xFFEEF2F8).copy(alpha = .62f)
+
+/**
+ * nilumio „Lichtkante groß“: Größenfaktor --k der Vorlage (Variante 13). Maße unten sind
+ * Vorlage-em × k in dp (1 em = 8 dp bei 960 dp Breite).
+ */
+internal const val LICHTKANTE_K = 2f
+
+/** Faktor nur für die Knopfzeile (Symbole, Abstände, Zeit): 80 % von [LICHTKANTE_K]. */
+internal const val LICHTKANTE_BUTTON_K = 1.6f
+
+/** Seitenrand von Titel, Zeit und Knöpfen (5 em). */
+internal val LichtkanteEdge = 40.dp
+
+// nilumio: sichtbarer Abstand zwischen den Symbolen 1,3 em × k wie in der Vorlage (abzüglich Knopfrand)
+val buttonSpacing = (5.4f * LICHTKANTE_BUTTON_K).dp
 
 @Composable
 fun RightPlaybackButtons(
@@ -367,7 +357,7 @@ fun RightPlaybackButtons(
         // Captions
         PlaybackButton(
             enabled = true,
-            iconRes = R.drawable.captions_svgrepo_com,
+            iconRes = R.drawable.nilumio_player_cc,
             onClick = {
                 onControllerInteraction.invoke()
                 onClickPlaybackDialogType.invoke(PlaybackDialogType.CAPTIONS)
@@ -376,13 +366,24 @@ fun RightPlaybackButtons(
             modifier = Modifier,
         )
         // Audio
-        PlaybackFaButton(
+        PlaybackButton(
             enabled = true,
-            iconRes = R.string.fa_volume_high,
+            iconRes = R.drawable.nilumio_player_audio,
             onClick = {
                 onControllerInteraction.invoke()
                 onClickPlaybackDialogType.invoke(PlaybackDialogType.AUDIO)
             },
+            onControllerInteraction = onControllerInteraction,
+            modifier = Modifier,
+        )
+        // nilumio: Einstellungen rechts außen statt links
+        PlaybackButton(
+            iconRes = R.drawable.nilumio_player_settings,
+            onClick = {
+                onControllerInteraction.invoke()
+                onClickPlaybackDialogType.invoke(PlaybackDialogType.SETTINGS)
+            },
+            enabled = true,
             onControllerInteraction = onControllerInteraction,
             modifier = Modifier,
         )
@@ -410,7 +411,7 @@ fun PlaybackButtons(
             horizontalArrangement = Arrangement.spacedBy(buttonSpacing),
         ) {
             PlaybackButton(
-                iconRes = R.drawable.baseline_skip_previous_24,
+                iconRes = R.drawable.nilumio_player_prev,
                 onClick = {
                     onControllerInteraction.invoke()
                     onPlaybackActionClick.invoke(PlaybackAction.Previous)
@@ -430,7 +431,7 @@ fun PlaybackButtons(
             )
             PlaybackButton(
                 modifier = Modifier.focusRequester(initialFocusRequester),
-                iconRes = if (showPlay) R.drawable.baseline_play_arrow_24 else R.drawable.baseline_pause_24,
+                iconRes = if (showPlay) R.drawable.nilumio_player_play else R.drawable.nilumio_player_pause,
                 onClick = {
                     onControllerInteraction.invoke()
                     if (showPlay) {
@@ -454,7 +455,7 @@ fun PlaybackButtons(
                 onControllerInteraction = onControllerInteraction,
             )
             PlaybackButton(
-                iconRes = R.drawable.baseline_skip_next_24,
+                iconRes = R.drawable.nilumio_player_next,
                 onClick = {
                     onControllerInteraction.invoke()
                     onPlaybackActionClick.invoke(PlaybackAction.Next)
@@ -475,32 +476,71 @@ fun PlaybackButton(
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource? = null,
 ) {
+    val source = interactionSource ?: remember { MutableInteractionSource() }
+    val focused by source.collectIsFocusedAsState()
+    LichtkanteButton(onClick, onControllerInteraction, modifier, enabled, source) {
+        LichtkanteIcon(iconRes = iconRes, focused = focused, modifier = Modifier.fillMaxSize())
+    }
+}
+
+/** nilumio „Lichtkante“: Symbol ohne Fläche, gedämpft; ausgewählt weiß mit Mint-Schein. */
+@Composable
+private fun LichtkanteButton(
+    onClick: () -> Unit,
+    onControllerInteraction: () -> Unit,
+    modifier: Modifier,
+    enabled: Boolean,
+    interactionSource: MutableInteractionSource,
+    content: @Composable () -> Unit,
+) {
     Button(
         enabled = enabled,
         onClick = onClick,
-//        shape = ButtonDefaults.shape(CircleShape),
         colors =
-            // nilumio „Lichtkante“: Symbole ohne Fläche, ausgewählt hell mit Mint-Schein
             ClickableSurfaceDefaults.colors(
                 containerColor = Color.Transparent,
-                contentColor = Color.White.copy(alpha = .62f),
-                focusedContainerColor = Color.White.copy(alpha = .1f),
+                contentColor = LichtkanteMuted,
+                focusedContainerColor = Color.Transparent,
                 focusedContentColor = Color.White,
+                pressedContainerColor = Color.Transparent,
+                pressedContentColor = Color.White,
+                disabledContainerColor = Color.Transparent,
+                disabledContentColor = Color.White.copy(alpha = .25f),
             ),
-        glow = ClickableSurfaceDefaults.glow(focusedGlow = Glow(NilumioColors.Mint.copy(alpha = .45f), 10.dp)),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.12f),
-        contentPadding = PaddingValues(4.dp),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
+        contentPadding = PaddingValues((2.5f * LICHTKANTE_BUTTON_K).dp),
         interactionSource = interactionSource,
         modifier =
             modifier
-                .size(36.dp, 36.dp)
+                .size((22.6f * LICHTKANTE_BUTTON_K).dp)
                 .onFocusChanged { onControllerInteraction.invoke() },
     ) {
+        content()
+    }
+}
+
+/** Mint-Schein hinter dem Symbol wie drop-shadow in der Vorlage (Weichzeichnen ab Android 12). */
+@Composable
+private fun LichtkanteIcon(
+    @DrawableRes iconRes: Int,
+    focused: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val painter = painterResource(iconRes)
+    Box(modifier) {
+        if (focused) {
+            Icon(
+                painter = painter,
+                contentDescription = null,
+                tint = NilumioColors.Mint.copy(alpha = .9f),
+                modifier = Modifier.matchParentSize().blur((3.5f * LICHTKANTE_BUTTON_K).dp, BlurredEdgeTreatment.Unbounded),
+            )
+        }
         Icon(
-            modifier = Modifier.fillMaxSize(),
-            painter = painterResource(iconRes),
-            contentDescription = "",
+            painter = painter,
+            contentDescription = null,
             tint = LocalContentColor.current,
+            modifier = Modifier.matchParentSize(),
         )
     }
 }
@@ -516,35 +556,28 @@ fun PlaybackSkipButton(
     onControllerInteraction: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Button(
-        onClick = onClick,
-        colors =
-            ClickableSurfaceDefaults.colors(
-                containerColor = Color.Transparent,
-                contentColor = Color.White.copy(alpha = .62f),
-                focusedContainerColor = Color.White.copy(alpha = .1f),
-                focusedContentColor = Color.White,
-            ),
-        glow = ClickableSurfaceDefaults.glow(focusedGlow = Glow(NilumioColors.Mint.copy(alpha = .45f), 10.dp)),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.12f),
-        contentPadding = PaddingValues(4.dp),
-        modifier =
-            modifier
-                .size(36.dp, 36.dp)
-                .onFocusChanged { onControllerInteraction.invoke() },
-    ) {
+    val source = remember { MutableInteractionSource() }
+    val focused by source.collectIsFocusedAsState()
+    LichtkanteButton(onClick, onControllerInteraction, modifier, true, source) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-            Icon(
-                painter = painterResource(R.drawable.nilumio_replay),
-                contentDescription = null,
-                tint = LocalContentColor.current,
+            LichtkanteIcon(
+                iconRes = R.drawable.nilumio_player_skip,
+                focused = focused,
                 modifier = Modifier.fillMaxSize().graphicsLayer { if (forward) scaleX = -1f },
             )
+            // Zahl wie in der Vorlage: 7 von 24 Einheiten, Grundlinie bei 15,5
             Text(
                 text = seconds.toString(),
-                fontSize = 8.sp,
+                fontFamily = NilumioOutfit,
+                fontSize = (5.13f * LICHTKANTE_BUTTON_K).sp,
+                lineHeight = (5.13f * LICHTKANTE_BUTTON_K).sp,
                 color = LocalContentColor.current,
-                modifier = Modifier.padding(top = 3.dp),
+                style =
+                    TextStyle(
+                        shadow = if (focused) Shadow(NilumioColors.Mint, blurRadius = 8f * LICHTKANTE_BUTTON_K) else null,
+                        lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.Both),
+                    ),
+                modifier = Modifier.padding(top = (.5f * LICHTKANTE_BUTTON_K).dp),
             )
         }
     }

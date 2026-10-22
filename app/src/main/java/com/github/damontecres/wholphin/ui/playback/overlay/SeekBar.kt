@@ -18,7 +18,7 @@ package com.github.damontecres.wholphin.ui.playback.overlay
  * limitations under the License.
  */
 
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -207,17 +206,15 @@ private fun SeekBarDisplay(
     val isFocused by interactionSource.collectIsFocusedAsState()
     var leftHandledByRepeat by remember { mutableStateOf(false) }
     var rightHandledByRepeat by remember { mutableStateOf(false) }
-    val animatedIndicatorHeight by animateDpAsState(
-        targetValue = 6.dp.times((if (isFocused) 2f else 1f)),
-    )
+    // nilumio „Lichtkante groß“: Linie 0,18 em × k, Kugel 1 em × k; mit Fokus etwas kräftiger
+    val focusScale by animateFloatAsState(targetValue = if (isFocused) 1.4f else 1f)
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Canvas(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(animatedIndicatorHeight)
-                    .padding(horizontal = 4.dp)
+                    .height((8f * LICHTKANTE_K).dp)
                     .onPreviewKeyEvent { event ->
                         if (!isDpadLeft(event) && !isDpadRight(event)) {
                             Timber.v("Ignoring %s", event)
@@ -286,18 +283,27 @@ private fun SeekBarDisplay(
             onDraw = {
                 // nilumio „Lichtkante“: dünne Linie, Fortschritt im Logo-Verlauf mit Schein, Position als Kugel
                 val yOffset = size.height.div(2)
-                val line = size.height * .5f
+                val line = (1.44f * LICHTKANTE_K).dp.toPx() * focusScale
                 val end = size.width.times(progress)
-                val logo = Brush.horizontalGradient(listOf(NilumioColors.Mint, NilumioColors.Sky, NilumioColors.Lilac), endX = size.width)
+                // Verlauf über den gespielten Teil wie in der Vorlage, Schein weich in drei Lagen
+                val logo = Brush.horizontalGradient(listOf(NilumioColors.Mint, NilumioColors.Sky, NilumioColors.Lilac), endX = end.coerceAtLeast(1f))
                 drawLine(onSurface.copy(alpha = 0.18f), Offset(0f, yOffset), Offset(size.width, yOffset), line, StrokeCap.Round)
-                drawLine(onSurface.copy(alpha = 0.32f), Offset(0f, yOffset), Offset(size.width.times(bufferedProgress), yOffset), line, StrokeCap.Round)
-                drawLine(logo, Offset(0f, yOffset), Offset(end, yOffset), line * 4, StrokeCap.Round, alpha = .22f)
+                drawLine(onSurface.copy(alpha = 0.1f), Offset(0f, yOffset), Offset(size.width.times(bufferedProgress), yOffset), line, StrokeCap.Round)
+                for ((w, a) in listOf(12f to .07f, 7.5f to .12f, 5f to .2f)) {
+                    drawLine(NilumioColors.Sky, Offset(0f, yOffset), Offset(end, yOffset), w.dp.toPx(), StrokeCap.Round, alpha = a)
+                }
                 drawLine(logo, Offset(0f, yOffset), Offset(end, yOffset), line, StrokeCap.Round)
-                val r = size.height * 1.1f
+                val r = (4f * LICHTKANTE_K).dp.toPx() * focusScale
                 val c = Offset(end, yOffset)
-                drawCircle(Brush.radialGradient(listOf(NilumioColors.Sky.copy(alpha = .55f), Color.Transparent), c, r * 2.2f), r * 2.2f, c)
+                drawCircle(Brush.radialGradient(listOf(NilumioColors.Sky.copy(alpha = .6f), Color.Transparent), c, r + 12.8.dp.toPx()), r + 12.8.dp.toPx(), c)
                 drawCircle(
-                    Brush.radialGradient(listOf(NilumioColors.Mint, NilumioColors.Sky, NilumioColors.Lilac), Offset(c.x - r * .2f, c.y - r * .3f), r * 1.3f),
+                    Brush.radialGradient(
+                        0f to NilumioColors.Mint,
+                        .45f to NilumioColors.Sky,
+                        1f to NilumioColors.Lilac,
+                        center = Offset(c.x - r * .2f, c.y - r * .3f),
+                        radius = r * 1.77f,
+                    ),
                     r,
                     c,
                 )

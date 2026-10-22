@@ -8,7 +8,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.github.damontecres.wholphin.R
 
 /**
  * nilumio-Zeichen: Kugel im Verlauf Grün → Türkis → Lila mit dunkler Erdkrümmung
@@ -66,6 +70,13 @@ object NilumioColors {
 
     fun onAvatar(color: Color): Color = if (color == Lilac) Color.White else Night
 }
+
+/** Outfit (OFL, statische Schnitte 300/400 aus store/brand), bisher nur im Player-Overlay. */
+val NilumioOutfit =
+    FontFamily(
+        Font(R.font.outfit_light, FontWeight.Light),
+        Font(R.font.outfit_regular, FontWeight.Normal),
+    )
 
 /** Fokusrahmen für Cover: weiß, 1,5 dp, mit leichtem Schein. */
 @Composable

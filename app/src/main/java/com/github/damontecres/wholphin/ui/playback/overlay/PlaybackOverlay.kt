@@ -20,6 +20,7 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -131,23 +132,27 @@ fun PlaybackOverlay(
             modifier = Modifier.matchParentSize(),
         ) {
             // Background scrim for OSD readability
+            // nilumio „Lichtkante groß“: nur untere 62 %, nach unten in Nachtblau
             val scrimBrush =
                 remember {
                     Brush.verticalGradient(
                         colors =
                             listOf(
                                 Color.Transparent,
-                                Color.Black.copy(alpha = 0.5f),
-                                Color.Black.copy(alpha = 0.80f),
+                                Color(0xE004060A),
                             ),
                     )
                 }
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(scrimBrush),
-            )
+            Box(Modifier.fillMaxSize()) {
+                Box(
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                            .fillMaxHeight(.62f)
+                            .background(scrimBrush),
+                )
+            }
         }
 
         AnimatedContent(
@@ -208,7 +213,7 @@ fun PlaybackOverlay(
                         onChangeState = onChangeState,
                         modifier =
                             Modifier
-                                .padding(bottom = 8.dp)
+                                .padding(bottom = 4.dp) // nilumio: Zeile wie in der Vorlage 3 em über dem Rand
                                 .onGloballyPositioned {
                                     controllerHeight = with(density) { it.size.height.toDp() }
                                 },
@@ -274,7 +279,8 @@ fun PlaybackOverlay(
                     modifier =
                         Modifier
                             .align(Alignment.Center)
-                            .fillMaxWidth(.95f),
+                            // nilumio: so breit wie die randlose Zeitleiste
+                            .fillMaxWidth(),
                 ) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(8.dp),

@@ -1,5 +1,16 @@
 package com.github.damontecres.wholphin.ui.playback.overlay
 
+import android.content.res.Resources
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.text.font.FontWeight
+import com.github.damontecres.wholphin.ui.components.NilumioOutfit
+import com.github.damontecres.wholphin.ui.formatDuration
+import com.github.damontecres.wholphin.ui.joinNotBlank
+import com.github.damontecres.wholphin.ui.seasonEpisodePadded
+import org.jellyfin.sdk.model.api.BaseItemKind
+import org.jellyfin.sdk.model.extensions.ticks
+import kotlin.time.Duration.Companion.minutes
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.animateDpAsState
@@ -9,7 +20,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -19,7 +29,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
@@ -29,7 +38,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.Player
-import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.github.damontecres.wholphin.R
 import com.github.damontecres.wholphin.data.model.BaseItem
@@ -65,13 +73,16 @@ fun PlaybackController(
     modifier: Modifier = Modifier,
     seekBarInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
+    // nilumio „Lichtkante“: Inhalt 40 dp vom Rand, Metazeile statt Wholphin-Untertitel
+    val resources = LocalResources.current
+    val meta = remember(item) { item?.let { playerMeta(it, resources) } }
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(0.dp),
+        modifier = modifier.padding(horizontal = LichtkanteEdge),
     ) {
         Controller(
             title = item?.title,
-            subtitle = item?.subtitleLong,
+            subtitle = meta,
             player = player,
             controllerViewState = controllerViewState,
             showPlay = showPlay,
@@ -92,10 +103,12 @@ fun PlaybackController(
             OverlayViewState.CHAPTERS -> {
                 Text(
                     text = stringResource(R.string.chapters),
-                    style = MaterialTheme.typography.titleLarge,
+                    // nilumio: dezenter Hinweis auf ↓ statt großer Überschrift
+                    color = LichtkanteMuted,
+                    fontFamily = NilumioOutfit,
+                    fontSize = 12.sp,
                     modifier =
                         Modifier
-                            .padding(start = 16.dp, top = 0.dp)
                             .onFocusChanged {
                                 if (it.isFocused) onChangeState.invoke(nextState)
                             }.focusable(),
@@ -105,10 +118,12 @@ fun PlaybackController(
             OverlayViewState.QUEUE -> {
                 Text(
                     text = stringResource(R.string.queue),
-                    style = MaterialTheme.typography.titleLarge,
+                    // nilumio: dezenter Hinweis auf ↓ statt großer Überschrift
+                    color = LichtkanteMuted,
+                    fontFamily = NilumioOutfit,
+                    fontSize = 12.sp,
                     modifier =
                         Modifier
-                            .padding(start = 16.dp, top = 0.dp)
                             .onFocusChanged {
                                 if (it.isFocused) onChangeState.invoke(nextState)
                             }.focusable(),
@@ -122,8 +137,9 @@ fun PlaybackController(
     }
 }
 
-internal val titleTextSize = 28.sp
-internal val subtitleTextSize = 18.sp
+// nilumio: Größen der Vorlage „Lichtkante groß“ (Titel 2,6 em × k, Metazeile 1 em × k)
+internal val titleTextSize = (20.8f * LICHTKANTE_K).sp
+internal val subtitleTextSize = (8f * LICHTKANTE_K).sp
 
 /**
  * A wrapper for the playback controls to show title and other information, plus the actual controls
@@ -162,67 +178,51 @@ fun Controller(
     )
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy((20f + 6.48f * LICHTKANTE_K).dp),
         modifier = modifier,
     ) {
+        val context = LocalContext.current
+        var endTimeStr by remember { mutableStateOf("...") }
+        LaunchedEffect(player, context) {
+            while (isActive) {
+                val remaining =
+                    (player.duration - player.currentPosition)
+                        .div(player.playbackParameters.speed)
+                        .toLong()
+                        .milliseconds
+                val endTime = LocalTime.now().plusSeconds(remaining.inWholeSeconds)
+                endTimeStr = formatTime(context, endTime)
+                delay(1.seconds)
+            }
+        }
+        // nilumio „Lichtkante“: Titel groß und leicht, darunter gedämpfte Metazeile mit Endzeit
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier =
-                Modifier
-                    .padding(start = 16.dp)
-                    .offset(y = verticalOffset),
+            modifier = Modifier.offset(y = verticalOffset),
         ) {
             title?.let {
                 Text(
                     text = it,
-                    style = MaterialTheme.typography.titleLarge,
+                    color = Color(0xFFEEF2F8),
+                    fontFamily = NilumioOutfit,
+                    fontWeight = FontWeight.Light,
                     fontSize = titleTextSize,
+                    lineHeight = titleTextSize * 1.05f,
+                    letterSpacing = titleTextSize * .005f,
                     maxLines = 1,
                     overflow = TextOverflow.MiddleEllipsis,
                     modifier = Modifier.fillMaxWidth(.75f),
                 )
             }
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.End),
-            ) {
-                subtitle?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontSize = subtitleTextSize,
-                        maxLines = 1,
-                        overflow = TextOverflow.MiddleEllipsis,
-                        modifier = Modifier.fillMaxWidth(.75f),
-                    )
-                }
-
-                val context = LocalContext.current
-                var endTimeStr by remember { mutableStateOf("...") }
-                LaunchedEffect(player, context) {
-                    while (isActive) {
-                        val remaining =
-                            (player.duration - player.currentPosition)
-                                .div(player.playbackParameters.speed)
-                                .toLong()
-                                .milliseconds
-                        val endTime = LocalTime.now().plusSeconds(remaining.inWholeSeconds)
-                        endTimeStr = formatTime(context, endTime)
-                        delay(1.seconds)
-                    }
-                }
-                Text(
-                    text = stringResource(R.string.ends_at, endTimeStr),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier =
-                        Modifier
-                            .padding(end = 32.dp),
-                )
-            }
+            Text(
+                text = listOfNotNull(subtitle, stringResource(R.string.ends_at, endTimeStr)).joinToString(" · "),
+                color = LichtkanteMuted,
+                fontFamily = NilumioOutfit,
+                fontSize = subtitleTextSize,
+                lineHeight = subtitleTextSize * 1.45f,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = (.75f * LICHTKANTE_K).dp).fillMaxWidth(.75f),
+            )
         }
         PlaybackControls(
             modifier = Modifier.fillMaxWidth(),
@@ -246,3 +246,22 @@ fun Controller(
         )
     }
 }
+
+/** nilumio: Serie „S08F04 · Folgentitel“, sonst „Jahr · Genre · Dauer“. */
+private fun playerMeta(
+    item: BaseItem,
+    resources: Resources,
+): String? =
+    if (item.type == BaseItemKind.EPISODE) {
+        listOf(item.data.seasonEpisodePadded, item.name).joinNotBlank(" · ")
+    } else {
+        listOf(
+            item.data.productionYear?.toString(),
+            item.data.genres?.firstOrNull(),
+            item.data.runTimeTicks
+                ?.ticks
+                ?.inWholeMinutes
+                ?.takeIf { it > 0 }
+                ?.let { resources.formatDuration(it.minutes) },
+        ).joinNotBlank(" · ")
+    }
