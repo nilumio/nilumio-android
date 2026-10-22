@@ -78,7 +78,7 @@ configure<ApplicationExtension> {
     compileSdk = libs.versions.compileSdk.getInt()
 
     defaultConfig {
-        applicationId = "com.held0.nordlicht"
+        applicationId = "com.held0.nilumio"
         minSdk = libs.versions.minSdk.getInt()
         targetSdk = libs.versions.targetSdk.getInt()
         versionCode = 1000 + gitCommitCount.trim().toInt()
