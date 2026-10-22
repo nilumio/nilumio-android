@@ -148,7 +148,7 @@ sealed class Destination(
     @Serializable
     data object Discover : Destination(false)
 
-    // nilumio: SyncPlay („Gemeinsam schauen“)
+    // nilumio: SyncPlay („Watch Party“)
     @Serializable
     data object SyncPlay : Destination(false)
 

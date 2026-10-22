@@ -1,5 +1,5 @@
 /*
- * nilumio – SyncPlay („Gemeinsam schauen“), Copyright (C) 2026 nilumio, GPL-2.0.
+ * nilumio – SyncPlay („Watch Party“), Copyright (C) 2026 nilumio, GPL-2.0.
  *
  * Befehlsplanung (scheduleUnpause/schedulePause/scheduleSeek, Bereit-Meldung nach Laden/Seek/Puffern)
  * portiert aus jellyfin-web src/plugins/syncPlay/core/PlaybackCore.js und QueueCore.js
@@ -42,6 +42,7 @@ class SyncPlayViewModel
     @Inject
     constructor(
         val manager: SyncPlayManager,
+        val navigationManager: com.github.damontecres.wholphin.services.NavigationManager,
     ) : ViewModel()
 
 /**

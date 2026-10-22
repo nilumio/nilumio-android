@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- nilumio: SyncPlay ("Watch together") -->
+<!-- nilumio: SyncPlay ("Watch Party") -->
 <resources>
-    <string name="syncplay_title">Watch together</string>
-    <string name="syncplay_create">Create new group</string>
-    <string name="syncplay_join">Join a group</string>
+    <string name="syncplay_title">Watch Party</string>
+    <string name="syncplay_create">Start a new group</string>
+    <string name="syncplay_join">Open groups</string>
     <string name="syncplay_no_groups">No groups on the server yet</string>
     <string name="syncplay_refresh">Refresh</string>
     <string name="syncplay_leave">Leave group</string>
@@ -13,5 +13,12 @@
     <string name="syncplay_joined">Joined group %1$s</string>
     <string name="syncplay_user_joined">%1$s has joined</string>
     <string name="syncplay_user_left">%1$s has left</string>
-    <string name="syncplay_error">Watch together: the server refused the request</string>
+    <string name="syncplay_error">Watch Party: the server refused the request</string>
+    <string name="syncplay_subtitle">Everyone sees the same thing at the same time, on other devices too.</string>
+    <string name="syncplay_create_hint">Then simply choose a film. Whoever joins watches along.</string>
+    <string name="syncplay_live">live</string>
+    <string name="syncplay_active">Group active</string>
+    <string name="syncplay_choose">Choose a film</string>
+    <string name="syncplay_state_playing">watching right now</string>
+    <string name="syncplay_state_waiting">waiting for a film</string>
 </resources>

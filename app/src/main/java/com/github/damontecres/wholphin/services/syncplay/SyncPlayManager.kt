@@ -1,5 +1,5 @@
 /*
- * nilumio – SyncPlay („Gemeinsam schauen“), Copyright (C) 2026 nilumio, GPL-2.0.
+ * nilumio – SyncPlay („Watch Party“), Copyright (C) 2026 nilumio, GPL-2.0.
  *
  * Herkunft (siehe THIRD_PARTY_NOTICES.md):
  * - Protokollablauf, Zeitabgleich (TimeSync: Messung mit kleinster Verzögerung aus den letzten 8,
@@ -105,6 +105,7 @@ class SyncPlayManager
 
         fun refreshGroups() =
             scope.launch {
+                listen() // WebSocket schon verbinden, damit „GroupJoined“ nach dem Erstellen ankommt
                 runCatching { groups.value = api.syncPlayApi.syncPlayGetGroups().content }
                     .onFailure { Timber.w(it, "SyncPlay: Gruppen laden fehlgeschlagen") }
             }
@@ -113,14 +114,34 @@ class SyncPlayManager
             request(R.string.syncplay_error) {
                 listen()
                 val name = serverRepository.currentUser?.name ?: "nilumio"
-                api.syncPlayApi.syncPlayCreateGroup(NewGroupRequestDto(context.getString(R.string.syncplay_group_of, name)))
+                val groupName = context.getString(R.string.syncplay_group_of, name)
+                api.syncPlayApi.syncPlayCreateGroup(NewGroupRequestDto(groupName))
+                adoptGroup { it.groupName == groupName && name in it.participants }
             }
 
         fun joinGroup(groupId: UUID) =
             request(R.string.syncplay_error) {
                 listen()
                 api.syncPlayApi.syncPlayJoinGroup(JoinGroupRequestDto(groupId))
+                adoptGroup { it.groupId == groupId }
             }
+
+        /**
+         * Falls „GroupJoined“ über den WebSocket nicht ankommt (Verbindung erst im Aufbau),
+         * die eigene Gruppe aus der Gruppenliste des Servers übernehmen.
+         */
+        private suspend fun adoptGroup(match: (GroupInfoDto) -> Boolean) {
+            repeat(6) {
+                delay(500)
+                if (group.value != null) return
+                val list = api.syncPlayApi.syncPlayGetGroups().content
+                groups.value = list
+                list.firstOrNull(match)?.let {
+                    group.value = it
+                    return
+                }
+            }
+        }
 
         fun leaveGroup() =
             request(null) {
