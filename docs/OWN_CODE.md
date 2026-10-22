@@ -25,8 +25,8 @@ removed lines are counted. Binary files (images, video) are counted as files onl
 
 - Wholphin's app code at the branch point: about **92,300 lines of Kotlin** in `app/src/main/java`.
 - nilumio added about **1,680 lines of Kotlin** there (1,450 in 10 new files, about 230 in 20 modified Wholphin files) and removed 89 Wholphin lines. That is roughly **2 %** of the app code.
-- Largest own pieces: SyncPlay (*Watch together*, about 610 lines, partly ported from jellyfin-web), *Add friend* (about 360 lines plus a test), drawer icons and start-up intro (about 390 lines), genre rows (about 80 lines).
-- Everything else is artwork (icons, banner, intro video), store texts, the privacy policy and the invitation web page, and this documentation.
+- Largest own pieces: SyncPlay (*Watch Party*, about 610 lines, partly ported from jellyfin-web), drawer icons and start-up intro (about 390 lines), genre rows (about 80 lines).
+- Everything else is artwork (icons, banner, intro video), store texts, the privacy policy, and this documentation.
 
 ## Keeping these numbers current
 

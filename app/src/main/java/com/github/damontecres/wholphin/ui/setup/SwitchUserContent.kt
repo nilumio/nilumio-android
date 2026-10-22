@@ -75,7 +75,6 @@ fun SwitchUserContent(
 
     val currentUser by viewModel.serverRepository.currentUserFlow.collectAsState(null)
     var showAddUser by remember { mutableStateOf(false) }
-    var showAddFriend by remember { mutableStateOf(false) }
     var addUser by remember(server) { mutableStateOf<JellyfinUser?>(null) }
     var username by remember(addUser) { mutableStateOf(addUser?.name ?: "") }
 
@@ -184,7 +183,6 @@ fun SwitchUserContent(
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        onAddFriend = { showAddFriend = true },
                     )
                 }
                 when (state.serverVersionSupported) {
@@ -402,9 +400,6 @@ fun SwitchUserContent(
                 }
             }
         }
-    }
-    if (showAddFriend) {
-        FriendInviteDialog(server, currentUser, onDismissRequest = { showAddFriend = false })
     }
     switchUserWithPin?.let { user ->
         PinEntryDialog(

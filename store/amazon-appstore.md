@@ -28,7 +28,7 @@ Ergebnis in `app/build/outputs/apk/firetv/release/`: je eine APK für `armeabi-v
 
 Hochladen: am einfachsten die **Universal-APK** (läuft auf allen Fire-TV-Modellen). Viele Fire-TV-Geräte laufen trotz 64-Bit-Chip mit 32-Bit-Fire-OS, deshalb mindestens `armeabi-v7a` immer mitliefern, falls einzelne APKs hochgeladen werden.
 
-**Signatur:** Amazon signiert die App beim Veröffentlichen mit einem eigenen, kontobezogenen Zertifikat neu. Den SHA-256-Fingerabdruck zeigt die Konsole nach dem Upload (Abschnitt „Appstore Certificate Hashes“). Diesen Fingerabdruck zusätzlich in `https://nilumio.com/.well-known/assetlinks.json` eintragen, sonst öffnen sich Einladungslinks (`https://nilumio.com/einladung`) bei Amazon-Installationen nicht direkt in der App.
+**Signatur:** Amazon signiert die App beim Veröffentlichen mit einem eigenen, kontobezogenen Zertifikat neu. Den SHA-256-Fingerabdruck zeigt die Konsole nach dem Upload (Abschnitt „Appstore Certificate Hashes“).
 
 ## 3. Konto
 

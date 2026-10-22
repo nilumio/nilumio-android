@@ -45,7 +45,6 @@ import com.github.damontecres.wholphin.services.BackdropService
 import com.github.damontecres.wholphin.services.DatePlayedInvalidationService
 import com.github.damontecres.wholphin.services.DeviceProfileService
 import com.github.damontecres.wholphin.services.ImageUrlService
-import com.github.damontecres.wholphin.services.FriendInviteService
 import com.github.damontecres.wholphin.services.IntentResult
 import com.github.damontecres.wholphin.services.IntentService
 import com.github.damontecres.wholphin.services.LatestNextUpSchedulerService
@@ -443,7 +442,6 @@ class MainActivityViewModel
         private val backdropService: BackdropService,
         private val appUpgradeHandler: AppUpgradeHandler,
         private val intentService: IntentService,
-        private val friendInviteService: FriendInviteService,
     ) : ViewModel() {
         private val mutex = Mutex()
 
@@ -504,7 +502,6 @@ class MainActivityViewModel
          */
         @VisibleForTesting
         internal suspend fun handleIntent(intent: Intent?): Boolean {
-            friendInviteService.handle(intent)?.let { return it }
             val result = intent?.let { intentService.parseIntent(intent) }
             when (result) {
                 is IntentResult.Error -> {

@@ -1,7 +1,7 @@
 <!-- nilumio: start of fork section. Everything below the end marker is the original Wholphin README. -->
 # nilumio for Android TV
 
-> **Kurz auf Deutsch:** nilumio ist eine Android-TV-App für deinen eigenen Jellyfin-Server. Sie ist ein Fork von Wholphin und steht wie Wholphin unter der GPL-2.0. Neu sind unter anderem eigenes Design, Start-Intro, Startseiten-Reihen nach Genre, gemeinsames Schauen (SyncPlay) und Freunde einladen. Alle Änderungen gegenüber Wholphin stehen in [NILUMIO_CHANGES.md](NILUMIO_CHANGES.md). Kontakt: webmaster@nilumio.com
+> **Kurz auf Deutsch:** nilumio ist eine Android-TV-App für deinen eigenen Jellyfin-Server. Sie ist ein Fork von Wholphin und steht wie Wholphin unter der GPL-2.0. Neu sind unter anderem eigenes Design, Start-Intro, Startseiten-Reihen nach Genre, Watch Party (gemeinsam schauen über SyncPlay). Alle Änderungen gegenüber Wholphin stehen in [NILUMIO_CHANGES.md](NILUMIO_CHANGES.md). Kontakt: webmaster@nilumio.com
 
 **nilumio** is an Android TV app for your own [Jellyfin](https://jellyfin.org) media server: a calm, dark interface with large artwork, built for the remote control. It is a fork of [Wholphin](https://github.com/damontecres/Wholphin) by damontecres and keeps Wholphin's playback engines (ExoPlayer and MPV), home screen customisation and settings.
 
@@ -9,8 +9,7 @@ What nilumio adds on top of Wholphin:
 
 - its own name, logo, colours and typography, and a short start-up intro
 - home screen rows by genre
-- *Watch together*: synchronised playback with Jellyfin SyncPlay groups
-- *Add friend*: server administrators can create an account for a friend and share it as a link with a QR code
+- *Watch Party*: synchronised playback with Jellyfin SyncPlay groups
 - wording fixes in the German and other translations
 
 nilumio is not an official Jellyfin or Wholphin product. Website: [nilumio.com](https://nilumio.com)
@@ -23,15 +22,15 @@ nilumio is not an official Jellyfin or Wholphin product. Website: [nilumio.com](
   <img alt="nilumio feature graphic" src="store/play/feature-graphic-1024x500-en.png" width="640"/>
 </p>
 
-| Home | Watch together | Add friend |
-|---|---|---|
-| *(screenshot to follow)* | *(screenshot to follow)* | *(screenshot to follow)* |
+| Home | Watch Party |
+|---|---|
+| *(screenshot to follow)* | *(screenshot to follow)* |
 
 ## Origin and licence
 
 - Based on Wholphin, `main` at commit [`551501f`](https://github.com/damontecres/Wholphin/commit/551501fa759d95f7eb601455149ccdf2e8602192) (October 2026). The upstream repository is configured as the `upstream` remote.
 - Licence: [GNU General Public License v2.0](LICENSE), like Wholphin. Every file that nilumio added or modified, with the date of the change, is listed in [NILUMIO_CHANGES.md](NILUMIO_CHANGES.md).
-- Code taken or ported from other projects (jellyfin-web, Wholphin-Enhanced, ZXing, fonts) is listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+- Code taken or ported from other projects (jellyfin-web, Wholphin-Enhanced, fonts) is listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 - The GPL covers the code, it is not a trademark licence. If you publish a build of your own, please give it your own name and logo.
 - An overview of how much of this repository is nilumio's own work is in [docs/OWN_CODE.md](docs/OWN_CODE.md).
 

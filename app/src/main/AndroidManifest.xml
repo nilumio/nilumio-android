@@ -68,19 +68,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:scheme="wholphin" />
             </intent-filter>
-            <!-- Friend invitations (nilumio://einladung#… and https://nilumio.com/einladung#…) -->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="nilumio" android:host="einladung" />
-            </intent-filter>
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="nilumio.com" android:path="/einladung" />
-            </intent-filter>
         </activity>
 
         <provider

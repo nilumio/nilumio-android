@@ -22,7 +22,6 @@ The files nilumio added or changed are listed in [NILUMIO_CHANGES.md](NILUMIO_CH
 
 | Library | Licence | Use |
 |---|---|---|
-| [ZXing core](https://github.com/zxing/zxing) 3.5.3 | Apache-2.0 | QR code for friend invitations |
 
 All other libraries are inherited from Wholphin and declared in `gradle/libs.versions.toml`.
 The app lists their licences on its *License information* screen in the settings; the licence texts of the native
@@ -32,7 +31,7 @@ components (libmpv, libass, dav1d, libunibreak and others) are in `app/config/li
 
 | Material | Origin | Licence | Where |
 |---|---|---|---|
-| Outfit typeface | [Outfit Fonts](https://github.com/Outfitio/Outfit-Fonts), The Outfit Project Authors | SIL Open Font License 1.1 (`store/brand/Outfit-OFL.txt`) | Wordmark in `store/brand/*.svg`; loaded from Google Fonts on `website/einladung/index.html` |
+| Outfit typeface | [Outfit Fonts](https://github.com/Outfitio/Outfit-Fonts), The Outfit Project Authors | SIL Open Font License 1.1 (`store/brand/Outfit-OFL.txt`) | Wordmark in `store/brand/*.svg` |
 | nilumio logo, icons, banners, intro video and sound | made for nilumio | All rights reserved, not licensed for use in other apps | `store/brand/`, `store/play/`, `app/src/main/res/mipmap-*/ic_nilumio*`, `app/src/main/res/raw/nilumio_intro.mp4`, `app/src/main/res/drawable-nodpi/nilumio_intro_final.png` |
 
 ## Trademarks

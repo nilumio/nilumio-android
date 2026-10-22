@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,7 +33,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -77,7 +75,6 @@ fun UserList(
     onRemoveUser: (JellyfinUser) -> Unit,
     onSwitchServer: () -> Unit,
     modifier: Modifier = Modifier,
-    onAddFriend: (() -> Unit)? = null,
 ) {
     var showDeleteDialog by remember { mutableStateOf<JellyfinUserAndImage?>(null) }
 
@@ -119,9 +116,6 @@ fun UserList(
                     AddUserCard(
                         onClick = { onAddUser.invoke() },
                     )
-                }
-                if (onAddFriend != null) {
-                    item { AddUserCard(onClick = onAddFriend, label = R.string.add_friend, icon = Icons.Default.Share) }
                 }
             }
         }
@@ -368,8 +362,6 @@ fun UserIconCardImagePreview() {
 private fun AddUserCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    label: Int = R.string.add_user,
-    icon: ImageVector = Icons.Default.Add,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -414,8 +406,8 @@ private fun AddUserCard(
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    imageVector = icon,
-                    contentDescription = stringResource(label),
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.add_user),
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(cardSize * 0.4f), // Size of the + icon
                 )
@@ -424,7 +416,7 @@ private fun AddUserCard(
 
         // "Add User" text below the card
         Text(
-            text = stringResource(label),
+            text = stringResource(R.string.add_user),
             style =
                 MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
