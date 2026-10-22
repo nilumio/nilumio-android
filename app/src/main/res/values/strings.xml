@@ -4,7 +4,7 @@
 
     <string name="about">About</string>
     <string name="active_recordings">Active Recordings</string>
-    <string name="add_favorite">Favorite</string>
+    <string name="add_favorite">Favourite</string>
     <string name="add_server">Add Server</string>
     <string name="add_user">Add User</string>
     <string name="audio">Audio</string>
@@ -49,7 +49,7 @@
     <string name="episodes">Episodes</string>
     <string name="error_loading_collection">Error loading collection %1$s</string>
     <string name="external_track">External</string>
-    <string name="favorites">Favorites</string>
+    <string name="favorites">Favourites</string>
     <string name="file_size">Size</string>
     <string name="forced_track">Forced</string>
     <string name="genres">Genres</string>
@@ -104,7 +104,7 @@
     <string name="recently_recorded">Recently Recorded</string>
     <string name="recently_released">Recently Released</string>
     <string name="recommended">Recommended</string>
-    <string name="record_program">Record Program</string>
+    <string name="record_program">Record Programme</string>
     <string name="record_series">Record Series</string>
     <string name="remove_favorite">Unfavorite</string>
     <string name="restart">Restart</string>
@@ -123,7 +123,7 @@
     <string name="voice_error_permissions">Microphone permission required</string>
     <string name="voice_error_network">Network error</string>
     <string name="voice_error_network_timeout">Network timeout</string>
-    <string name="voice_error_no_match">No speech recognized</string>
+    <string name="voice_error_no_match">No speech recognised</string>
     <string name="voice_error_busy">Voice recognition busy</string>
     <string name="voice_error_server">Server error</string>
     <string name="voice_error_speech_timeout">No speech detected</string>
@@ -186,7 +186,7 @@
     <string name="create_playlist">Create new playlist</string>
     <string name="add_to_playlist">Add to playlist</string>
     <string name="one_click_pause">Pause with one click</string>
-    <string name="one_click_pause_summary_on">Press D-Pad center to pause/play</string>
+    <string name="one_click_pause_summary_on">Press D-Pad centre to pause/play</string>
     <string name="italic_font">Italicize font</string>
     <string name="font">Font</string>
     <string name="background">Background</string>
@@ -206,7 +206,7 @@
     <string name="samples_title">Samples</string>
     <string name="featurettes_title">Featurettes</string>
     <string name="shorts_title">Shorts</string>
-    <string name="favorite_items_title">Favorite %s</string>
+    <string name="favorite_items_title">Favourite %s</string>
 
     <plurals name="trailers">
         <item quantity="zero">Trailers</item>
@@ -339,7 +339,7 @@
     <string name="installed_version">Installed version</string>
     <string name="max_homepage_items">Max items on home page rows</string>
     <string name="nav_drawer_pins_summary">Choose the default items to show, others will be hidden</string>
-    <string name="nav_drawer_pins">Customize Navigation Drawer Items</string>
+    <string name="nav_drawer_pins">Customise Navigation Drawer Items</string>
     <string name="nav_drawer_switch_on_focus_summary_off">Click to switch pages</string>
     <string name="nav_drawer_switch_on_focus">Switch nav drawer pages on focus</string>
     <string name="pass_out_protection">Passout Protection</string>
@@ -355,24 +355,24 @@
     <string name="settings">Settings</string>
     <string name="skip_back_on_resume_preference">Skip back when resuming playback</string>
     <string name="skip_back_preference">Skip back</string>
-    <string name="skip_commercials_behavior">Skip commercials behavior</string>
+    <string name="skip_commercials_behavior">Skip commercials behaviour</string>
     <string name="skip_forward_preference">Skip forward</string>
-    <string name="skip_intro_behavior">Skip intro behavior</string>
-    <string name="skip_outro_behavior">Skip outro behavior</string>
-    <string name="skip_previews_behavior">Skip previews behavior</string>
-    <string name="skip_recap_behavior">Skip recap behavior</string>
+    <string name="skip_intro_behavior">Skip intro behaviour</string>
+    <string name="skip_outro_behavior">Skip outro behaviour</string>
+    <string name="skip_previews_behavior">Skip previews behaviour</string>
+    <string name="skip_recap_behavior">Skip recap behaviour</string>
     <string name="update_available">Update available</string>
     <string name="update_url_summary">URL used to check for app updates</string>
     <string name="update_url">Update URL</string>
     <string name="font_size">Font size</string>
-    <string name="font_color">Font color</string>
+    <string name="font_color">Font colour</string>
     <string name="font_opacity">Font opacity</string>
     <string name="edge_style">Edge style</string>
-    <string name="edge_color">Edge color</string>
+    <string name="edge_color">Edge colour</string>
     <string name="background_opacity">Background opacity</string>
     <string name="background_style">Background style</string>
     <string name="subtitle_style">Subtitle style</string>
-    <string name="background_color">Background color</string>
+    <string name="background_color">Background colour</string>
     <string name="reset">Reset</string>
     <string name="bold_font">Bold font</string>
 
@@ -402,7 +402,7 @@
     <string name="enter_pin">Enter PIN</string>
     <string name="sign_in_auto">Sign in automatically</string>
     <string name="use_server_credentials">Login via server</string>
-    <string name="press_enter_to_confirm">Press center to confirm</string>
+    <string name="press_enter_to_confirm">Press centre to confirm</string>
     <string name="require_pin_code">Require PIN for profile</string>
     <string name="require_login">Require login for profile</string>
     <string name="confirm_pin">Confirm PIN</string>
@@ -452,9 +452,9 @@
     <string name="bit_depth">Bit depth</string>
     <string name="video_range">Video range</string>
     <string name="video_range_type">Video range type</string>
-    <string name="color_space">Color space</string>
-    <string name="color_transfer">Color transfer</string>
-    <string name="color_primaries">Color primaries</string>
+    <string name="color_space">Colour space</string>
+    <string name="color_transfer">Colour transfer</string>
+    <string name="color_primaries">Colour primaries</string>
     <string name="pixel_format">Pixel format</string>
     <string name="ref_frames">Ref frames</string>
     <string name="nal">NAL</string>
@@ -474,9 +474,9 @@
     <string name="sample_rate_unit">Hz</string>
     <string name="show_titles">Show titles</string>
     <string name="live_tv_repeat">Repeat</string>
-    <string name="favorite_channels_at_beginning">Show favorite channels first</string>
+    <string name="favorite_channels_at_beginning">Show favourite channels first</string>
     <string name="sort_channels_recently_watched">Sort channels by recently watched</string>
-    <string name="color_code_programs">Color-code programs</string>
+    <string name="color_code_programs">Colour-code programmes</string>
     <string name="subtitle_delay">Subtitle delay</string>
     <string name="backdrop_display">Backdrop style</string>
     <string name="combined_search_results">Combined search results</string>
@@ -510,10 +510,10 @@
     <string name="remove_seerr_server">Remove Seerr Server</string>
     <string name="seerr_server_added">Seerr server added</string>
     <string name="quick_connect">Quick Connect</string>
-    <string name="quick_connect_summary">Authorize another device to log in to your account</string>
+    <string name="quick_connect_summary">Authorise another device to log in to your account</string>
     <string name="quick_connect_code">Enter Quick Connect code</string>
     <string name="quick_connect_code_error">Code must be 6 digits</string>
-    <string name="quick_connect_success">Device authorized successfully</string>
+    <string name="quick_connect_success">Device authorised successfully</string>
     <string name="password">Password</string>
     <string name="username">Username</string>
     <string name="url">URL</string>
@@ -562,7 +562,7 @@
     <string name="recently_released_in">Recently released in %1$s</string>
     <string name="height">Height</string>
     <string name="apply_all_rows">Apply to all rows</string>
-    <string name="customize_home">Customize home page</string>
+    <string name="customize_home">Customise home page</string>
     <string name="home_rows">Home rows</string>
     <string name="load_from_server">Load from server user profile</string>
     <string name="save_to_server">Save to server user profile</string>
@@ -672,8 +672,8 @@
     </string-array>
 
     <string name="white">White</string>
-    <string name="light_gray">Light gray</string>
-    <string name="dark_gray">Dark gray</string>
+    <string name="light_gray">Light grey</string>
+    <string name="dark_gray">Dark grey</string>
     <string name="yellow">Yellow</string>
     <string name="cyan">Cyan</string>
     <string name="magenta">Magenta</string>
@@ -752,7 +752,7 @@
         <item>@string/view_options_type_list_compact</item>
     </string-array>
 
-    <string name="backdrop_style_dynamic">Image with dynamic color</string>
+    <string name="backdrop_style_dynamic">Image with dynamic colour</string>
     <string name="backdrop_style_image">Image only</string>
     <string name="enter_url_api_key"><![CDATA[Enter URL & API Key]]></string>
     <string name="api_key">API Key</string>
@@ -813,10 +813,10 @@
     <string name="song_has_lyrics">Song has lyrics</string>
     <string name="remove_from_queue">Remove from queue</string>
     <string name="show_album_cover">Show album cover</string>
-    <string name="show_visualizer">Show visualizer</string>
+    <string name="show_visualizer">Show visualiser</string>
     <string name="show_backdrop">Show backdrop</string>
     <string name="play_as_type">Play as?</string>
-    <string name="visualizer_rationale">Visualizing the currently playing audio requires permission to record audio.</string>
+    <string name="visualizer_rationale">Visualising the currently playing audio requires permission to record audio.</string>
     <string name="continue_string">Continue</string>
     <string name="select_all">Select all</string>
     <string name="separate_types">Separate types</string>
@@ -837,15 +837,15 @@
     <string name="ass_subtitle_playback">SSA/ASS subtitle playback</string>
     <string name="cinema_mode">Cinema mode</string>
     <string name="show_more">Show %1$s more</string>
-    <string name="skip_behavior">Skip behavior</string>
+    <string name="skip_behavior">Skip behaviour</string>
     <string name="skip_behavior_summary">For intros, credits, etc</string>
     <string name="play_with">Play with</string>
     <string name="transcoding">Transcoding</string>
     <string name="user_interface_language">User interface language</string>
     <string name="display_toggles_title">Ratings display</string>
-    <string name="display_toggles_summary">Customize which to display</string>
+    <string name="display_toggles_summary">Customise which to display</string>
     <string name="profile_protection">Profile protection</string>
-    <string name="continue_watching_click_behavior">Continue watching/Next up click behavior</string>
+    <string name="continue_watching_click_behavior">Continue watching/Next up click behaviour</string>
     <string name="continue_watching_click_summary_on">Play on click</string>
     <string name="continue_watching_click_summary_off">Show details on click</string>
     <array name="ass_subtitle_modes">
@@ -924,7 +924,7 @@
     <string name="any_language">Any language</string>
     <string name="hash_matches">Hash matches</string>
     <string name="subtitles_hearing_impaired">SDH</string>
-    <string name="programs">TV programs</string>
+    <string name="programs">TV programmes</string>
     <string name="recordings">Recordings</string>
     <string name="folders_title">Folders</string>
     <string name="user_views">User views</string>
@@ -936,10 +936,10 @@
     <string name="dim_percentage">Dim percentage</string>
     <string name="dim_screen">Dim screen</string>
     <string name="photo_albums">Photo albums</string>
-    <string name="no_favorites_found">No favorites found!</string>
+    <string name="no_favorites_found">No favourites found!</string>
     <string name="remove_from_playlist">Remove from playlist</string>
     <string name="login_credentials_expired">Credentials expired, please login in again</string>
-    <string name="login_not_authorized">You are not authorized to access the server at this time</string>
+    <string name="login_not_authorized">You are not authorised to access the server at this time</string>
     <string name="max_resolution">Max resolution before transcoding</string>
 
     <string name="resolution_8k">8K</string>

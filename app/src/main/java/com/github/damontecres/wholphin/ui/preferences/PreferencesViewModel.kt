@@ -146,6 +146,11 @@ class PreferencesViewModel
         }
 
         fun fetchReleaseNotes() {
+            // nilumio: Store-Fassungen ohne Updater fragen nicht bei GitHub nach
+            if (!UpdateChecker.ACTIVE) {
+                releaseNotes.update { DataLoadingState.Error("Release notes are not available in this version") }
+                return
+            }
             viewModelScope.launchIO {
                 releaseNotes.update { DataLoadingState.Loading }
                 try {
