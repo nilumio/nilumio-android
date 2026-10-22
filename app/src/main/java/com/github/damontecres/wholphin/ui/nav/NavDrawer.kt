@@ -1,5 +1,7 @@
 package com.github.damontecres.wholphin.ui.nav
 
+import com.github.damontecres.wholphin.ui.components.NordlichtColors
+import com.github.damontecres.wholphin.ui.components.NordlichtIcons
 import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -365,7 +367,7 @@ fun NavDrawer(
                         IconNavItem(
                             text = stringResource(R.string.now_playing),
                             subtext = serviceState.nowPlayingTitle,
-                            icon = Icons.Default.PlayArrow,
+                            icon = NordlichtIcons.NowPlaying,
                             selected = selectedIndex == NOW_PLAYING_INDEX,
                             drawerOpen = isOpen,
                             interactionSource = interactionSource,
@@ -403,7 +405,7 @@ fun NavDrawer(
                             val interactionSource = remember { MutableInteractionSource() }
                             IconNavItem(
                                 text = stringResource(R.string.search),
-                                icon = Icons.Default.Search,
+                                icon = NordlichtIcons.Search,
                                 selected = selectedIndex == SEARCH_INDEX,
                                 drawerOpen = isOpen,
                                 interactionSource = interactionSource,
@@ -424,7 +426,7 @@ fun NavDrawer(
                             val interactionSource = remember { MutableInteractionSource() }
                             IconNavItem(
                                 text = stringResource(R.string.home),
-                                icon = Icons.Default.Home,
+                                icon = NordlichtIcons.Home,
                                 selected = selectedIndex == HOME_INDEX,
                                 drawerOpen = isOpen,
                                 interactionSource = interactionSource,
@@ -522,7 +524,7 @@ fun NavDrawer(
                             val interactionSource = remember { MutableInteractionSource() }
                             IconNavItem(
                                 text = stringResource(R.string.settings),
-                                icon = Icons.Default.Settings,
+                                icon = NordlichtIcons.Settings,
                                 selected = false,
                                 drawerOpen = isOpen,
                                 interactionSource = interactionSource,
@@ -658,32 +660,22 @@ fun NavigationDrawerScope.NavItem(
     containerColor: Color = Color.Unspecified,
 ) {
     val context = LocalContext.current
-    val useFont = library !is ServerNavDrawerItem || library.type != CollectionType.LIVETV
     val icon =
         remember(library) {
             when (library) {
-                NavDrawerItem.Favorites -> {
-                    R.string.fa_heart
-                }
-
-                NavDrawerItem.More -> {
-                    R.string.fa_ellipsis
-                }
-
-                NavDrawerItem.Discover -> {
-                    R.string.fa_magnifying_glass_plus
-                }
-
+                NavDrawerItem.Favorites -> NordlichtIcons.Favorites
+                NavDrawerItem.More -> NordlichtIcons.More
+                NavDrawerItem.Discover -> NordlichtIcons.Discover
                 is ServerNavDrawerItem -> {
                     when (library.type) {
-                        CollectionType.MOVIES -> R.string.fa_film
-                        CollectionType.TVSHOWS -> R.string.fa_tv
-                        CollectionType.HOMEVIDEOS -> R.string.fa_video
-                        CollectionType.LIVETV -> R.drawable.gf_dvr
-                        CollectionType.MUSIC -> R.string.fa_music
-                        CollectionType.BOXSETS -> R.string.fa_open_folder
-                        CollectionType.PLAYLISTS -> R.string.fa_list_ul
-                        else -> R.string.fa_film
+                        CollectionType.MOVIES -> NordlichtIcons.Movies
+                        CollectionType.TVSHOWS -> NordlichtIcons.Series
+                        CollectionType.HOMEVIDEOS -> NordlichtIcons.HomeVideos
+                        CollectionType.LIVETV -> NordlichtIcons.LiveTv
+                        CollectionType.MUSIC -> NordlichtIcons.Music
+                        CollectionType.BOXSETS -> NordlichtIcons.Collections
+                        CollectionType.PLAYLISTS -> NordlichtIcons.Playlists
+                        else -> NordlichtIcons.Movies
                     }
                 }
             }
@@ -700,23 +692,12 @@ fun NavigationDrawerScope.NavItem(
         leadingContent = {
             val color = navItemColor(selected, focused, drawerOpen)
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                if (useFont) {
-                    Text(
-                        text = stringResource(icon),
-                        textAlign = TextAlign.Center,
-                        fontSize = 16.sp,
-                        fontFamily = FontAwesome,
-                        color = color,
-                        modifier = Modifier,
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(icon),
-                        contentDescription = null,
-                        tint = color,
-                        modifier = Modifier.size(DrawerIconSize),
-                    )
-                }
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = color,
+                    modifier = Modifier.size(DrawerIconSize),
+                )
             }
         },
         trailingContent =
@@ -783,7 +764,7 @@ fun navItemColor(
             }
 
             selected -> {
-                MaterialTheme.colorScheme.border
+                if (theme == AppThemeColors.PURPLE) NordlichtColors.Green else MaterialTheme.colorScheme.border
             }
 
             focused -> {

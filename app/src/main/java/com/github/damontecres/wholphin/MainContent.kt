@@ -34,8 +34,6 @@ import com.github.damontecres.wholphin.services.NavigationManager
 import com.github.damontecres.wholphin.services.ScreensaverService
 import com.github.damontecres.wholphin.services.SetupDestination
 import com.github.damontecres.wholphin.ui.components.AppScreensaver
-import com.github.damontecres.wholphin.ui.components.NordlichtEdge
-import com.github.damontecres.wholphin.ui.nav.Destination
 import com.github.damontecres.wholphin.ui.nav.ApplicationContent
 import com.github.damontecres.wholphin.ui.setup.SwitchServerContent
 import com.github.damontecres.wholphin.ui.setup.SwitchUserContent
@@ -136,13 +134,6 @@ fun MainContent(
                     }
                 },
             )
-            // Lichtkante oben, außer bei Vollbild-Wiedergabe
-            val inApp = backStack.lastOrNull() is SetupDestination.AppContent
-            val top = navigationManager.backStack.lastOrNull()
-            val playing = top is Destination.Playback || top is Destination.PlaybackList || top is Destination.Slideshow
-            if (!(inApp && playing)) {
-                NordlichtEdge(Modifier.fillMaxSize())
-            }
             val screenSaverState by screensaverService.state.collectAsState()
             if (screenSaverState.enabled || screenSaverState.enabledTemp) {
                 AnimatedVisibility(
