@@ -69,10 +69,11 @@ nilumio is an independent project and is not affiliated with the Jellyfin projec
 
 | Datei | Zweck | Größe |
 |---|---|---|
-| `store/icon-512.png` | App-Symbol | 512 × 512 |
-| `store/feature-graphic-1024x500.png` | Vorstellungsgrafik | 1024 × 500 |
-| `store/tv-banner-1280x720.png` | Android-TV-Banner (Pflicht für TV-Apps) | 1280 × 720 |
-| Screenshots TV | mind. 1, 1920 × 1080 | folgen nach dem TV-Test |
+| `store/play/icon-512.png` | App-Symbol | 512 × 512 |
+| `store/play/feature-graphic-1024x500-de.png` | Vorstellungsgrafik (de-DE) | 1024 × 500 |
+| `store/play/feature-graphic-1024x500-en.png` | Vorstellungsgrafik (en-GB) | 1024 × 500 |
+| `store/play/tv-banner-1280x720.png` | Android-TV-Banner (Pflicht für TV-Apps) | 1280 × 720 |
+| Screenshots TV | mind. 1, 1920 × 1080, nur freie Inhalte (siehe `store/play-console.md`) | folgen nach dem TV-Test |
 
 ## Auffindbarkeit „wolphin“
 
