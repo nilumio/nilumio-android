@@ -1,5 +1,11 @@
 package com.github.damontecres.wholphin
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.saveable.rememberSaveable
+import com.github.damontecres.wholphin.ui.components.StartupIntro
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -280,6 +286,14 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         }
+                    }
+                    var showIntro by rememberSaveable { mutableStateOf(savedInstanceState == null) }
+                    AnimatedVisibility(
+                        visible = showIntro,
+                        enter = EnterTransition.None,
+                        exit = fadeOut(tween(450)),
+                    ) {
+                        StartupIntro(onFinished = { showIntro = false })
                     }
                 }
             }

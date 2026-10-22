@@ -1,5 +1,6 @@
 package com.github.damontecres.wholphin.ui.setup
 
+import com.github.damontecres.wholphin.ui.components.StartupSignal
 import android.Manifest
 import android.content.res.Resources
 import android.os.Build
@@ -78,6 +79,7 @@ fun SwitchServerContent(
     modifier: Modifier = Modifier,
     viewModel: SwitchServerViewModel = hiltViewModel(),
 ) {
+    LaunchedEffect(Unit) { StartupSignal.markReady() }
     val state by viewModel.state.collectAsState()
     LaunchedEffect(Unit) {
         viewModel.init()

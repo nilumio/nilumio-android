@@ -1,5 +1,6 @@
 package com.github.damontecres.wholphin.ui.main
 
+import com.github.damontecres.wholphin.ui.components.StartupSignal
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.gestures.LocalBringIntoViewSpec
@@ -111,6 +112,9 @@ fun HomePage(
     val loading = state.loadingState
     val refreshing = state.refreshState
     val homeRows = state.homeRows
+    LaunchedEffect(loading) {
+        if (loading is LoadingState.Success || loading is LoadingState.Error) StartupSignal.markReady()
+    }
 
     when (val state = loading) {
         is LoadingState.Error -> {

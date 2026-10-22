@@ -1,5 +1,6 @@
 package com.github.damontecres.wholphin.ui.setup
 
+import com.github.damontecres.wholphin.ui.components.StartupSignal
 import android.widget.Toast
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
@@ -63,6 +64,7 @@ fun SwitchUserContent(
             creationCallback = { it.create(server) },
         ),
 ) {
+    LaunchedEffect(Unit) { StartupSignal.markReady() }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     LaunchedEffect(Unit) {

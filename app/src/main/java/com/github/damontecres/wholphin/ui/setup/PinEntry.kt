@@ -1,5 +1,7 @@
 package com.github.damontecres.wholphin.ui.setup
 
+import androidx.compose.runtime.LaunchedEffect
+import com.github.damontecres.wholphin.ui.components.StartupSignal
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
@@ -44,6 +46,7 @@ fun PinEntry(
     onClickServerAuth: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    LaunchedEffect(Unit) { StartupSignal.markReady() }
     var input by remember { mutableStateOf("") }
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),

@@ -38,7 +38,7 @@ val PurpleThemeColors =
         val onPrimaryDark = Color(0xFF00382A)
         val primaryContainerDark = Color(0xFF0F6B57)
         val onPrimaryContainerDark = Color(0xFFC9FFE9)
-        val secondaryDark = Color(0xFF7FDCE8)
+        val secondaryDark = Color(0xFF3CCFE0)
         val onSecondaryDark = Color(0xFF00363D)
         val secondaryContainerDark = Color(0xFF1C2A33)
         val onSecondaryContainerDark = Color(0xFFCDEFF5)
@@ -180,6 +180,6 @@ val PurpleThemeColors =
                 inverseSurface = inverseSurfaceDark,
                 inverseOnSurface = inverseOnSurfaceDark,
                 inversePrimary = inversePrimaryDark,
-                border = inversePrimaryDark.copy(alpha = .75f),
+                border = Color(0xFF22C7D9),
             )
     }

@@ -87,7 +87,7 @@ import com.github.damontecres.wholphin.ui.components.TimeDisplay
 import com.github.damontecres.wholphin.ui.ifElse
 import com.github.damontecres.wholphin.ui.launchDefault
 import com.github.damontecres.wholphin.ui.preferences.PreferenceScreenOption
-import com.github.damontecres.wholphin.ui.setup.UserIconCardImage
+import com.github.damontecres.wholphin.ui.components.NilumioMark
 import com.github.damontecres.wholphin.ui.spacedByWithFooter
 import com.github.damontecres.wholphin.ui.theme.LocalTheme
 import com.github.damontecres.wholphin.ui.toServerString
@@ -583,11 +583,8 @@ fun NavigationDrawerScope.ProfileIcon(
         onClick = onClick,
         colors = nordlichtDrawerItemColors(),
         leadingContent = {
-            UserIconCardImage(
-                id = user.id,
-                name = user.name,
-                imageUrl = imageUrl,
-                alpha = if (drawerOpen) 1f else .5f,
+            NilumioMark(
+                alpha = if (drawerOpen) 1f else .7f,
                 modifier = Modifier.size(DrawerIconSize),
             )
         },
