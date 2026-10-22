@@ -50,6 +50,7 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
 import com.github.damontecres.wholphin.R
+import com.github.damontecres.wholphin.ui.components.NilumioColors
 import com.github.damontecres.wholphin.data.model.JellyfinUser
 import com.github.damontecres.wholphin.ui.Cards
 import com.github.damontecres.wholphin.ui.FontAwesome
@@ -193,8 +194,8 @@ private fun UserIconCard(
     modifier: Modifier = Modifier,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    // Generate unique color for this user
-    val userColor = rememberIdColor(user.user.id)
+    // nilumio: feste Personenfarbe wie in Watch Party
+    val userColor = NilumioColors.avatar(user.user.name ?: user.user.id.toString())
 
     // Track image loading errors
     var imageError by remember { mutableStateOf(false) }
@@ -218,16 +219,11 @@ private fun UserIconCard(
                 ClickableSurfaceDefaults.colors(
                     containerColor =
                         if (isCurrentUser) {
-                            userColor.copy(alpha = 0.7f)
+                            userColor
                         } else {
-                            userColor.copy(alpha = 0.5f)
+                            userColor.copy(alpha = 0.8f)
                         },
-                    focusedContainerColor =
-                        if (isCurrentUser) {
-                            userColor.copy(alpha = 0.9f)
-                        } else {
-                            userColor.copy(alpha = 0.7f)
-                        },
+                    focusedContainerColor = userColor,
                 ),
             border =
                 ClickableSurfaceDefaults.border(
@@ -272,7 +268,7 @@ private fun UserIconCard(
                             MaterialTheme.typography.displayLarge.copy(
                                 fontWeight = FontWeight.Bold,
                             ),
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = NilumioColors.onAvatar(userColor),
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -305,7 +301,7 @@ fun UserIconCardImage(
     alpha: Float = 1f,
 ) {
     var imageError by remember { mutableStateOf(false) }
-    val userColor = rememberIdColor(id, alpha)
+    val userColor = NilumioColors.avatar(name ?: id.toString()).copy(alpha = alpha) // nilumio
     Box(
         modifier =
             modifier.background(
@@ -335,7 +331,7 @@ fun UserIconCardImage(
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = NilumioColors.onAvatar(userColor.copy(alpha = 1f)),
                 textAlign = TextAlign.Center,
             )
         }

@@ -62,7 +62,7 @@ sealed interface AppPreference<Pref, T> {
         val SkipForward =
             AppSliderPreference<AppPreferences>(
                 title = R.string.skip_forward_preference,
-                defaultValue = 30,
+                defaultValue = 10, // nilumio: 10 s statt 30 s
                 min = 5,
                 max = 5.minutes.inWholeSeconds,
                 interval = 5,

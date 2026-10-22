@@ -54,7 +54,6 @@ import kotlin.time.Duration.Companion.seconds
 private val Panel = Color(0xFF111726)
 private val Muted = Color(0xFF8E9AB0)
 private val FocusRing = Color(0xFF22ABD8).copy(alpha = .62f)
-private val AvatarColors = listOf(NilumioColors.Mint, NilumioColors.Sky, NilumioColors.Lilac, Color(0xFFF2C97D))
 
 @Composable
 fun SyncPlayPage(
@@ -86,7 +85,7 @@ fun SyncPlayPage(
                 Row(horizontalArrangement = Arrangement.spacedBy(28.dp), modifier = Modifier.padding(vertical = 12.dp)) {
                     current.participants.forEachIndexed { i, name ->
                         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Avatar(name, i, 72.dp)
+                            Avatar(name, 72.dp)
                             Text(name, color = Color.White, fontSize = 15.sp)
                         }
                     }
@@ -178,7 +177,7 @@ private fun GroupCard(
             }
             Row {
                 group.participants.take(4).forEachIndexed { i, name ->
-                    Avatar(name, i, 34.dp, Modifier.offset(x = (-10 * i).dp))
+                    Avatar(name, 34.dp, Modifier.offset(x = (-10 * i).dp))
                 }
             }
         }
@@ -188,18 +187,17 @@ private fun GroupCard(
 @Composable
 private fun Avatar(
     name: String,
-    index: Int,
     size: Dp,
     modifier: Modifier = Modifier,
 ) {
-    val color = AvatarColors[index % AvatarColors.size]
+    val color = NilumioColors.avatar(name)
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier.size(size).background(color, CircleShape),
     ) {
         Text(
             name.firstOrNull()?.uppercase() ?: "?",
-            color = if (color == NilumioColors.Lilac) Color.White else NilumioColors.Night,
+            color = NilumioColors.onAvatar(color),
             fontWeight = FontWeight.SemiBold,
             fontSize = (size.value * .4f).sp,
         )
