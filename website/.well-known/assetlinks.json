@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.held0.nilumio",
+      "sha256_cert_fingerprints": [
+        "BA:F7:83:1A:1D:64:C5:25:62:B8:A6:D0:5D:58:FF:13:F1:3B:10:B4:F3:23:4F:B6:E1:5A:D3:C3:C2:A2:3B:1A"
+      ]
+    }
+  }
+]

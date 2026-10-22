@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0b0f16">
+<title>Einladung – nilumio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0f16; --card: #121826; --line: #232c3d; --text: #eef2f8; --muted: #9aa6ba;
+    --mint: #8CFFC4; --cyan: #6CCDE4; --violet: #8079FF;
+    --glow: linear-gradient(90deg, var(--mint), var(--cyan) 50%, var(--violet));
+  }
+  * { box-sizing: border-box; }
+  html { color-scheme: dark; }
+  body {
+    margin: 0; min-height: 100vh; background: var(--bg); color: var(--text);
+    font: 400 17px/1.55 Outfit, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: grid; grid-template-columns: minmax(0, 30rem); justify-content: center; align-content: center;
+    padding: max(24px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+    background-image: radial-gradient(60rem 30rem at 50% -10rem, rgba(108, 205, 228, .14), transparent 70%);
+  }
+  main { width: 100%; max-width: 30rem; }
+  .mark { width: 72px; height: 72px; display: block; margin: 0 auto 20px; }
+  h1 { font-weight: 600; font-size: clamp(1.6rem, 6vw, 2.1rem); line-height: 1.2; text-align: center; margin: 0 0 8px; }
+  h1 span { background: var(--glow); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lead { text-align: center; color: var(--muted); margin: 0 0 28px; }
+  .btn {
+    display: block; width: 100%; text-align: center; text-decoration: none; cursor: pointer;
+    font: 600 1.05rem Outfit, system-ui, sans-serif; padding: 15px 18px; border-radius: 14px; margin: 0 0 12px;
+    border: 1px solid var(--line); background: var(--card); color: var(--text);
+  }
+  .btn.primary { background: var(--glow); color: #0b0f16; border: 0; }
+  .btn:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+  section { margin-top: 28px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: rgba(18, 24, 38, .7); }
+  h2 { font-weight: 600; font-size: 1.1rem; margin: 0 0 6px; }
+  section p { color: var(--muted); margin: 0 0 14px; }
+  dl { margin: 0; display: grid; gap: 10px; }
+  dt { color: var(--muted); font-size: .85rem; }
+  dd { margin: 2px 0 0; font-weight: 600; word-break: break-all; display: flex; gap: 10px; align-items: center; justify-content: space-between; }
+  dd button { flex: none; font: 400 .85rem Outfit, system-ui, sans-serif; color: var(--cyan); background: none; border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+  .note { font-size: .85rem; color: var(--muted); text-align: center; margin-top: 22px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="mg" gradientUnits="userSpaceOnUse" x1="20" y1="0" x2="80" y2="0"><stop offset="0" stop-color="#8CFFC4"/><stop offset=".5" stop-color="#6CCDE4"/><stop offset="1" stop-color="#8079FF"/></linearGradient><clipPath id="mc"><circle cx="50" cy="50" r="30"/></clipPath><filter id="mf" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="11.4"/></filter></defs><circle cx="50" cy="50" r="28.5" fill="url(#mg)" opacity=".75" filter="url(#mf)"/><g clip-path="url(#mc)"><circle cx="50" cy="50" r="30" fill="url(#mg)"/><circle cx="51.59" cy="102.41" r="45.21" fill="#0b0f16"/></g></svg>
+
+  <div id="invite" hidden>
+    <h1 data-t="title"></h1>
+    <p class="lead" data-t="lead"></p>
+    <a class="btn primary" id="open" data-t="open"></a>
+    <a class="btn" href="https://play.google.com/store/apps/details?id=com.held0.nilumio" data-t="store"></a>
+
+    <section>
+      <h2 data-t="tvTitle"></h2>
+      <p data-t="tvText"></p>
+      <dl>
+        <div><dt data-t="server"></dt><dd id="s"></dd></div>
+        <div><dt data-t="user"></dt><dd id="u"></dd></div>
+        <div><dt data-t="password"></dt><dd><span id="p">••••••••</span><button type="button" id="show" data-t="show"></button></dd></div>
+      </dl>
+    </section>
+    <p class="note" data-t="privacy"></p>
+  </div>
+
+  <div id="invalid" hidden>
+    <h1 data-t="invalidTitle"></h1>
+    <p class="lead" data-t="invalidText"></p>
+    <a class="btn" href="https://play.google.com/store/apps/details?id=com.held0.nilumio" data-t="store"></a>
+  </div>
+</main>
+<script>
+  const T = {
+    de: {
+      title: 'Du bist zu <span>{n}</span> eingeladen',
+      lead: 'Jemand teilt seinen Jellyfin-Server mit dir. Öffne die Einladung in nilumio – Server und Anmeldung werden automatisch eingerichtet.',
+      open: 'In nilumio öffnen', store: 'nilumio bei Google Play',
+      tvTitle: 'Auf dem Fernseher',
+      tvText: 'Installiere nilumio auf deinem Fernseher, wähle „Server hinzufügen“ und gib diese Daten ein:',
+      server: 'Server-Adresse', user: 'Benutzername', password: 'Passwort', show: 'Anzeigen',
+      privacy: 'Die Zugangsdaten stehen nur im Link auf deinem Gerät und werden nicht an nilumio.com übertragen. Gib den Link nicht weiter.',
+      invalidTitle: 'Einladung nicht lesbar',
+      invalidText: 'Dieser Link ist unvollständig. Bitte lass dir die Einladung noch einmal schicken oder scanne den QR-Code erneut.',
+      server_fallback: 'einen Server'
+    },
+    en: {
+      title: 'You’re invited to <span>{n}</span>',
+      lead: 'Someone is sharing their Jellyfin server with you. Open the invitation in nilumio and the server and sign-in are set up automatically.',
+      open: 'Open in nilumio', store: 'Get nilumio on Google Play',
+      tvTitle: 'On your TV',
+      tvText: 'Install nilumio on your TV, choose “Add server” and enter these details:',
+      server: 'Server address', user: 'User name', password: 'Password', show: 'Show',
+      privacy: 'The sign-in details are only in the link on your device and are never sent to nilumio.com. Please don’t pass the link on.',
+      invalidTitle: 'Invitation can’t be read',
+      invalidText: 'This link is incomplete. Please ask for the invitation again or scan the QR code once more.',
+      server_fallback: 'a server'
+    }
+  };
+  const t = (navigator.language || 'de').toLowerCase().startsWith('de') ? T.de : T.en;
+  document.documentElement.lang = t === T.de ? 'de' : 'en';
+
+  function decode(fragment) {
+    let b64 = fragment.replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+    const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    const data = JSON.parse(new TextDecoder().decode(bytes));
+    if (!data.s || !data.u || typeof data.p !== 'string') throw new Error('incomplete');
+    return data;
+  }
+  const esc = s => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  let invite = null;
+  const fragment = location.hash.slice(1);
+  try { invite = decode(fragment); } catch (e) { invite = null; }
+
+  const root = document.getElementById(invite ? 'invite' : 'invalid');
+  root.hidden = false;
+  root.querySelectorAll('[data-t]').forEach(el => {
+    const key = el.dataset.t;
+    if (key === 'title') el.innerHTML = t.title.replace('{n}', esc(invite.n || t.server_fallback));
+    else el.textContent = t[key];
+  });
+  if (invite) {
+    document.getElementById('open').href = 'nilumio://einladung#' + fragment;
+    document.getElementById('s').textContent = invite.s;
+    document.getElementById('u').textContent = invite.u;
+    document.getElementById('show').addEventListener('click', e => {
+      document.getElementById('p').textContent = invite.p;
+      e.currentTarget.remove();
+    });
+  }
+</script>
+</body>
+</html>
