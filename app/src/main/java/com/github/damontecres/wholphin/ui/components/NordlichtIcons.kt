@@ -1,6 +1,15 @@
 package com.github.damontecres.wholphin.ui.components
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.tv.material3.NavigationDrawerItemColors
+import androidx.tv.material3.NavigationDrawerItemDefaults
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
@@ -125,3 +134,39 @@ object NordlichtIcons {
 
     val NowPlaying = icon("nl_nowplaying", "M8,5.5v13l10,-6.5z" to 1f)
 }
+
+/** Färbt den Inhalt (z. B. ein weiß getöntes Icon) im nordlicht-Verlauf Grün → Türkis → Lila ein. */
+fun Modifier.nordlichtGradient(enabled: Boolean): Modifier =
+    if (!enabled) {
+        this
+    } else {
+        this
+            .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+            .drawWithCache {
+                val brush =
+                    Brush.linearGradient(
+                        listOf(NordlichtColors.Green, NordlichtColors.Teal, NordlichtColors.Violet),
+                        start = androidx.compose.ui.geometry.Offset.Zero,
+                        end = androidx.compose.ui.geometry.Offset(size.width, size.height),
+                    )
+                onDrawWithContent {
+                    drawContent()
+                    drawRect(brush, blendMode = BlendMode.SrcIn)
+                }
+            }
+    }
+
+/** Design A: dunkelgraue statt weiße Hinterlegung, Schrift bleibt hell. */
+@Composable
+fun nordlichtDrawerItemColors(containerColor: Color = Color.Transparent): NavigationDrawerItemColors =
+    NavigationDrawerItemDefaults.colors(
+        containerColor = containerColor,
+        focusedContainerColor = Color.White.copy(alpha = 0.10f),
+        focusedContentColor = Color.White,
+        pressedContainerColor = Color.White.copy(alpha = 0.14f),
+        pressedContentColor = Color.White,
+        selectedContainerColor = Color.White.copy(alpha = 0.06f),
+        selectedContentColor = Color.White,
+        focusedSelectedContainerColor = Color.White.copy(alpha = 0.12f),
+        focusedSelectedContentColor = Color.White,
+    )

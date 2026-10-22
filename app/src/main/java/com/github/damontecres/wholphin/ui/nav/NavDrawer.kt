@@ -2,6 +2,8 @@ package com.github.damontecres.wholphin.ui.nav
 
 import com.github.damontecres.wholphin.ui.components.NordlichtColors
 import com.github.damontecres.wholphin.ui.components.NordlichtIcons
+import com.github.damontecres.wholphin.ui.components.nordlichtDrawerItemColors
+import com.github.damontecres.wholphin.ui.components.nordlichtGradient
 import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -579,6 +581,7 @@ fun NavigationDrawerScope.ProfileIcon(
         modifier = modifier,
         selected = false,
         onClick = onClick,
+        colors = nordlichtDrawerItemColors(),
         leadingContent = {
             UserIconCardImage(
                 id = user.id,
@@ -620,13 +623,15 @@ fun NavigationDrawerScope.IconNavItem(
         modifier = modifier,
         selected = false,
         onClick = onClick,
+        colors = nordlichtDrawerItemColors(),
         leadingContent = {
-            val color = navItemColor(selected, focused, drawerOpen)
+            val active = selected || focused
+            val color = if (active) Color.White else navItemColor(selected, focused, drawerOpen)
             Icon(
                 icon,
                 contentDescription = null,
                 tint = color,
-                modifier = Modifier.size(DrawerIconSize),
+                modifier = Modifier.size(DrawerIconSize).nordlichtGradient(active),
             )
         },
         supportingContent =
@@ -685,18 +690,16 @@ fun NavigationDrawerScope.NavItem(
         modifier = modifier,
         selected = false,
         onClick = onClick,
-        colors =
-            NavigationDrawerItemDefaults.colors(
-                containerColor = containerColor,
-            ),
+        colors = nordlichtDrawerItemColors(containerColor),
         leadingContent = {
-            val color = navItemColor(selected, focused, drawerOpen)
+            val active = selected || focused
+            val color = if (active) Color.White else navItemColor(selected, focused, drawerOpen)
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
                     tint = color,
-                    modifier = Modifier.size(DrawerIconSize),
+                    modifier = Modifier.size(DrawerIconSize).nordlichtGradient(active),
                 )
             }
         },
