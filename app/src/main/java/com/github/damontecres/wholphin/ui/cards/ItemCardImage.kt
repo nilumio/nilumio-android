@@ -244,7 +244,7 @@ fun ItemCardImageOverlay(
                     .align(Alignment.TopEnd),
         ) {
             if (watched && (watchedPercent == null || watchedPercent <= 0.0 || watchedPercent >= 100.0)) {
-                WatchedIcon(Modifier.size(24.dp))
+                WatchedIcon(Modifier.size(20.dp)) // nilumio: nicht größer als das Folgen-Feld
             }
             if (unwatchedCount > 0) {
                 Box(

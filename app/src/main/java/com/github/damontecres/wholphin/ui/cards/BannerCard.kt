@@ -154,7 +154,7 @@ fun BannerCard(
                             .padding(4.dp),
                 ) {
                     if (played && (playPercent <= 0 || playPercent >= 100)) {
-                        WatchedIcon(Modifier.size(24.dp))
+                        WatchedIcon(Modifier.size(20.dp)) // nilumio: nicht größer als das Folgen-Feld
                     }
                     if (cornerText != null) {
                         Box(
