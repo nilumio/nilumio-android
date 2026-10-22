@@ -1,4 +1,4 @@
-# Nordlicht – Store-Eintrag (Google Play)
+# nilumio – Store-Eintrag (Google Play)
 
 Entwurf, Stand 21.10.2026. Grenzen von Google Play: Titel max. 30 Zeichen, Kurzbeschreibung max. 80, Beschreibung max. 4000.
 
@@ -9,15 +9,15 @@ Regeln, an die sich der Text hält:
 
 ## Deutsch (de-DE)
 
-**Titel (30):** nordlicht – TV Media Player
+**Titel (30):** nilumio – TV Media Player
 
 **Kurzbeschreibung (80):** Deine Jellyfin-Mediathek auf dem Fernseher: schnell, übersichtlich, kinoreif.
 
 **Beschreibung:**
 
-Nordlicht bringt deine eigene Film- und Serien-Sammlung auf den Fernseher. Die App verbindet sich mit deinem Jellyfin-Server und zeigt deine Mediathek in einer ruhigen, dunklen Oberfläche mit großen Bildern – gebaut für die Fernbedienung.
+nilumio bringt deine eigene Film- und Serien-Sammlung auf den Fernseher. Die App verbindet sich mit deinem Jellyfin-Server und zeigt deine Mediathek in einer ruhigen, dunklen Oberfläche mit großen Bildern – gebaut für die Fernbedienung.
 
-Was Nordlicht kann:
+Was nilumio kann:
 • Filme, Serien, Musik und Live-TV von deinem eigenen Jellyfin-Server
 • Weiterschauen, wo du aufgehört hast – auf allen Geräten
 • Vorschaubilder beim Spulen (Trickplay)
@@ -29,24 +29,24 @@ Was Nordlicht kann:
 • Filmwünsche über Seerr
 
 Was du brauchst:
-Nordlicht ist ein Abspieler, kein Streamingdienst. Du brauchst einen eigenen Jellyfin-Server (z. B. auf einem NAS) mit deinen eigenen Medien. Nordlicht enthält keine Filme oder Serien.
+nilumio ist ein Abspieler, kein Streamingdienst. Du brauchst einen eigenen Jellyfin-Server (z. B. auf einem NAS) mit deinen eigenen Medien. nilumio enthält keine Filme oder Serien.
 
 Open Source:
-Nordlicht ist freie Software unter der GNU GPL 2.0 und basiert auf dem Open-Source-Projekt Wholphin von damontecres. Den vollständigen Quellcode findest du unter: [GitHub-Link folgt].
+nilumio ist freie Software unter der GNU GPL 2.0 und basiert auf dem Open-Source-Projekt Wholphin von damontecres. Den vollständigen Quellcode findest du unter: [GitHub-Link folgt].
 
-Nordlicht ist ein unabhängiges Projekt und steht in keiner Verbindung zum Jellyfin-Projekt.
+nilumio ist ein unabhängiges Projekt und steht in keiner Verbindung zum Jellyfin-Projekt.
 
 ## English (en-GB)
 
-**Title (30):** nordlicht – TV Media Player
+**Title (30):** nilumio – TV Media Player
 
 **Short description (80):** Your Jellyfin library on the big screen: fast, tidy and cinematic.
 
 **Description:**
 
-Nordlicht brings your own film and series collection to your TV. It connects to your Jellyfin server and shows your library in a calm, dark interface with large artwork, designed for the remote control.
+nilumio brings your own film and series collection to your TV. It connects to your Jellyfin server and shows your library in a calm, dark interface with large artwork, designed for the remote control.
 
-What Nordlicht does:
+What nilumio does:
 • Films, series, music and live TV from your own Jellyfin server
 • Resume where you left off, on every device
 • Preview thumbnails while seeking (trickplay)
@@ -58,12 +58,12 @@ What Nordlicht does:
 • Film and series requests via Seerr
 
 What you need:
-Nordlicht is a player, not a streaming service. You need your own Jellyfin server (for example on a NAS) with your own media. Nordlicht does not contain any films or series.
+nilumio is a player, not a streaming service. You need your own Jellyfin server (for example on a NAS) with your own media. nilumio does not contain any films or series.
 
 Open source:
-Nordlicht is free software under the GNU GPL 2.0 and is based on the open-source project Wholphin by damontecres. The full source code is available at: [GitHub link to follow].
+nilumio is free software under the GNU GPL 2.0 and is based on the open-source project Wholphin by damontecres. The full source code is available at: [GitHub link to follow].
 
-Nordlicht is an independent project and is not affiliated with the Jellyfin project.
+nilumio is an independent project and is not affiliated with the Jellyfin project.
 
 ## Grafiken
 
