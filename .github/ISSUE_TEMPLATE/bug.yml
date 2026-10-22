@@ -1,0 +1,41 @@
+name: Bug report
+description: Something in nilumio does not work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. If the same problem happens in Wholphin, please report it to [Wholphin](https://github.com/damontecres/Wholphin/issues) instead. Security issues: see SECURITY.md, not here.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Open …\n2. Press …\n3. See …"
+  - type: input
+    id: version
+    attributes:
+      label: nilumio version
+      description: Shown under Settings > About
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and Android version
+      placeholder: e.g. Chromecast with Google TV, Android 14
+  - type: input
+    id: server
+    attributes:
+      label: Jellyfin server version
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots (optional)
+      description: Please remove server addresses, user names and tokens first.

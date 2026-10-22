@@ -1,0 +1,20 @@
+name: Idea
+description: Suggest a feature or an improvement
+labels: [idea]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like nilumio to do?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why would it help you?
+  - type: checkboxes
+    id: upstream
+    attributes:
+      label: Upstream
+      options:
+        - label: I checked that this is specific to nilumio and not a general Wholphin idea (those belong to Wholphin's discussions).
