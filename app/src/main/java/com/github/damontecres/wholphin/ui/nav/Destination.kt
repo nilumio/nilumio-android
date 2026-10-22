@@ -148,6 +148,10 @@ sealed class Destination(
     @Serializable
     data object Discover : Destination(false)
 
+    // nilumio: SyncPlay („Gemeinsam schauen“)
+    @Serializable
+    data object SyncPlay : Destination(false)
+
     @Serializable
     data class DiscoveredItem(
         val item: DiscoverItem,
