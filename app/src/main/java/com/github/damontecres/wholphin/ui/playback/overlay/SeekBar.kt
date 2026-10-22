@@ -38,6 +38,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import com.github.damontecres.wholphin.ui.components.NilumioColors
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.key.KeyEventType
@@ -200,7 +202,6 @@ private fun SeekBarDisplay(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    val color = MaterialTheme.colorScheme.border
     val onSurface = MaterialTheme.colorScheme.onSurface
 
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -283,44 +284,22 @@ private fun SeekBarDisplay(
                         }
                     }.focusable(enabled = enabled, interactionSource = interactionSource),
             onDraw = {
+                // nilumio „Lichtkante“: dünne Linie, Fortschritt im Logo-Verlauf mit Schein, Position als Kugel
                 val yOffset = size.height.div(2)
-                drawLine(
-                    color = onSurface.copy(alpha = 0.25f),
-                    start = Offset(x = 0f, y = yOffset),
-                    end = Offset(x = size.width, y = yOffset),
-                    strokeWidth = size.height,
-                    cap = StrokeCap.Round,
-                )
-                drawLine(
-                    color = onSurface.copy(alpha = .65f),
-                    start = Offset(x = 0f, y = yOffset),
-                    end =
-                        Offset(
-                            x = size.width.times(bufferedProgress),
-                            y = yOffset,
-                        ),
-                    strokeWidth = size.height,
-                    cap = StrokeCap.Round,
-                )
-                drawLine(
-                    color = color,
-                    start = Offset(x = 0f, y = yOffset),
-                    end =
-                        Offset(
-                            x = size.width.times(progress),
-                            y = yOffset,
-                        ),
-                    strokeWidth = size.height,
-                    cap = StrokeCap.Round,
-                )
+                val line = size.height * .5f
+                val end = size.width.times(progress)
+                val logo = Brush.horizontalGradient(listOf(NilumioColors.Mint, NilumioColors.Sky, NilumioColors.Lilac), endX = size.width)
+                drawLine(onSurface.copy(alpha = 0.18f), Offset(0f, yOffset), Offset(size.width, yOffset), line, StrokeCap.Round)
+                drawLine(onSurface.copy(alpha = 0.32f), Offset(0f, yOffset), Offset(size.width.times(bufferedProgress), yOffset), line, StrokeCap.Round)
+                drawLine(logo, Offset(0f, yOffset), Offset(end, yOffset), line * 4, StrokeCap.Round, alpha = .22f)
+                drawLine(logo, Offset(0f, yOffset), Offset(end, yOffset), line, StrokeCap.Round)
+                val r = size.height * 1.1f
+                val c = Offset(end, yOffset)
+                drawCircle(Brush.radialGradient(listOf(NilumioColors.Sky.copy(alpha = .55f), Color.Transparent), c, r * 2.2f), r * 2.2f, c)
                 drawCircle(
-                    color = Color.White,
-                    radius = size.height + 2,
-                    center =
-                        Offset(
-                            x = size.width.times(progress),
-                            y = yOffset,
-                        ),
+                    Brush.radialGradient(listOf(NilumioColors.Mint, NilumioColors.Sky, NilumioColors.Lilac), Offset(c.x - r * .2f, c.y - r * .3f), r * 1.3f),
+                    r,
+                    c,
                 )
             },
         )

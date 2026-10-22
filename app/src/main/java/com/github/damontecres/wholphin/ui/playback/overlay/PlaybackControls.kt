@@ -41,6 +41,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -58,6 +59,7 @@ import androidx.compose.ui.window.DialogWindowProvider
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.tv.material3.ClickableSurfaceDefaults
+import androidx.tv.material3.Glow
 import androidx.tv.material3.Icon
 import androidx.tv.material3.ListItem
 import androidx.tv.material3.LocalContentColor
@@ -70,6 +72,7 @@ import com.github.damontecres.wholphin.ui.AppColors
 import com.github.damontecres.wholphin.ui.FontAwesome
 import com.github.damontecres.wholphin.ui.PreviewTvSpec
 import com.github.damontecres.wholphin.ui.components.Button
+import com.github.damontecres.wholphin.ui.components.NilumioColors
 import com.github.damontecres.wholphin.ui.components.SelectedLeadingContent
 import com.github.damontecres.wholphin.ui.components.TextButton
 import com.github.damontecres.wholphin.ui.formatDuration
@@ -415,11 +418,13 @@ fun PlaybackButtons(
                 enabled = previousEnabled,
                 onControllerInteraction = onControllerInteraction,
             )
-            PlaybackButton(
-                iconRes = R.drawable.baseline_fast_rewind_24,
+            // nilumio: Knöpfe springen 30 s, Links/Rechts auf der Zeitleiste weiter um die Einstellung (10 s)
+            PlaybackSkipButton(
+                seconds = BUTTON_SKIP_SECONDS,
+                forward = false,
                 onClick = {
                     onControllerInteraction.invoke()
-                    player.seekBack(seekBack)
+                    player.seekBack(BUTTON_SKIP_SECONDS.seconds)
                 },
                 onControllerInteraction = onControllerInteraction,
             )
@@ -439,11 +444,12 @@ fun PlaybackButtons(
                 },
                 onControllerInteraction = onControllerInteraction,
             )
-            PlaybackButton(
-                iconRes = R.drawable.baseline_fast_forward_24,
+            PlaybackSkipButton(
+                seconds = BUTTON_SKIP_SECONDS,
+                forward = true,
                 onClick = {
                     onControllerInteraction.invoke()
-                    player.seekForward(seekForward)
+                    player.seekForward(BUTTON_SKIP_SECONDS.seconds)
                 },
                 onControllerInteraction = onControllerInteraction,
             )
@@ -469,16 +475,20 @@ fun PlaybackButton(
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource? = null,
 ) {
-    val selectedColor = MaterialTheme.colorScheme.border
     Button(
         enabled = enabled,
         onClick = onClick,
 //        shape = ButtonDefaults.shape(CircleShape),
         colors =
+            // nilumio „Lichtkante“: Symbole ohne Fläche, ausgewählt hell mit Mint-Schein
             ClickableSurfaceDefaults.colors(
-                containerColor = AppColors.TransparentBlack25,
-                focusedContainerColor = selectedColor,
+                containerColor = Color.Transparent,
+                contentColor = Color.White.copy(alpha = .62f),
+                focusedContainerColor = Color.White.copy(alpha = .1f),
+                focusedContentColor = Color.White,
             ),
+        glow = ClickableSurfaceDefaults.glow(focusedGlow = Glow(NilumioColors.Mint.copy(alpha = .45f), 10.dp)),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.12f),
         contentPadding = PaddingValues(4.dp),
         interactionSource = interactionSource,
         modifier =
@@ -490,13 +500,53 @@ fun PlaybackButton(
             modifier = Modifier.fillMaxSize(),
             painter = painterResource(iconRes),
             contentDescription = "",
-            tint =
-                if (LocalTheme.current == AppThemeColors.OLED_BLACK) {
-                    LocalContentColor.current
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                },
+            tint = LocalContentColor.current,
         )
+    }
+}
+
+private const val BUTTON_SKIP_SECONDS = 30
+
+/** nilumio: Kreispfeil mit Sekundenzahl, vorwärts gespiegelt. */
+@Composable
+fun PlaybackSkipButton(
+    seconds: Int,
+    forward: Boolean,
+    onClick: () -> Unit,
+    onControllerInteraction: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Button(
+        onClick = onClick,
+        colors =
+            ClickableSurfaceDefaults.colors(
+                containerColor = Color.Transparent,
+                contentColor = Color.White.copy(alpha = .62f),
+                focusedContainerColor = Color.White.copy(alpha = .1f),
+                focusedContentColor = Color.White,
+            ),
+        glow = ClickableSurfaceDefaults.glow(focusedGlow = Glow(NilumioColors.Mint.copy(alpha = .45f), 10.dp)),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.12f),
+        contentPadding = PaddingValues(4.dp),
+        modifier =
+            modifier
+                .size(36.dp, 36.dp)
+                .onFocusChanged { onControllerInteraction.invoke() },
+    ) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            Icon(
+                painter = painterResource(R.drawable.nilumio_replay),
+                contentDescription = null,
+                tint = LocalContentColor.current,
+                modifier = Modifier.fillMaxSize().graphicsLayer { if (forward) scaleX = -1f },
+            )
+            Text(
+                text = seconds.toString(),
+                fontSize = 8.sp,
+                color = LocalContentColor.current,
+                modifier = Modifier.padding(top = 3.dp),
+            )
+        }
     }
 }
 
@@ -510,16 +560,20 @@ fun PlaybackFaButton(
     interactionSource: MutableInteractionSource? = null,
     textColor: Color = Color.Unspecified,
 ) {
-    val selectedColor = MaterialTheme.colorScheme.border
     Button(
         enabled = enabled,
         onClick = onClick,
 //        shape = ButtonDefaults.shape(CircleShape),
         colors =
+            // nilumio „Lichtkante“: Symbole ohne Fläche, ausgewählt hell mit Mint-Schein
             ClickableSurfaceDefaults.colors(
-                containerColor = AppColors.TransparentBlack25,
-                focusedContainerColor = selectedColor,
+                containerColor = Color.Transparent,
+                contentColor = Color.White.copy(alpha = .62f),
+                focusedContainerColor = Color.White.copy(alpha = .1f),
+                focusedContentColor = Color.White,
             ),
+        glow = ClickableSurfaceDefaults.glow(focusedGlow = Glow(NilumioColors.Mint.copy(alpha = .45f), 10.dp)),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.12f),
         contentPadding = PaddingValues(4.dp),
         interactionSource = interactionSource,
         modifier =
@@ -533,13 +587,7 @@ fun PlaybackFaButton(
             fontFamily = FontAwesome,
             textAlign = TextAlign.Center,
             color =
-                if (textColor.isSpecified) {
-                    textColor
-                } else if (LocalTheme.current == AppThemeColors.OLED_BLACK) {
-                    LocalContentColor.current
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                },
+                if (textColor.isSpecified) textColor else LocalContentColor.current,
             modifier =
                 Modifier
                     .fillMaxWidth()
