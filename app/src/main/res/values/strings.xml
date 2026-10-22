@@ -981,4 +981,14 @@
         <item quantity="one">Add %d row</item>
         <item quantity="other">Add %d rows</item>
     </plurals>
+    <string name="add_friend">Add Friend</string>
+    <string name="friend_name">Your friend\'s name</string>
+    <string name="friend_server_address">Public address of your server</string>
+    <string name="friend_reachability_hint">Your friend connects over the internet, so your server must be reachable from outside your home network, e.g. via port forwarding, Tailscale or a Cloudflare Tunnel.</string>
+    <string name="friend_only_admins">Only administrators can invite friends. Please sign in with an administrator account of this server.</string>
+    <string name="friend_create_invite">Create invitation</string>
+    <string name="friend_invite_ready">Your friend can scan this QR code with their phone or open the link:</string>
+    <string name="friend_invite_secret">The link contains your friend\'s password. Only share it with them.</string>
+    <string name="friend_invite_failed">The invitation could not be opened</string>
+    <string name="friend_done">Done</string>
 </resources>

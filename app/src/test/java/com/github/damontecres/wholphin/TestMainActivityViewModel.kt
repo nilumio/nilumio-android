@@ -70,6 +70,7 @@ class TestMainActivityViewModel {
             backdropService,
             appUpgradeHandler,
             intentService,
+            mockk { coEvery { handle(any()) } returns null },
         )
 
     private val serverId = UUID.randomUUID()

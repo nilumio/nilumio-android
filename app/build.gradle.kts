@@ -350,6 +350,7 @@ dependencies {
     implementation(libs.androidx.material3.adaptive.navigation3)
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.zxing.core)
 
     implementation(libs.hilt.android)
     implementation(libs.androidx.room.common.jvm)
