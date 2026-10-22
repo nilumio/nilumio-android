@@ -19,7 +19,7 @@ object NordlichtColors {
     val Violet = Color(0xFF7B6CFF)
 
     /** Dunkles Lila für Fortschrittsbalken */
-    val Progress = Color(0xFF4A3DB8)
+    val Progress = Color(0xFF4B3DB8)
 }
 
 /**
