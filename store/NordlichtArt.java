@@ -18,11 +18,11 @@ public class NordlichtArt {
         String[] dpi = {"mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"};
         for (int i = 0; i < dpi.length; i++) {
             String d = res + "/mipmap-" + dpi[i] + "/";
-            save(foreground(fg[i]), d + "ic_launcher_foreground.png");
-            save(fullIcon(legacy[i], false), d + "ic_launcher.png");
-            save(fullIcon(legacy[i], true), d + "ic_launcher_round.png");
+            save(foreground(fg[i]), d + "ic_nordlicht_foreground.png");
+            save(fullIcon(legacy[i], false), d + "ic_nordlicht.png");
+            save(fullIcon(legacy[i], true), d + "ic_nordlicht_round.png");
         }
-        save(banner(320, 180, true), res + "/mipmap-xhdpi/ic_banner.png");
+        save(banner(320, 180, true), res + "/mipmap-xhdpi/ic_nordlicht_banner.png");
         save(banner(1280, 720, true), store + "/tv-banner-1280x720.png");
         save(fullIcon(512, false), store + "/icon-512.png");
         save(feature(1024, 500), store + "/feature-graphic-1024x500.png");

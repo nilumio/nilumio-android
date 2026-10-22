@@ -48,6 +48,12 @@ val gitTags =
         .standardOutput.asText
         .get()
 
+val gitCommitCount =
+    providers
+        .exec { commandLine("git", "rev-list", "--count", "HEAD") }
+        .standardOutput.asText
+        .getOrElse("0")
+
 val gitDescribe =
     providers
         .exec { commandLine("git", "describe", "--tags", "--long", "--match=v*") }
@@ -75,7 +81,7 @@ configure<ApplicationExtension> {
         applicationId = "com.held0.nordlicht"
         minSdk = libs.versions.minSdk.getInt()
         targetSdk = libs.versions.targetSdk.getInt()
-        versionCode = gitTags.trim().lines().size
+        versionCode = 1000 + gitCommitCount.trim().toInt()
         versionName = gitDescribe.trim().removePrefix("v").ifBlank { "0.0.0" }
         testInstrumentationRunner = "com.github.damontecres.wholphin.test.WholphinTestRunner"
 
