@@ -67,3 +67,21 @@ scripts/mpv/prefix/
 
 # Store release bundles (nilumio)
 store/release/
+
+# nilumio: local tooling and secrets that must never be committed
+.claude/
+keystore*
+*.keystore.properties
+signing.properties
+*.p12
+*.pem
+# Docs live in /docs in this fork (upstream ignores docs/)
+!/docs/
+# Intro render workspace: generated frames, audio, videos and browser profiles
+store/intro/frames-*/
+store/intro/chrome-profile-*/
+store/intro/archiv/
+store/intro/audio-*.wav
+store/intro/info-*.json
+store/intro/*.mp4
+store/intro/*-schlussbild.png
