@@ -114,7 +114,16 @@ class SyncPlayManager
             request(R.string.syncplay_error) {
                 listen()
                 val name = serverRepository.currentUser?.name ?: "nilumio"
-                val groupName = context.getString(R.string.syncplay_group_of, name)
+                // „Schnicks Lobby“: deutscher Genitiv ohne Apostroph, außer bei s/ß/x/z am Ende („Jonas’ Lobby“)
+                val owner =
+                    if (java.util.Locale.getDefault().language != "de") {
+                        name
+                    } else if (name.lowercase().last() in "sßxz") {
+                        "$name’"
+                    } else {
+                        "${name}s"
+                    }
+                val groupName = context.getString(R.string.syncplay_group_of, owner)
                 api.syncPlayApi.syncPlayCreateGroup(NewGroupRequestDto(groupName))
                 adoptGroup { it.groupName == groupName && name in it.participants }
             }

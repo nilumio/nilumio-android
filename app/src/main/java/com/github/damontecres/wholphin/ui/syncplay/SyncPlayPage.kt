@@ -80,7 +80,11 @@ fun SyncPlayPage(
         if (current != null) {
             item { LiveLabel(stringResource(R.string.syncplay_active)) }
             item { Text(current.groupName, fontSize = 34.sp, color = Color.White) }
-            item { Text(stringResource(R.string.syncplay_hint), color = Muted, fontSize = 16.sp) }
+            item {
+                // Allein in der Gruppe: Lobby-Hinweis, sonst Hinweis zum gemeinsamen Start
+                val alone = current.participants.size <= 1
+                Text(stringResource(if (alone) R.string.syncplay_lobby_hint else R.string.syncplay_hint), color = Muted, fontSize = 16.sp)
+            }
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(28.dp), modifier = Modifier.padding(vertical = 12.dp)) {
                     current.participants.forEachIndexed { i, name ->

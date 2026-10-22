@@ -6,10 +6,10 @@
     <string name="syncplay_join">Offene Gruppen</string>
     <string name="syncplay_no_groups">Noch keine Gruppen auf dem Server</string>
     <string name="syncplay_refresh">Aktualisieren</string>
-    <string name="syncplay_leave">Gruppe verlassen</string>
+    <string name="syncplay_leave">Lobby verlassen</string>
     <string name="syncplay_participants">Mitglieder: %1$s</string>
-    <string name="syncplay_hint">Starte jetzt einen Film oder eine Folge – alle in der Gruppe schauen mit. Abspielen, Pause und Spulen laufen synchron.</string>
-    <string name="syncplay_group_of">Gruppe von %1$s</string>
+    <string name="syncplay_hint">Starte einen Film oder eine Folge. Alle in der Gruppe schauen mit. Abspielen, Pause und Spulen laufen synchron.</string>
+    <string name="syncplay_group_of">%1$s Lobby</string>
     <string name="syncplay_joined">Gruppe %1$s beigetreten</string>
     <string name="syncplay_user_joined">%1$s ist beigetreten</string>
     <string name="syncplay_user_left">%1$s hat die Gruppe verlassen</string>
@@ -21,4 +21,5 @@
     <string name="syncplay_choose">Film auswählen</string>
     <string name="syncplay_state_playing">schaut gerade</string>
     <string name="syncplay_state_waiting">wartet auf einen Film</string>
+    <string name="syncplay_lobby_hint">Du bist in der Lobby. Andere Nutzer dieses Servers finden deine Gruppe bei sich unter Watch Party und können beitreten. Du kannst schon mal nach einem Film schauen und später in die Lobby zurückkommen.</string>
 </resources>
