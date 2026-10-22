@@ -358,6 +358,12 @@ fun DestinationContent(
             InstallUpdatePage(preferences, modifier)
         }
 
+        // nilumio: SyncPlay
+        Destination.SyncPlay -> {
+            LaunchedEffect(Unit) { onClearBackdrop.invoke() }
+            com.github.damontecres.wholphin.ui.syncplay.SyncPlayPage(modifier)
+        }
+
         Destination.License -> {
             LicenseInfo(modifier)
         }

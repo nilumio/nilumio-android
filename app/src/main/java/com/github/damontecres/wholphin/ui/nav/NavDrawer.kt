@@ -522,6 +522,16 @@ fun NavDrawer(
                                 )
                             }
                         }
+                        // nilumio: SyncPlay („Gemeinsam schauen“)
+                        item {
+                            IconNavItem(
+                                text = stringResource(R.string.syncplay_title),
+                                icon = NordlichtIcons.WatchTogether,
+                                selected = false,
+                                drawerOpen = isOpen,
+                                onClick = { viewModel.navigationManager.navigateToFromDrawer(Destination.SyncPlay) },
+                            )
+                        }
                         item {
                             val interactionSource = remember { MutableInteractionSource() }
                             IconNavItem(

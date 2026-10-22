@@ -160,7 +160,7 @@ fun PlaybackPageContent(
 ) {
     val state by viewModel.state.collectAsState()
     val subtitleSearchState by viewModel.subtitleSearchState.collectAsState()
-    val player = playerInstance.player
+    val player = com.github.damontecres.wholphin.services.syncplay.rememberSyncPlayPlayer(playerInstance.player) // nilumio: SyncPlay
     val playerBackend = playerInstance.backend
 
     val prefs = preferences.appPreferences.playbackPreferences
@@ -186,7 +186,7 @@ fun PlaybackPageContent(
     LaunchedEffect(playbackSpeed) { player.setPlaybackSpeed(playbackSpeed) }
 
     LaunchedEffect(state.currentPlayback?.subtitleDelay) {
-        (player as? MpvPlayer)?.subtitleDelay =
+        (playerInstance.player as? MpvPlayer)?.subtitleDelay =
             state.currentPlayback?.subtitleDelay ?: Duration.ZERO
     }
 
@@ -779,8 +779,8 @@ fun PlaybackPageContent(
             },
             onPlaybackActionClick = onPlaybackActionClick,
             onChangeSubtitleDelay = { viewModel.updateSubtitleDelay(it) },
-            enableSubtitleDelay = player is MpvPlayer,
-            enableVideoScale = player !is MpvPlayer,
+            enableSubtitleDelay = playerInstance.player is MpvPlayer,
+            enableVideoScale = playerInstance.player !is MpvPlayer,
         )
     }
 }

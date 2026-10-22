@@ -133,6 +133,16 @@ object NordlichtIcons {
     val Playlists = icon("nl_playlists", "M4,7h11M4,12h11M4,17h7" to 1f, "M18,14v6M15,17h6" to .8f)
 
     val NowPlaying = icon("nl_nowplaying", "M8,5.5v13l10,-6.5z" to 1f)
+
+    /** Gemeinsam schauen (SyncPlay): zwei Personen. */
+    val WatchTogether =
+        icon(
+            "nl_watchtogether",
+            "M11.6,8.8a2.6,2.6 0 1,1 -5.2,0a2.6,2.6 0 1,1 5.2,0" to 1f,
+            "M4,19c0,-3 2.2,-5 5,-5s5,2 5,5" to 1f,
+            "M18.2,9.4a2.2,2.2 0 1,1 -4.4,0a2.2,2.2 0 1,1 4.4,0" to .7f,
+            "M15.4,14.2c2.6,-0.3 4.6,1.6 4.6,4.8" to .7f,
+        )
 }
 
 /** Färbt den Inhalt (z. B. ein weiß getöntes Icon) im nordlicht-Verlauf Grün → Türkis → Lila ein. */
