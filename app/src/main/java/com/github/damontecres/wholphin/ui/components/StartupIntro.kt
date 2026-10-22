@@ -1,7 +1,8 @@
 package com.github.damontecres.wholphin.ui.components
 
 import android.net.Uri
-import android.view.TextureView
+import android.view.SurfaceView
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,12 +15,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.analytics.AnalyticsListener
 import com.github.damontecres.wholphin.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,8 +47,12 @@ object StartupSignal {
 }
 
 /**
- * Spielt die nilumio-Animation, während die App im Hintergrund lädt. Ist das Video zu Ende,
- * bleibt das Schlussbild stehen, bis [StartupSignal] die geladene Startseite meldet.
+ * Spielt die nilumio-Animation, während die App im Hintergrund lädt.
+ *
+ * Das Video läuft auf einer eigenen SurfaceView-Ebene, die der Fernseher direkt aus dem
+ * Hardware-Decoder ausgibt. So ruckelt es nicht, auch wenn die App gleichzeitig die Startseite
+ * aufbaut. Am Ende übernimmt ein Standbild des Schlussbilds, das stehen bleibt, bis
+ * [StartupSignal] die geladene Startseite meldet, und dann mit dem Overlay ausgeblendet wird.
  */
 @Composable
 fun StartupIntro(
@@ -79,7 +87,19 @@ fun StartupIntro(
                 }
             }
         player.addListener(listener)
+        val analytics =
+            object : AnalyticsListener {
+                override fun onDroppedVideoFrames(
+                    eventTime: AnalyticsListener.EventTime,
+                    droppedFrames: Int,
+                    elapsedMs: Long,
+                ) {
+                    Timber.i("Startup intro dropped %d frames in %d ms", droppedFrames, elapsedMs)
+                }
+            }
+        player.addAnalyticsListener(analytics)
         onDispose {
+            player.removeAnalyticsListener(analytics)
             player.removeListener(listener)
             player.release()
         }
@@ -90,17 +110,30 @@ fun StartupIntro(
         videoDone = true
         StartupSignal.markReady()
     }
+    LaunchedEffect(videoDone) {
+        if (videoDone) player.stop()
+    }
     LaunchedEffect(videoDone, ready) {
         if (videoDone && ready) {
             // kurz atmen lassen, damit die Startseite schon gezeichnet ist
-            delay(150.milliseconds)
+            delay(200.milliseconds)
             onFinished()
         }
     }
     Box(modifier = modifier.fillMaxSize().background(NilumioColors.Night)) {
-        AndroidView(
-            factory = { ctx -> TextureView(ctx).also { player.setVideoTextureView(it) } },
-            modifier = Modifier.fillMaxSize(),
-        )
+        if (!videoDone) {
+            AndroidView(
+                factory = { ctx -> SurfaceView(ctx).also { player.setVideoSurfaceView(it) } },
+                modifier = Modifier.fillMaxSize(),
+            )
+        } else {
+            // Standbild statt SurfaceView: lässt sich weich ausblenden
+            Image(
+                painter = painterResource(R.drawable.nilumio_intro_final),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
     }
 }

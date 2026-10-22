@@ -180,6 +180,6 @@ val PurpleThemeColors =
                 inverseSurface = inverseSurfaceDark,
                 inverseOnSurface = inverseOnSurfaceDark,
                 inversePrimary = inversePrimaryDark,
-                border = Color(0xFF22C7D9),
+                border = Color(0xFF22C7D9).copy(alpha = .55f),
             )
     }
