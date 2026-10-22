@@ -67,6 +67,8 @@ fun StudioCard(
     val background = rememberIdColor(studioId).copy(alpha = .4f)
     var error by remember { mutableStateOf(false) }
     Card(
+        border = com.github.damontecres.wholphin.ui.components.nilumioCardBorder(), // nilumio
+        glow = com.github.damontecres.wholphin.ui.components.nilumioCardGlow(),
         modifier = modifier,
         onClick = onClick,
         onLongClick = onLongClick,

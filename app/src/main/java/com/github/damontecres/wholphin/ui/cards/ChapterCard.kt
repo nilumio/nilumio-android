@@ -60,6 +60,8 @@ fun ChapterCard(
         }
     var width by remember { mutableStateOf(AspectRatios.WIDE * cardHeight) }
     Card(
+        border = com.github.damontecres.wholphin.ui.components.nilumioCardBorder(), // nilumio
+        glow = com.github.damontecres.wholphin.ui.components.nilumioCardGlow(),
         modifier = modifier.height(cardHeight),
         onClick = onClick,
         onLongClick = onLongClick,

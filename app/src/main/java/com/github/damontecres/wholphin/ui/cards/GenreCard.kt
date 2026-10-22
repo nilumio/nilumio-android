@@ -63,6 +63,8 @@ fun GenreCard(
 ) {
     val background = rememberIdColor(genreId).copy(alpha = .6f)
     Card(
+        border = com.github.damontecres.wholphin.ui.components.nilumioCardBorder(), // nilumio
+        glow = com.github.damontecres.wholphin.ui.components.nilumioCardGlow(),
         modifier = modifier,
         onClick = onClick,
         onLongClick = onLongClick,

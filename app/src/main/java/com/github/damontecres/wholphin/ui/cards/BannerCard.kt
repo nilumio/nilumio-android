@@ -105,6 +105,10 @@ fun BannerCard(
     val currentOnLongClick by rememberUpdatedState(onLongClick)
 
     Card(
+
+        border = com.github.damontecres.wholphin.ui.components.nilumioCardBorder(), // nilumio
+
+        glow = com.github.damontecres.wholphin.ui.components.nilumioCardGlow(),
         modifier = modifier.size(cardHeight * aspectRatio, cardHeight),
         onClick = { currentOnClick() },
         onLongClick = { currentOnLongClick() },

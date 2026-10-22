@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.unit.dp
 
 /**
  * nilumio-Zeichen: Kugel im Verlauf Grün → Türkis → Lila mit dunkler Erdkrümmung
@@ -65,3 +66,20 @@ object NilumioColors {
 
     fun onAvatar(color: Color): Color = if (color == Lilac) Color.White else Night
 }
+
+/** Fokusrahmen für Cover: weiß, 1,5 dp, mit leichtem Schein. */
+@Composable
+fun nilumioCardBorder() =
+    androidx.tv.material3.CardDefaults.border(
+        focusedBorder =
+            androidx.tv.material3.Border(
+                border = androidx.compose.foundation.BorderStroke(1.5.dp, Color.White),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+            ),
+    )
+
+@Composable
+fun nilumioCardGlow() =
+    androidx.tv.material3.CardDefaults.glow(
+        focusedGlow = androidx.tv.material3.Glow(elevationColor = Color.White.copy(alpha = .25f), elevation = 12.dp),
+    )

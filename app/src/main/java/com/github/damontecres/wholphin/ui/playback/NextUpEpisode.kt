@@ -177,6 +177,8 @@ fun NextUpCard(
     modifier: Modifier = Modifier,
 ) {
     Card(
+        border = com.github.damontecres.wholphin.ui.components.nilumioCardBorder(), // nilumio
+        glow = com.github.damontecres.wholphin.ui.components.nilumioCardGlow(),
         modifier = modifier,
         onClick = onClick,
         interactionSource = interactionSource,

@@ -73,6 +73,8 @@ fun GridCard(
         modifier = modifier,
     ) {
         Card(
+            border = com.github.damontecres.wholphin.ui.components.nilumioCardBorder(), // nilumio
+            glow = com.github.damontecres.wholphin.ui.components.nilumioCardGlow(),
             modifier = Modifier.fillMaxWidth(),
             onClick = onClick,
             onLongClick = onLongClick,

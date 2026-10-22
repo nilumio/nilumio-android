@@ -80,6 +80,8 @@ fun DiscoverItemCard(
         modifier = modifier.size(width, Dp.Unspecified),
     ) {
         Card(
+            border = com.github.damontecres.wholphin.ui.components.nilumioCardBorder(), // nilumio
+            glow = com.github.damontecres.wholphin.ui.components.nilumioCardGlow(),
             modifier =
                 Modifier
                     .size(width, Dp.Unspecified)
