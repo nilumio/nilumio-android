@@ -25,7 +25,7 @@ The files nilumio added or changed are listed in [NILUMIO_CHANGES.md](NILUMIO_CH
 | [ZXing core](https://github.com/zxing/zxing) 3.5.3 | Apache-2.0 | QR code for friend invitations |
 
 All other libraries are inherited from Wholphin and declared in `gradle/libs.versions.toml`.
-The app shows their licences in *Settings > Licences*; the licence texts of the native
+The app lists their licences on its *License information* screen in the settings; the licence texts of the native
 components (libmpv, libass, dav1d, libunibreak and others) are in `app/config/licenses/`.
 
 ## Fonts and artwork
