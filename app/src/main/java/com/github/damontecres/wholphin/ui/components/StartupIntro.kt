@@ -23,7 +23,6 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.analytics.AnalyticsListener
 import com.github.damontecres.wholphin.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -87,19 +86,7 @@ fun StartupIntro(
                 }
             }
         player.addListener(listener)
-        val analytics =
-            object : AnalyticsListener {
-                override fun onDroppedVideoFrames(
-                    eventTime: AnalyticsListener.EventTime,
-                    droppedFrames: Int,
-                    elapsedMs: Long,
-                ) {
-                    Timber.i("Startup intro dropped %d frames in %d ms", droppedFrames, elapsedMs)
-                }
-            }
-        player.addAnalyticsListener(analytics)
         onDispose {
-            player.removeAnalyticsListener(analytics)
             player.removeListener(listener)
             player.release()
         }
