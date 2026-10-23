@@ -142,6 +142,17 @@ class NavDrawerViewModel
                     )
                 }
 
+                // nilumio: Zufall und SyncPlay als normale Menüpunkte
+                NavDrawerItem.Shuffle -> {
+                    setIndex(index)
+                    navigationManager.navigateToFromDrawer(Destination.Shuffle)
+                }
+
+                NavDrawerItem.SyncPlay -> {
+                    setIndex(index)
+                    navigationManager.navigateToFromDrawer(Destination.SyncPlay)
+                }
+
                 is ServerNavDrawerItem -> {
                     setIndex(index)
                     navigationManager.navigateToFromDrawer(item.destination)
@@ -173,6 +184,8 @@ class NavDrawerViewModel
                             is ServerNavDrawerItem -> it.destination
                             is NavDrawerItem.Favorites -> Destination.Favorites
                             is NavDrawerItem.Discover -> Destination.Discover
+                            is NavDrawerItem.Shuffle -> Destination.Shuffle // nilumio
+                            is NavDrawerItem.SyncPlay -> Destination.SyncPlay // nilumio
                             else -> null
                         }
                     }
@@ -246,6 +259,22 @@ sealed interface NavDrawerItem {
             get() = "a_discover"
 
         override fun name(context: Context): String = context.getString(R.string.discover)
+    }
+
+    // nilumio: Zufall
+    object Shuffle : NavDrawerItem {
+        override val id: String
+            get() = "n_shuffle"
+
+        override fun name(context: Context): String = context.getString(R.string.shuffle_title)
+    }
+
+    // nilumio: SyncPlay
+    object SyncPlay : NavDrawerItem {
+        override val id: String
+            get() = "n_syncplay"
+
+        override fun name(context: Context): String = context.getString(R.string.syncplay_title)
     }
 }
 
@@ -401,7 +430,7 @@ fun NavDrawer(
                                             focusRequester.tryRequestFocus()
                                         }
                                     }
-                                }.fillMaxHeight(),
+                                }.weight(1f), // nilumio: Restplatz, scrollt statt umzubrechen
                     ) {
                         item {
                             val interactionSource = remember { MutableInteractionSource() }
@@ -521,26 +550,6 @@ fun NavDrawer(
                                             ),
                                 )
                             }
-                        }
-                        // nilumio: Zufall
-                        item {
-                            IconNavItem(
-                                text = stringResource(R.string.shuffle_title),
-                                icon = NordlichtIcons.Dice,
-                                selected = false,
-                                drawerOpen = isOpen,
-                                onClick = { viewModel.navigationManager.navigateToFromDrawer(Destination.Shuffle) },
-                            )
-                        }
-                        // nilumio: SyncPlay („SyncPlay“)
-                        item {
-                            IconNavItem(
-                                text = stringResource(R.string.syncplay_title),
-                                icon = NordlichtIcons.WatchTogether,
-                                selected = false,
-                                drawerOpen = isOpen,
-                                onClick = { viewModel.navigationManager.navigateToFromDrawer(Destination.SyncPlay) },
-                            )
                         }
                         item {
                             val interactionSource = remember { MutableInteractionSource() }
@@ -688,6 +697,8 @@ fun NavigationDrawerScope.NavItem(
                 NavDrawerItem.Favorites -> NordlichtIcons.Favorites
                 NavDrawerItem.More -> NordlichtIcons.More
                 NavDrawerItem.Discover -> NordlichtIcons.Discover
+                NavDrawerItem.Shuffle -> NordlichtIcons.Dice // nilumio
+                NavDrawerItem.SyncPlay -> NordlichtIcons.WatchTogether // nilumio
                 is ServerNavDrawerItem -> {
                     when (library.type) {
                         CollectionType.MOVIES -> NordlichtIcons.Movies

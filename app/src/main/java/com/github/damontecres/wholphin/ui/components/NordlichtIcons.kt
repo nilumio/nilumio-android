@@ -152,6 +152,12 @@ object NordlichtIcons {
             strokeWidth = 2.2f,
         )
 
+    /** Menü-Editor: Pfeile zum Verschieben und Umsortieren. */
+    val ArrowRight = icon("nl_arrow_right", "M5,12h14M13,6l6,6l-6,6" to 1f, strokeWidth = 2.2f)
+    val ArrowLeft = icon("nl_arrow_left", "M19,12h-14M11,6l-6,6l6,6" to 1f, strokeWidth = 2.2f)
+    val ChevronUp = icon("nl_chevron_up", "M6,15l6,-6l6,6" to 1f, strokeWidth = 2.2f)
+    val ChevronDown = icon("nl_chevron_down", "M6,9l6,6l6,-6" to 1f, strokeWidth = 2.2f)
+
     /** SyncPlay: zwei Personen. */
     val WatchTogether =
         icon(

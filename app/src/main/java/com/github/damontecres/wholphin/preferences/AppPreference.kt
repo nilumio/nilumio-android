@@ -779,8 +779,8 @@ sealed interface AppPreference<Pref, T> {
 
         val UserPinnedNavDrawerItems =
             AppClickablePreference<AppPreferences>(
-                title = R.string.nav_drawer_pins,
-                summary = R.string.nav_drawer_pins_summary,
+                title = R.string.nav_menu_title, // nilumio
+                summary = R.string.nav_menu_summary, // nilumio
                 getter = { },
                 setter = { prefs, _ -> prefs },
             )
@@ -1177,6 +1177,7 @@ val basicPreferences =
             title = R.string.ui_interface,
             preferences =
                 listOf(
+                    AppPreference.UserPinnedNavDrawerItems, // nilumio: Menü anpassen ganz oben
                     AppPreference.SignInAuto,
                     AppPreference.RememberSelectedTab,
                     AppPreference.PlayThemeMusic,
@@ -1210,7 +1211,6 @@ val basicPreferences =
                 listOf(
                     AppPreference.ProtectProfilePreference,
                     AppPreference.CustomizeHome,
-                    AppPreference.UserPinnedNavDrawerItems,
                     AppPreference.UserInterfaceLanguage,
                     AppPreference.UserProfileSettings,
                 ),

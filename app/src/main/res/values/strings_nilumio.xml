@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- nilumio: eigene Texte -->
+<resources>
+    <string name="nav_menu_title">Customise menu</string>
+    <string name="nav_menu_summary">Choose and order the items in the side menu</string>
+    <string name="nav_menu_in">In the menu</string>
+    <string name="nav_menu_out">Not in the menu</string>
+    <string name="nav_menu_all_in">All items are in the menu</string>
+    <string name="nav_menu_none_in">The menu is empty</string>
+    <string name="nav_menu_more_hint">Items not in the menu are listed under “More”.</string>
+    <string name="nav_menu_move_up">Move up</string>
+    <string name="nav_menu_move_down">Move down</string>
+    <string name="nav_menu_remove">Remove from the menu</string>
+    <string name="nav_menu_add">Add to the menu</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- nilumio: eigene Texte -->
+<resources>
+    <string name="nav_menu_title">Menü anpassen</string>
+    <string name="nav_menu_summary">Punkte der Seitenleiste wählen und sortieren</string>
+    <string name="nav_menu_in">Im Menü</string>
+    <string name="nav_menu_out">Nicht im Menü</string>
+    <string name="nav_menu_all_in">Alle Punkte sind im Menü</string>
+    <string name="nav_menu_none_in">Das Menü ist leer</string>
+    <string name="nav_menu_more_hint">Punkte, die nicht im Menü sind, findest du unter „Mehr“.</string>
+    <string name="nav_menu_move_up">Nach oben</string>
+    <string name="nav_menu_move_down">Nach unten</string>
+    <string name="nav_menu_remove">Aus dem Menü nehmen</string>
+    <string name="nav_menu_add">Ins Menü aufnehmen</string>
+</resources>

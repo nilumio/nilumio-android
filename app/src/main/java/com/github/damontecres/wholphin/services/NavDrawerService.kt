@@ -218,7 +218,8 @@ class NavDrawerService
                             type = it.collectionType,
                         )
                     }
-            val allItems = builtins + libraries
+            // nilumio: Zufall und SyncPlay standardmäßig angeheftet, hinten
+            val allItems = builtins + libraries + listOf(NavDrawerItem.Shuffle, NavDrawerItem.SyncPlay)
 
             val navDrawerPins =
                 withContext(WholphinDispatchers.IO) {

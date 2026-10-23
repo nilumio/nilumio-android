@@ -2,6 +2,29 @@ package com.github.damontecres.wholphin.ui.preferences
 
 import android.content.Context
 import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.window.DialogProperties
+import androidx.tv.material3.Border
+import androidx.tv.material3.ClickableSurfaceDefaults
+import androidx.tv.material3.Icon
+import androidx.tv.material3.Surface
+import com.github.damontecres.wholphin.ui.components.NordlichtIcons
+import com.github.damontecres.wholphin.ui.tryRequestFocus
+import kotlinx.coroutines.delay
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,18 +35,11 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,9 +50,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.tv.material3.ListItem
-import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.Switch
 import androidx.tv.material3.Text
 import com.github.damontecres.wholphin.R
 import com.github.damontecres.wholphin.data.ServerPreferencesDao
@@ -48,14 +61,11 @@ import com.github.damontecres.wholphin.services.NavDrawerService
 import com.github.damontecres.wholphin.services.NavigationManager
 import com.github.damontecres.wholphin.services.SeerrServerRepository
 import com.github.damontecres.wholphin.ui.FontAwesome
-import com.github.damontecres.wholphin.ui.PreviewTvSpec
 import com.github.damontecres.wholphin.ui.components.BasicDialog
 import com.github.damontecres.wholphin.ui.components.Button
 import com.github.damontecres.wholphin.ui.launchDefault
 import com.github.damontecres.wholphin.ui.launchIO
-import com.github.damontecres.wholphin.ui.main.settings.MoveDirection
 import com.github.damontecres.wholphin.ui.nav.NavDrawerItem
-import com.github.damontecres.wholphin.ui.theme.WholphinTheme
 import com.github.damontecres.wholphin.util.ExceptionHandler
 import com.github.damontecres.wholphin.util.WholphinDispatchers
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -63,7 +73,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -85,23 +94,11 @@ data class NavDrawerPin(
     }
 }
 
-private fun <T> List<T>.move(
-    direction: MoveDirection,
-    index: Int,
-): List<T> =
-    toMutableList().apply {
-        if (direction == MoveDirection.DOWN) {
-            val down = this[index]
-            val up = this[index + 1]
-            set(index, up)
-            set(index + 1, down)
-        } else {
-            val up = this[index]
-            val down = this[index - 1]
-            set(index - 1, up)
-            set(index, down)
-        }
-    }
+// nilumio: Menü-Editor mit zwei Listen („Im Menü“ / „Nicht im Menü“)
+private enum class PinButton { UP, DOWN, REMOVE, ADD }
+
+private val EditorPanel = Color(0xFF111726)
+private val EditorMuted = Color(0xFF8E9AB0)
 
 @Composable
 fun NavDrawerPreference(
@@ -123,22 +120,10 @@ fun NavDrawerPreference(
     if (showDialog) {
         NavDrawerPreferenceDialog(
             items = items,
+            onUpdate = viewModel::update,
             onDismissRequest = {
                 viewModel.save()
                 showDialog = false
-            },
-            onClick = { index ->
-                val newItems =
-                    items.toMutableList().apply {
-                        set(index, items[index].let { it.copy(pinned = !it.pinned) })
-                    }
-                viewModel.update(newItems)
-            },
-            onMoveUp = { index ->
-                viewModel.update(items.move(MoveDirection.UP, index))
-            },
-            onMoveDown = { index ->
-                viewModel.update(items.move(MoveDirection.DOWN, index))
             },
         )
     }
@@ -147,113 +132,233 @@ fun NavDrawerPreference(
 @Composable
 fun NavDrawerPreferenceDialog(
     items: List<NavDrawerPin>,
+    onUpdate: (List<NavDrawerPin>) -> Unit,
     onDismissRequest: () -> Unit,
-    onClick: (Int) -> Unit,
-    onMoveUp: (Int) -> Unit,
-    onMoveDown: (Int) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
-    val bringIntoViewRequesters = remember { List(items.size) { BringIntoViewRequester() } }
+    val pinned = items.filter { it.pinned }
+    val unpinned = items.filterNot { it.pinned }
+    // Ein FocusRequester je Eintrag und Knopf, damit der Fokus nach dem Verschieben mitwandert
+    val requesters = remember { mutableMapOf<Pair<String, PinButton>, FocusRequester>() }
+
+    fun requester(
+        id: String,
+        button: PinButton,
+    ) = requesters.getOrPut(id to button) { FocusRequester() }
+    var pendingFocus by remember { mutableStateOf<Pair<String, PinButton>?>(null) }
+    LaunchedEffect(items.isNotEmpty()) {
+        if (pendingFocus == null) {
+            pendingFocus = pinned.firstOrNull()?.let { it.id to PinButton.REMOVE } ?: unpinned.firstOrNull()?.let { it.id to PinButton.ADD }
+        }
+    }
+    LaunchedEffect(pendingFocus, items) {
+        val target = pendingFocus ?: return@LaunchedEffect
+        // Neue Liste wird evtl. erst im nächsten Frame gezeichnet
+        repeat(10) {
+            if (requesters[target]?.tryRequestFocus() == true) return@LaunchedEffect
+            delay(32)
+        }
+    }
+
+    // Reihenfolge wird immer als „angeheftet, dann übrige“ gespeichert
+    fun commit(
+        newPinned: List<NavDrawerPin>,
+        newUnpinned: List<NavDrawerPin>,
+        focus: Pair<String, PinButton>,
+    ) {
+        onUpdate(newPinned.map { it.copy(pinned = true) } + newUnpinned.map { it.copy(pinned = false) })
+        pendingFocus = focus
+    }
+
     BasicDialog(
         onDismissRequest = onDismissRequest,
+        properties = DialogProperties(usePlatformDefaultWidth = false),
         elevation = 3.dp,
     ) {
         Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier =
                 Modifier
-                    .padding(16.dp),
+                    .width(820.dp)
+                    .height(460.dp)
+                    .padding(24.dp),
         ) {
             Text(
-                text = stringResource(R.string.nav_drawer_pins),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(bottom = 8.dp),
+                text = stringResource(R.string.nav_menu_title),
+                fontSize = 24.sp,
+                color = Color.White,
             )
-            val listState = rememberLazyListState()
-
-            fun ensureVisible(index: Int) {
-                val idx = index.coerceIn(items.indices)
-                scope.launch {
-                    bringIntoViewRequesters[idx].bringIntoView()
-                }
-            }
-            LazyColumn(
-                state = listState,
-                verticalArrangement = Arrangement.spacedBy(0.dp),
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.weight(1f),
             ) {
-                itemsIndexed(items, key = { _, item -> item.id }) { index, item ->
-                    NavDrawerPreferenceListItem(
-                        title = item.title,
-                        pinned = item.pinned,
-                        moveUpAllowed = index > 0,
-                        moveDownAllowed = index < items.lastIndex,
-                        onClick = { onClick.invoke(index) },
-                        onMoveUp = {
-                            onMoveUp.invoke(index)
-                            ensureVisible(index - 1)
-                        },
-                        onMoveDown = {
-                            onMoveDown.invoke(index)
-                            ensureVisible(index + 1)
-                        },
-                        modifier =
-                            Modifier
-                                .animateItem()
-                                .bringIntoViewRequester(bringIntoViewRequesters[index]),
-                    )
+                PinPanel(
+                    title = stringResource(R.string.nav_menu_in),
+                    emptyText = stringResource(R.string.nav_menu_none_in),
+                    isEmpty = pinned.isEmpty(),
+                    modifier = Modifier.weight(1f),
+                ) {
+                    pinned.forEachIndexed { index, item ->
+                        key(item.id) {
+                            PinRow(item.title) {
+                                PinIconButton(
+                                    icon = NordlichtIcons.ChevronUp,
+                                    description = stringResource(R.string.nav_menu_move_up),
+                                    active = index > 0,
+                                    focusRequester = requester(item.id, PinButton.UP),
+                                ) {
+                                    val list = pinned.toMutableList().apply { add(index - 1, removeAt(index)) }
+                                    commit(list, unpinned, item.id to if (index - 1 == 0) PinButton.DOWN else PinButton.UP)
+                                }
+                                PinIconButton(
+                                    icon = NordlichtIcons.ChevronDown,
+                                    description = stringResource(R.string.nav_menu_move_down),
+                                    active = index < pinned.lastIndex,
+                                    focusRequester = requester(item.id, PinButton.DOWN),
+                                ) {
+                                    val list = pinned.toMutableList().apply { add(index + 1, removeAt(index)) }
+                                    commit(list, unpinned, item.id to if (index + 1 == pinned.lastIndex) PinButton.UP else PinButton.DOWN)
+                                }
+                                PinIconButton(
+                                    icon = NordlichtIcons.ArrowRight,
+                                    description = stringResource(R.string.nav_menu_remove),
+                                    active = true,
+                                    focusRequester = requester(item.id, PinButton.REMOVE),
+                                ) {
+                                    val list = pinned.toMutableList().apply { removeAt(index) }
+                                    // Fokus bleibt links auf dem nachrückenden Eintrag
+                                    val next = list.getOrNull(index.coerceAtMost(list.lastIndex))
+                                    commit(list, unpinned + item, next?.let { it.id to PinButton.REMOVE } ?: (item.id to PinButton.ADD))
+                                }
+                            }
+                        }
+                    }
+                }
+                PinPanel(
+                    title = stringResource(R.string.nav_menu_out),
+                    emptyText = stringResource(R.string.nav_menu_all_in),
+                    isEmpty = unpinned.isEmpty(),
+                    modifier = Modifier.weight(1f),
+                ) {
+                    unpinned.forEachIndexed { index, item ->
+                        key(item.id) {
+                            PinRow(item.title, buttonsFirst = true) {
+                                PinIconButton(
+                                    icon = NordlichtIcons.ArrowLeft,
+                                    description = stringResource(R.string.nav_menu_add),
+                                    active = true,
+                                    focusRequester = requester(item.id, PinButton.ADD),
+                                ) {
+                                    val list = unpinned.toMutableList().apply { removeAt(index) }
+                                    val next = list.getOrNull(index.coerceAtMost(list.lastIndex))
+                                    commit(pinned + item, list, next?.let { it.id to PinButton.ADD } ?: (item.id to PinButton.REMOVE))
+                                }
+                            }
+                        }
+                    }
                 }
             }
+            Text(
+                text = stringResource(R.string.nav_menu_more_hint),
+                fontSize = 14.sp,
+                color = EditorMuted,
+            )
         }
     }
 }
 
 @Composable
-fun NavDrawerPreferenceListItem(
+private fun PinPanel(
     title: String,
-    pinned: Boolean,
-    moveUpAllowed: Boolean,
-    moveDownAllowed: Boolean,
-    onClick: () -> Unit,
-    onMoveUp: () -> Unit,
-    onMoveDown: () -> Unit,
+    emptyText: String,
+    isEmpty: Boolean,
     modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
 ) {
-    Box(
-        modifier = modifier,
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier =
+            modifier
+                .fillMaxHeight()
+                .background(EditorPanel, RoundedCornerShape(14.dp))
+                .padding(12.dp),
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 40.dp),
+        Text(
+            text = title.uppercase(),
+            fontSize = 13.sp,
+            letterSpacing = 1.sp,
+            color = EditorMuted,
+            modifier = Modifier.padding(start = 8.dp, bottom = 4.dp),
+        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            modifier = Modifier.verticalScroll(rememberScrollState()),
         ) {
-            ListItem(
-                selected = false,
-                headlineContent = {
-                    Text(
-                        text = title,
-                    )
-                },
-                trailingContent = {
-                    Switch(
-                        checked = pinned,
-                        onCheckedChange = {
-                            onClick.invoke()
-                        },
-                    )
-                },
-                onClick = onClick,
-                modifier = Modifier.weight(1f),
-            )
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.wrapContentWidth(),
-            ) {
-                MoveButton(R.string.fa_caret_up, moveUpAllowed, onMoveUp)
-                MoveButton(R.string.fa_caret_down, moveDownAllowed, onMoveDown)
+            if (isEmpty) {
+                Text(
+                    text = emptyText,
+                    fontSize = 15.sp,
+                    color = EditorMuted,
+                    modifier = Modifier.padding(8.dp),
+                )
             }
+            content()
+        }
+    }
+}
+
+@Composable
+private fun PinRow(
+    title: String,
+    buttonsFirst: Boolean = false,
+    buttons: @Composable () -> Unit,
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth().heightIn(min = 44.dp),
+    ) {
+        if (buttonsFirst) buttons()
+        Text(
+            text = title,
+            fontSize = 17.sp,
+            color = Color.White,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
+        )
+        if (!buttonsFirst) buttons()
+    }
+}
+
+/** Runder Icon-Knopf; inaktive Knöpfe bleiben fokussierbar, damit die Spalten für das Steuerkreuz stabil bleiben. */
+@Composable
+private fun PinIconButton(
+    icon: ImageVector,
+    description: String,
+    active: Boolean,
+    focusRequester: FocusRequester,
+    onClick: () -> Unit,
+) {
+    val shape = RoundedCornerShape(10.dp)
+    Surface(
+        onClick = { if (active) onClick() },
+        shape = ClickableSurfaceDefaults.shape(shape),
+        colors =
+            ClickableSurfaceDefaults.colors(
+                containerColor = Color(0xFF182033),
+                focusedContainerColor = Color(0xFF243049),
+            ),
+        border = ClickableSurfaceDefaults.border(focusedBorder = Border(BorderStroke(1.5.dp, Color.White), inset = 0.dp, shape = shape)),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
+        modifier = Modifier.size(40.dp).focusRequester(focusRequester),
+    ) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            Icon(
+                imageVector = icon,
+                contentDescription = description,
+                tint = if (active) Color.White else Color.White.copy(alpha = .25f),
+                modifier = Modifier.size(22.dp),
+            )
         }
     }
 }
@@ -275,23 +380,6 @@ fun MoveButton(
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
     )
-}
-
-@PreviewTvSpec
-@Composable
-fun NavDrawerPreferenceListItemPreview() {
-    WholphinTheme {
-        NavDrawerPreferenceListItem(
-            title = "Movies",
-            pinned = true,
-            moveUpAllowed = true,
-            moveDownAllowed = true,
-            onClick = {},
-            onMoveUp = {},
-            onMoveDown = { },
-            modifier = Modifier.width(360.dp),
-        )
-    }
 }
 
 @HiltViewModel
