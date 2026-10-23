@@ -353,6 +353,7 @@ fun RightPlaybackButtons(
     Row(
         modifier = modifier.focusGroup(),
         horizontalArrangement = Arrangement.spacedBy(buttonSpacing),
+        verticalAlignment = Alignment.CenterVertically, // nilumio: alle Knöpfe auf einer Mittellinie
     ) {
         // Captions
         PlaybackButton(
@@ -409,6 +410,7 @@ fun PlaybackButtons(
         Row(
             modifier = modifier.focusGroup(),
             horizontalArrangement = Arrangement.spacedBy(buttonSpacing),
+            verticalAlignment = Alignment.CenterVertically, // nilumio: Play/Pause mittig zu den anderen
         ) {
             PlaybackButton(
                 iconRes = R.drawable.nilumio_player_prev,

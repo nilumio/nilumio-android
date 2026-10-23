@@ -213,7 +213,7 @@ fun PlaybackOverlay(
                         onChangeState = onChangeState,
                         modifier =
                             Modifier
-                                .padding(bottom = 4.dp) // nilumio: Zeile wie in der Vorlage 3 em über dem Rand
+                                .padding(bottom = 28.dp) // nilumio: Knopfzeile mit mehr Abstand zum unteren Rand
                                 .onGloballyPositioned {
                                     controllerHeight = with(density) { it.size.height.toDp() }
                                 },
