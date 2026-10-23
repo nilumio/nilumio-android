@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- nilumio: eigene Texte -->
+<!-- nilumio: alle eigenen Texte -->
 <resources>
+    <!-- Menü anpassen -->
     <string name="nav_menu_title">Customise menu</string>
     <string name="nav_menu_summary">Choose and order the items in the side menu</string>
     <string name="nav_menu_in">In the menu</string>
@@ -12,4 +13,41 @@
     <string name="nav_menu_move_down">Move down</string>
     <string name="nav_menu_remove">Remove from the menu</string>
     <string name="nav_menu_add">Add to the menu</string>
+    <!-- Startseite: Reihen nach Genre; Lizenzhinweis -->
+    <string name="license_info_origin">Based on the open-source project Wholphin by damontecres (GPL-2.0)</string>
+    <string name="by_genre">By genre</string>
+    <string name="select_none">None</string>
+    <plurals name="add_genre_rows">
+        <item quantity="one">Add %d row</item>
+        <item quantity="other">Add %d rows</item>
+    </plurals>
+    <!-- SyncPlay -->
+    <string name="syncplay_title">SyncPlay</string>
+    <string name="syncplay_create">Create a new lobby</string>
+    <string name="syncplay_join">Open lobbies</string>
+    <string name="syncplay_no_groups">No open lobbies yet</string>
+    <string name="syncplay_leave">Leave lobby</string>
+    <string name="syncplay_hint">Start a film or an episode. Everyone in the group watches along. Play, pause and seeking are synchronised.</string>
+    <string name="syncplay_group_of">%1$s\'s lobby</string>
+    <string name="syncplay_joined">Joined group %1$s</string>
+    <string name="syncplay_user_joined">%1$s has joined</string>
+    <string name="syncplay_user_left">%1$s has left</string>
+    <string name="syncplay_error">SyncPlay: the server refused the request</string>
+    <string name="syncplay_subtitle">Everyone sees the same thing at the same time, also on other devices on this server.</string>
+    <string name="syncplay_create_hint">Then simply choose a film. Whoever joins watches along.</string>
+    <string name="syncplay_live">live</string>
+    <string name="syncplay_choose">Choose a film</string>
+    <string name="syncplay_state_playing">watching right now</string>
+    <string name="syncplay_state_waiting">waiting for a film</string>
+    <string name="syncplay_lobby_hint">You are in the lobby. Other users on this server can find your lobby under SyncPlay and join it. In the meantime you can look for a film and come back to the lobby at any time.</string>
+    <string name="syncplay_lobby_open">Lobby open</string>
+    <string name="syncplay_state_mine">your lobby · waiting for members</string>
+    <!-- Zufall -->
+    <string name="shuffle_title">Shuffle</string>
+    <string name="shuffle_subtitle">A random film or episode. Anything you have watched recently only comes up again much later.</string>
+    <string name="shuffle_movies">Films by genre</string>
+    <string name="shuffle_any_movie">Any film</string>
+    <string name="shuffle_series">Random episode</string>
+    <string name="shuffle_movies_button">Random films</string>
+    <string name="shuffle_first_episode">First episode of a series</string>
 </resources>

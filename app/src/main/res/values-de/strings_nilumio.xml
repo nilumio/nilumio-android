@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- nilumio: eigene Texte -->
+<!-- nilumio: alle eigenen Texte -->
 <resources>
+    <!-- Menü anpassen -->
     <string name="nav_menu_title">Menü anpassen</string>
     <string name="nav_menu_summary">Punkte der Seitenleiste wählen und sortieren</string>
     <string name="nav_menu_in">Im Menü</string>
@@ -12,4 +13,41 @@
     <string name="nav_menu_move_down">Nach unten</string>
     <string name="nav_menu_remove">Aus dem Menü nehmen</string>
     <string name="nav_menu_add">Ins Menü aufnehmen</string>
+    <!-- Startseite: Reihen nach Genre; Lizenzhinweis -->
+    <string name="license_info_origin">Basiert auf dem Open-Source-Projekt Wholphin von damontecres (GPL-2.0)</string>
+    <string name="by_genre">Nach Genre</string>
+    <string name="select_none">Keine auswählen</string>
+    <plurals name="add_genre_rows">
+        <item quantity="one">%d Reihe hinzufügen</item>
+        <item quantity="other">%d Reihen hinzufügen</item>
+    </plurals>
+    <!-- SyncPlay -->
+    <string name="syncplay_title">SyncPlay</string>
+    <string name="syncplay_create">Neue Lobby erstellen</string>
+    <string name="syncplay_join">Offene Lobbys</string>
+    <string name="syncplay_no_groups">Noch keine offenen Lobbys</string>
+    <string name="syncplay_leave">Lobby verlassen</string>
+    <string name="syncplay_hint">Starte einen Film oder eine Folge. Alle in der Gruppe schauen mit. Abspielen, Pause und Spulen laufen synchron.</string>
+    <string name="syncplay_group_of">%1$s Lobby</string>
+    <string name="syncplay_joined">Gruppe %1$s beigetreten</string>
+    <string name="syncplay_user_joined">%1$s ist beigetreten</string>
+    <string name="syncplay_user_left">%1$s hat die Gruppe verlassen</string>
+    <string name="syncplay_error">SyncPlay: Der Server hat die Anfrage abgelehnt</string>
+    <string name="syncplay_subtitle">Alle sehen dasselbe zur selben Zeit, auch an anderen Geräten dieses Servers.</string>
+    <string name="syncplay_create_hint">Danach einfach einen Film auswählen. Wer beitritt, schaut mit.</string>
+    <string name="syncplay_live">live</string>
+    <string name="syncplay_choose">Film auswählen</string>
+    <string name="syncplay_state_playing">schaut gerade</string>
+    <string name="syncplay_state_waiting">wartet auf einen Film</string>
+    <string name="syncplay_lobby_hint">Du bist in der Lobby. Andere Nutzer dieses Servers finden deine Lobby bei sich unter SyncPlay und können beitreten. Du kannst schon mal nach einem Film schauen und jederzeit in die Lobby zurückkommen.</string>
+    <string name="syncplay_lobby_open">Lobby offen</string>
+    <string name="syncplay_state_mine">deine Lobby · wartet auf Mitglieder</string>
+    <!-- Zufall -->
+    <string name="shuffle_title">Zufall</string>
+    <string name="shuffle_subtitle">Ein zufälliger Film oder eine zufällige Folge. Was du kürzlich gesehen hast, kommt erst viel später wieder dran.</string>
+    <string name="shuffle_movies">Filme nach Genre</string>
+    <string name="shuffle_any_movie">Irgendein Film</string>
+    <string name="shuffle_series">Zufällige Serienepisode</string>
+    <string name="shuffle_movies_button">Zufällige Filme</string>
+    <string name="shuffle_first_episode">Erste Episode einer Serie</string>
 </resources>

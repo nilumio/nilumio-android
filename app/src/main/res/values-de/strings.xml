@@ -719,11 +719,4 @@
     <string name="remove_from_playlist">Von Wiedergabeliste entfernen</string>
     <string name="login_credentials_expired">Anmeldeinformationen abgelaufen, bitte erneut anmelden</string>
     <string name="login_not_authorized">Du bist aktuell nicht berechtigt auf den Server zuzugreifen</string>
-    <string name="license_info_origin">Basiert auf dem Open-Source-Projekt Wholphin von damontecres (GPL-2.0)</string>
-    <string name="by_genre">Nach Genre</string>
-    <string name="select_none">Keine auswählen</string>
-    <plurals name="add_genre_rows">
-        <item quantity="one">%d Reihe hinzufügen</item>
-        <item quantity="other">%d Reihen hinzufügen</item>
-    </plurals>
 </resources>
