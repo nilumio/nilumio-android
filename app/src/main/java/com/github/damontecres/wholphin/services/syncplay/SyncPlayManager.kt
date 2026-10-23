@@ -1,5 +1,5 @@
 /*
- * nilumio – SyncPlay („Watch Party“), Copyright (C) 2026 nilumio, GPL-2.0.
+ * nilumio – SyncPlay („SyncPlay“), Copyright (C) 2026 nilumio, GPL-2.0.
  *
  * Herkunft (siehe THIRD_PARTY_NOTICES.md):
  * - Protokollablauf, Zeitabgleich (TimeSync: Messung mit kleinster Verzögerung aus den letzten 8,

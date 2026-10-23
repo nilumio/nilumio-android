@@ -1,5 +1,5 @@
 /*
- * nilumio – Seite „Watch Party“ (SyncPlay), Copyright (C) 2026 nilumio, GPL-2.0.
+ * nilumio – Seite „SyncPlay“ (SyncPlay), Copyright (C) 2026 nilumio, GPL-2.0.
  * Aufbau angelehnt an die Gruppenauswahl von jellyfin-web (src/plugins/syncPlay/ui/groupSelectionMenu.js, GPL-2.0).
  * Design „Lounge“: große Karte zum Erstellen, offene Gruppen als Karten mit Gesichtern.
  */

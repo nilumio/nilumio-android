@@ -16,7 +16,7 @@ To see every change in detail: `git diff 551501fa..HEAD` or `git log 551501fa..H
 | Look | New launcher icons, TV banner, colours, typography, navigation drawer icons with the nilumio gradient, focus border | `res/mipmap-*`, `ui/theme/*`, `ui/components/Nordlicht*.kt`, `ui/components/NilumioMark.kt`, `ui/nav/NavDrawer.kt`, `ui/cards/*` |
 | Start-up intro | Short intro video while the app loads | `ui/components/StartupIntro.kt`, `MainActivity.kt`, `res/raw/nilumio_intro.mp4`, `res/drawable-nodpi/nilumio_intro_final.png` |
 | Home rows by genre | Genre rows can be added to the home screen | `ui/main/HomePage.kt`, `ui/main/settings/HomeSettings*.kt`, `preferences/AppPreference.kt` |
-| Watch Party (SyncPlay) | Create or join SyncPlay groups, synchronised play, pause and seeking | `services/syncplay/*`, `ui/syncplay/SyncPlayPage.kt`, `ui/nav/*`, `ui/playback/PlaybackPage.kt`, `res/values*/strings_syncplay.xml` |
+| SyncPlay | Create or join SyncPlay groups, synchronised play, pause and seeking | `services/syncplay/*`, `ui/syncplay/SyncPlayPage.kt`, `ui/nav/*`, `ui/playback/PlaybackPage.kt`, `res/values*/strings_syncplay.xml` |
 | Translations | Name changes, fixed escaped ampersands, new nilumio strings | `res/values-*/strings.xml` |
 | Build | More memory for Gradle | `gradle.properties`, `gradle/libs.versions.toml` |
 | Store and docs | Play Store texts and graphics, privacy policy, artwork sources, fork documentation | `store/`, `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `THIRD_PARTY_NOTICES.md`, `docs/`, `.github/ISSUE_TEMPLATE/` |

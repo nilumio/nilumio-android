@@ -134,7 +134,7 @@ object NordlichtIcons {
 
     val NowPlaying = icon("nl_nowplaying", "M8,5.5v13l10,-6.5z" to 1f)
 
-    /** Watch Party (SyncPlay): zwei Personen. */
+    /** SyncPlay: zwei Personen. */
     val WatchTogether =
         icon(
             "nl_watchtogether",

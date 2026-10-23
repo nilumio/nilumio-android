@@ -65,7 +65,7 @@ object NilumioColors {
 
     private val avatars = listOf(Mint, Sky, Lilac, Gold)
 
-    /** Feste Farbe je Person, gleich in Benutzerauswahl und Watch Party. */
+    /** Feste Farbe je Person, gleich in Benutzerauswahl und SyncPlay. */
     fun avatar(name: String?): Color = avatars[Math.floorMod((name ?: "").lowercase().hashCode(), avatars.size)]
 
     fun onAvatar(color: Color): Color = if (color == Lilac) Color.White else Night

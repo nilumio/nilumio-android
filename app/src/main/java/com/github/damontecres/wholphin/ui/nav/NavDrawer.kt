@@ -522,7 +522,7 @@ fun NavDrawer(
                                 )
                             }
                         }
-                        // nilumio: SyncPlay („Watch Party“)
+                        // nilumio: SyncPlay („SyncPlay“)
                         item {
                             IconNavItem(
                                 text = stringResource(R.string.syncplay_title),

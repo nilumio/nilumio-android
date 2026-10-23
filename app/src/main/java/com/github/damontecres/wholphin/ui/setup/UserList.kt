@@ -194,7 +194,7 @@ private fun UserIconCard(
     modifier: Modifier = Modifier,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    // nilumio: feste Personenfarbe wie in Watch Party
+    // nilumio: feste Personenfarbe wie in SyncPlay
     val userColor = NilumioColors.avatar(user.user.name ?: user.user.id.toString())
 
     // Track image loading errors

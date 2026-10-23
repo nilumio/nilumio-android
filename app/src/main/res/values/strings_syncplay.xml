@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- nilumio: SyncPlay ("Watch Party") -->
+<!-- nilumio: SyncPlay ("SyncPlay") -->
 <resources>
-    <string name="syncplay_title">Watch Party</string>
+    <string name="syncplay_title">SyncPlay</string>
     <string name="syncplay_create">Start a new group</string>
     <string name="syncplay_join">Open groups</string>
     <string name="syncplay_no_groups">No groups on the server yet</string>
@@ -13,7 +13,7 @@
     <string name="syncplay_joined">Joined group %1$s</string>
     <string name="syncplay_user_joined">%1$s has joined</string>
     <string name="syncplay_user_left">%1$s has left</string>
-    <string name="syncplay_error">Watch Party: the server refused the request</string>
+    <string name="syncplay_error">SyncPlay: the server refused the request</string>
     <string name="syncplay_subtitle">Everyone sees the same thing at the same time, on other devices too.</string>
     <string name="syncplay_create_hint">Then simply choose a film. Whoever joins watches along.</string>
     <string name="syncplay_live">live</string>
@@ -21,7 +21,7 @@
     <string name="syncplay_choose">Choose a film</string>
     <string name="syncplay_state_playing">watching right now</string>
     <string name="syncplay_state_waiting">waiting for a film</string>
-    <string name="syncplay_lobby_hint">You are in the lobby. Other users on this server can find your lobby under Watch Party and join it. In the meantime you can look for a film and come back to the lobby later.</string>
+    <string name="syncplay_lobby_hint">You are in the lobby. Other users on this server can find your lobby under SyncPlay and join it. In the meantime you can look for a film and come back to the lobby later.</string>
     <string name="syncplay_lobby_open">Lobby open</string>
     <string name="syncplay_state_mine">your lobby · waiting for members</string>
 </resources>

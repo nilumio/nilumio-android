@@ -1,7 +1,7 @@
 <!-- nilumio: start of fork section. Everything below the end marker is the original Wholphin README. -->
 # nilumio for Android TV
 
-> **Kurz auf Deutsch:** nilumio ist eine Android-TV-App für deinen eigenen Jellyfin-Server. Sie ist ein Fork von Wholphin und steht wie Wholphin unter der GPL-2.0. Neu sind unter anderem eigenes Design, Start-Intro, Startseiten-Reihen nach Genre, Watch Party (gemeinsam schauen über SyncPlay). Alle Änderungen gegenüber Wholphin stehen in [NILUMIO_CHANGES.md](NILUMIO_CHANGES.md). Kontakt: webmaster@nilumio.com
+> **Kurz auf Deutsch:** nilumio ist eine Android-TV-App für deinen eigenen Jellyfin-Server. Sie ist ein Fork von Wholphin und steht wie Wholphin unter der GPL-2.0. Neu sind unter anderem eigenes Design, Start-Intro, Startseiten-Reihen nach Genre, SyncPlay (gemeinsam schauen). Alle Änderungen gegenüber Wholphin stehen in [NILUMIO_CHANGES.md](NILUMIO_CHANGES.md). Kontakt: webmaster@nilumio.com
 
 **nilumio** is an Android TV app for your own [Jellyfin](https://jellyfin.org) media server: a calm, dark interface with large artwork, built for the remote control. It is a fork of [Wholphin](https://github.com/damontecres/Wholphin) by damontecres and keeps Wholphin's playback engines (ExoPlayer and MPV), home screen customisation and settings.
 
@@ -9,7 +9,7 @@ What nilumio adds on top of Wholphin:
 
 - its own name, logo, colours and typography, and a short start-up intro
 - home screen rows by genre
-- *Watch Party*: synchronised playback with Jellyfin SyncPlay groups
+- *SyncPlay*: synchronised playback with Jellyfin SyncPlay groups
 - wording fixes in the German and other translations
 
 nilumio is not an official Jellyfin or Wholphin product. Website: [nilumio.com](https://nilumio.com)
@@ -22,7 +22,7 @@ nilumio is not an official Jellyfin or Wholphin product. Website: [nilumio.com](
   <img alt="nilumio feature graphic" src="store/play/feature-graphic-1024x500-en.png" width="640"/>
 </p>
 
-| Home | Watch Party |
+| Home | SyncPlay |
 |---|---|
 | *(screenshot to follow)* | *(screenshot to follow)* |
 

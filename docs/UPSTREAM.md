@@ -33,7 +33,7 @@ likely hot spots are:
 |---|---|---|
 | App identity and signing | `app/build.gradle.kts`, `app/src/main/AndroidManifest.xml`, `app/src/debug/res/values/strings.xml` | application ID `com.held0.nilumio`, version code from the commit count, signing block, icons |
 | Theme | `ui/theme/Type.kt`, `ui/theme/colors/PurpleThemeColors.kt`, `res/values/themes.xml` | nilumio colours and typography |
-| Navigation and home | `ui/nav/*`, `ui/main/HomePage.kt`, `ui/main/settings/HomeSettings*` | *Watch Party* entry, genre rows |
+| Navigation and home | `ui/nav/*`, `ui/main/HomePage.kt`, `ui/main/settings/HomeSettings*` | *SyncPlay* entry, genre rows |
 | Texts | `res/values*/strings.xml` | the app name and nilumio strings; take everything else from upstream |
 | Docs | `README.md`, `CONTRIBUTING.md` | only the block between the `nilumio:` markers at the top |
 | Issue templates | `.github/ISSUE_TEMPLATE/` | ours (upstream templates were removed on purpose) |
