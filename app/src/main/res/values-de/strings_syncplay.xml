@@ -24,4 +24,10 @@
     <string name="syncplay_lobby_hint">Du bist in der Lobby. Andere Nutzer dieses Servers finden deine Lobby bei sich unter SyncPlay und können beitreten. Du kannst schon mal nach einem Film schauen und später in die Lobby zurückkommen.</string>
     <string name="syncplay_lobby_open">Lobby offen</string>
     <string name="syncplay_state_mine">deine Lobby · wartet auf Mitglieder</string>
+    <string name="shuffle_title">Zufall</string>
+    <string name="shuffle_subtitle">Ein zufälliger Film oder eine zufällige Folge. Was du kürzlich gesehen hast, kommt erst viel später wieder dran.</string>
+    <string name="shuffle_any">Überrasch mich</string>
+    <string name="shuffle_movies">Filme nach Genre</string>
+    <string name="shuffle_any_movie">Irgendein Film</string>
+    <string name="shuffle_series">Folge einer Serie</string>
 </resources>

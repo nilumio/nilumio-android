@@ -522,6 +522,16 @@ fun NavDrawer(
                                 )
                             }
                         }
+                        // nilumio: Zufall
+                        item {
+                            IconNavItem(
+                                text = stringResource(R.string.shuffle_title),
+                                icon = NordlichtIcons.Dice,
+                                selected = false,
+                                drawerOpen = isOpen,
+                                onClick = { viewModel.navigationManager.navigateToFromDrawer(Destination.Shuffle) },
+                            )
+                        }
                         // nilumio: SyncPlay („SyncPlay“)
                         item {
                             IconNavItem(

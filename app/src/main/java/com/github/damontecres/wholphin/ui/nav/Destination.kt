@@ -152,6 +152,10 @@ sealed class Destination(
     @Serializable
     data object SyncPlay : Destination(false)
 
+    // nilumio: Zufall
+    @Serializable
+    data object Shuffle : Destination(false)
+
     @Serializable
     data class DiscoveredItem(
         val item: DiscoverItem,

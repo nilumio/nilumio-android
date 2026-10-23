@@ -134,6 +134,15 @@ object NordlichtIcons {
 
     val NowPlaying = icon("nl_nowplaying", "M8,5.5v13l10,-6.5z" to 1f)
 
+    /** Zufall: Würfel mit fünf Augen. */
+    val Dice =
+        icon(
+            "nl_dice",
+            "M6.5,4h11a2.5,2.5 0 0,1 2.5,2.5v11a2.5,2.5 0 0,1 -2.5,2.5h-11a2.5,2.5 0 0,1 -2.5,-2.5v-11a2.5,2.5 0 0,1 2.5,-2.5z" to 1f,
+            "M8.6,8.6h0.01M15.4,8.6h0.01M12,12h0.01M8.6,15.4h0.01M15.4,15.4h0.01" to 1f,
+            strokeWidth = 2.2f,
+        )
+
     /** SyncPlay: zwei Personen. */
     val WatchTogether =
         icon(

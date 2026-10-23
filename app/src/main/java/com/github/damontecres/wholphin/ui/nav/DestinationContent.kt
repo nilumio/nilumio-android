@@ -364,6 +364,12 @@ fun DestinationContent(
             com.github.damontecres.wholphin.ui.syncplay.SyncPlayPage(modifier)
         }
 
+        // nilumio: Zufall
+        Destination.Shuffle -> {
+            LaunchedEffect(Unit) { onClearBackdrop.invoke() }
+            com.github.damontecres.wholphin.ui.shuffle.ShufflePage(modifier)
+        }
+
         Destination.License -> {
             LicenseInfo(modifier)
         }
