@@ -1,8 +1,0 @@
-/* Outfit (SIL Open Font License 1.1, siehe fonts/OFL.txt) */
-@font-face {
-  font-family: 'Outfit';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url("https://cdn.jsdelivr.net/gh/nilumio/nilumio-android@main/web/fonts/Outfit.woff2") format("woff2");
-}
