@@ -3,6 +3,7 @@ package com.github.damontecres.wholphin.ui.theme.colors
 import androidx.compose.ui.graphics.Color
 import androidx.tv.material3.darkColorScheme
 import androidx.tv.material3.lightColorScheme
+import com.github.damontecres.wholphin.ui.components.Nilumio
 import com.github.damontecres.wholphin.ui.theme.ThemeColors
 
 val PurpleThemeColors =
@@ -180,6 +181,6 @@ val PurpleThemeColors =
                 inverseSurface = inverseSurfaceDark,
                 inverseOnSurface = inverseOnSurfaceDark,
                 inversePrimary = inversePrimaryDark,
-                border = Color(0xFF22ABD8).copy(alpha = .62f),
+                border = Nilumio.FocusRing, // nilumio
             )
     }

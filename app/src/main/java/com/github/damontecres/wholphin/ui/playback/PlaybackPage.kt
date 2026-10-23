@@ -44,8 +44,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.key.onKeyEvent
@@ -76,12 +76,14 @@ import com.github.damontecres.wholphin.preferences.DpadSeekMode
 import com.github.damontecres.wholphin.preferences.PlayerBackend
 import com.github.damontecres.wholphin.preferences.UserPreferences
 import com.github.damontecres.wholphin.preferences.skipBackOnResume
+import com.github.damontecres.wholphin.services.syncplay.rememberSyncPlayPlayer
 import com.github.damontecres.wholphin.ui.AppColors
 import com.github.damontecres.wholphin.ui.AspectRatios
 import com.github.damontecres.wholphin.ui.LocalImageUrlService
 import com.github.damontecres.wholphin.ui.components.BasicDialog
 import com.github.damontecres.wholphin.ui.components.ErrorMessage
 import com.github.damontecres.wholphin.ui.components.LoadingPage
+import com.github.damontecres.wholphin.ui.components.Nilumio
 import com.github.damontecres.wholphin.ui.nav.Destination
 import com.github.damontecres.wholphin.ui.playback.overlay.DpadSeekOverlay
 import com.github.damontecres.wholphin.ui.playback.overlay.PauseIndicator
@@ -161,7 +163,7 @@ fun PlaybackPageContent(
 ) {
     val state by viewModel.state.collectAsState()
     val subtitleSearchState by viewModel.subtitleSearchState.collectAsState()
-    val player = com.github.damontecres.wholphin.services.syncplay.rememberSyncPlayPlayer(playerInstance.player) // nilumio: SyncPlay
+    val player = rememberSyncPlayPlayer(playerInstance.player) // nilumio: SyncPlay
     val playerBackend = playerInstance.backend
 
     val prefs = preferences.appPreferences.playbackPreferences
@@ -444,13 +446,7 @@ fun PlaybackPageContent(
                                         .fillMaxWidth(percent)
                                         .height(6.dp)
                                         .background(
-                                            Brush.horizontalGradient(
-                                                listOf(
-                                                    com.github.damontecres.wholphin.ui.components.NilumioColors.Mint,
-                                                    com.github.damontecres.wholphin.ui.components.NilumioColors.Sky,
-                                                    com.github.damontecres.wholphin.ui.components.NilumioColors.Lilac,
-                                                ),
-                                            ),
+                                            Brush.horizontalGradient(Nilumio.Gradient),
                                         ),
                             )
                         }

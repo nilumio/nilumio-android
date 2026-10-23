@@ -50,7 +50,9 @@ import com.github.damontecres.wholphin.ui.preferences.subtitle.SubtitleStylePage
 import com.github.damontecres.wholphin.ui.preferences.user.UserProfilePreferencesPage
 import com.github.damontecres.wholphin.ui.search.SearchPage
 import com.github.damontecres.wholphin.ui.setup.InstallUpdatePage
+import com.github.damontecres.wholphin.ui.shuffle.ShufflePage
 import com.github.damontecres.wholphin.ui.slideshow.SlideshowPage
+import com.github.damontecres.wholphin.ui.syncplay.SyncPlayPage
 import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.CollectionType
 import timber.log.Timber
@@ -361,13 +363,13 @@ fun DestinationContent(
         // nilumio: SyncPlay
         Destination.SyncPlay -> {
             LaunchedEffect(Unit) { onClearBackdrop.invoke() }
-            com.github.damontecres.wholphin.ui.syncplay.SyncPlayPage(modifier)
+            SyncPlayPage(modifier)
         }
 
         // nilumio: Zufall
         Destination.Shuffle -> {
             LaunchedEffect(Unit) { onClearBackdrop.invoke() }
-            com.github.damontecres.wholphin.ui.shuffle.ShufflePage(modifier)
+            ShufflePage(modifier)
         }
 
         Destination.License -> {

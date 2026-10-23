@@ -30,6 +30,8 @@ import coil3.request.crossfade
 import com.github.damontecres.wholphin.ui.AspectRatios
 import com.github.damontecres.wholphin.ui.PreviewTvSpec
 import com.github.damontecres.wholphin.ui.components.Genre
+import com.github.damontecres.wholphin.ui.components.nilumioCardBorder
+import com.github.damontecres.wholphin.ui.components.nilumioCardGlow
 import com.github.damontecres.wholphin.ui.setup.rememberIdColor
 import com.github.damontecres.wholphin.ui.theme.WholphinTheme
 import java.util.UUID
@@ -63,8 +65,8 @@ fun GenreCard(
 ) {
     val background = rememberIdColor(genreId).copy(alpha = .6f)
     Card(
-        border = com.github.damontecres.wholphin.ui.components.nilumioCardBorder(), // nilumio
-        glow = com.github.damontecres.wholphin.ui.components.nilumioCardGlow(),
+        border = nilumioCardBorder(),
+        glow = nilumioCardGlow(),
         modifier = modifier,
         onClick = onClick,
         onLongClick = onLongClick,

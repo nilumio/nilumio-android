@@ -1,9 +1,5 @@
 package com.github.damontecres.wholphin.ui.nav
 
-import com.github.damontecres.wholphin.ui.components.NordlichtColors
-import com.github.damontecres.wholphin.ui.components.NordlichtIcons
-import com.github.damontecres.wholphin.ui.components.nordlichtDrawerItemColors
-import com.github.damontecres.wholphin.ui.components.nordlichtGradient
 import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -83,11 +79,12 @@ import com.github.damontecres.wholphin.services.NavigationManager
 import com.github.damontecres.wholphin.services.SetupDestination
 import com.github.damontecres.wholphin.services.SetupNavigationManager
 import com.github.damontecres.wholphin.ui.FontAwesome
+import com.github.damontecres.wholphin.ui.components.NilumioIcons
+import com.github.damontecres.wholphin.ui.components.NilumioMark
 import com.github.damontecres.wholphin.ui.components.TimeDisplay
 import com.github.damontecres.wholphin.ui.ifElse
 import com.github.damontecres.wholphin.ui.launchDefault
 import com.github.damontecres.wholphin.ui.preferences.PreferenceScreenOption
-import com.github.damontecres.wholphin.ui.components.NilumioMark
 import com.github.damontecres.wholphin.ui.spacedByWithFooter
 import com.github.damontecres.wholphin.ui.theme.LocalTheme
 import com.github.damontecres.wholphin.ui.toServerString
@@ -142,18 +139,13 @@ class NavDrawerViewModel
                     )
                 }
 
-                // nilumio: Zufall und SyncPlay als normale Menüpunkte
-                NavDrawerItem.Shuffle -> {
-                    setIndex(index)
-                    navigationManager.navigateToFromDrawer(Destination.Shuffle)
-                }
-
-                NavDrawerItem.SyncPlay -> {
-                    setIndex(index)
-                    navigationManager.navigateToFromDrawer(Destination.SyncPlay)
-                }
-
                 is ServerNavDrawerItem -> {
+                    setIndex(index)
+                    navigationManager.navigateToFromDrawer(item.destination)
+                }
+
+                // nilumio: Zufall und SyncPlay als normale Menüpunkte
+                is NilumioNavDrawerItem -> {
                     setIndex(index)
                     navigationManager.navigateToFromDrawer(item.destination)
                 }
@@ -182,10 +174,14 @@ class NavDrawerViewModel
                     }.map {
                         when (it) {
                             is ServerNavDrawerItem -> it.destination
+
                             is NavDrawerItem.Favorites -> Destination.Favorites
+
                             is NavDrawerItem.Discover -> Destination.Discover
-                            is NavDrawerItem.Shuffle -> Destination.Shuffle // nilumio
-                            is NavDrawerItem.SyncPlay -> Destination.SyncPlay // nilumio
+
+                            is NilumioNavDrawerItem -> it.destination
+
+                            // nilumio
                             else -> null
                         }
                     }
@@ -259,22 +255,6 @@ sealed interface NavDrawerItem {
             get() = "a_discover"
 
         override fun name(context: Context): String = context.getString(R.string.discover)
-    }
-
-    // nilumio: Zufall
-    object Shuffle : NavDrawerItem {
-        override val id: String
-            get() = "n_shuffle"
-
-        override fun name(context: Context): String = context.getString(R.string.shuffle_title)
-    }
-
-    // nilumio: SyncPlay
-    object SyncPlay : NavDrawerItem {
-        override val id: String
-            get() = "n_syncplay"
-
-        override fun name(context: Context): String = context.getString(R.string.syncplay_title)
     }
 }
 
@@ -398,7 +378,7 @@ fun NavDrawer(
                         IconNavItem(
                             text = stringResource(R.string.now_playing),
                             subtext = serviceState.nowPlayingTitle,
-                            icon = NordlichtIcons.NowPlaying,
+                            icon = NilumioIcons.NowPlaying,
                             selected = selectedIndex == NOW_PLAYING_INDEX,
                             drawerOpen = isOpen,
                             interactionSource = interactionSource,
@@ -436,7 +416,7 @@ fun NavDrawer(
                             val interactionSource = remember { MutableInteractionSource() }
                             IconNavItem(
                                 text = stringResource(R.string.search),
-                                icon = NordlichtIcons.Search,
+                                icon = NilumioIcons.Search,
                                 selected = selectedIndex == SEARCH_INDEX,
                                 drawerOpen = isOpen,
                                 interactionSource = interactionSource,
@@ -457,7 +437,7 @@ fun NavDrawer(
                             val interactionSource = remember { MutableInteractionSource() }
                             IconNavItem(
                                 text = stringResource(R.string.home),
-                                icon = NordlichtIcons.Home,
+                                icon = NilumioIcons.Home,
                                 selected = selectedIndex == HOME_INDEX,
                                 drawerOpen = isOpen,
                                 interactionSource = interactionSource,
@@ -555,7 +535,7 @@ fun NavDrawer(
                             val interactionSource = remember { MutableInteractionSource() }
                             IconNavItem(
                                 text = stringResource(R.string.settings),
-                                icon = NordlichtIcons.Settings,
+                                icon = NilumioIcons.Settings,
                                 selected = false,
                                 drawerOpen = isOpen,
                                 interactionSource = interactionSource,
@@ -610,7 +590,7 @@ fun NavigationDrawerScope.ProfileIcon(
         modifier = modifier,
         selected = false,
         onClick = onClick,
-        colors = nordlichtDrawerItemColors(),
+        colors = nilumioDrawerItemColors(), // nilumio
         leadingContent = {
             NilumioMark(
                 alpha = if (drawerOpen) 1f else .7f,
@@ -649,16 +629,9 @@ fun NavigationDrawerScope.IconNavItem(
         modifier = modifier,
         selected = false,
         onClick = onClick,
-        colors = nordlichtDrawerItemColors(),
+        colors = nilumioDrawerItemColors(), // nilumio
         leadingContent = {
-            val active = selected || focused
-            val color = if (active) Color.White else navItemColor(selected, focused, drawerOpen)
-            Icon(
-                icon,
-                contentDescription = null,
-                tint = color,
-                modifier = Modifier.size(DrawerIconSize).nordlichtGradient(active),
-            )
+            NilumioDrawerIcon(icon, selected, focused, drawerOpen) // nilumio
         },
         supportingContent =
             subtext?.let {
@@ -691,44 +664,15 @@ fun NavigationDrawerScope.NavItem(
     containerColor: Color = Color.Unspecified,
 ) {
     val context = LocalContext.current
-    val icon =
-        remember(library) {
-            when (library) {
-                NavDrawerItem.Favorites -> NordlichtIcons.Favorites
-                NavDrawerItem.More -> NordlichtIcons.More
-                NavDrawerItem.Discover -> NordlichtIcons.Discover
-                NavDrawerItem.Shuffle -> NordlichtIcons.Dice // nilumio
-                NavDrawerItem.SyncPlay -> NordlichtIcons.WatchTogether // nilumio
-                is ServerNavDrawerItem -> {
-                    when (library.type) {
-                        CollectionType.MOVIES -> NordlichtIcons.Movies
-                        CollectionType.TVSHOWS -> NordlichtIcons.Series
-                        CollectionType.HOMEVIDEOS -> NordlichtIcons.HomeVideos
-                        CollectionType.LIVETV -> NordlichtIcons.LiveTv
-                        CollectionType.MUSIC -> NordlichtIcons.Music
-                        CollectionType.BOXSETS -> NordlichtIcons.Collections
-                        CollectionType.PLAYLISTS -> NordlichtIcons.Playlists
-                        else -> NordlichtIcons.Movies
-                    }
-                }
-            }
-        }
     val focused by interactionSource.collectIsFocusedAsState()
     NavigationDrawerItem(
         modifier = modifier,
         selected = false,
         onClick = onClick,
-        colors = nordlichtDrawerItemColors(containerColor),
+        colors = nilumioDrawerItemColors(containerColor), // nilumio
         leadingContent = {
-            val active = selected || focused
-            val color = if (active) Color.White else navItemColor(selected, focused, drawerOpen)
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = color,
-                    modifier = Modifier.size(DrawerIconSize).nordlichtGradient(active),
-                )
+                NilumioDrawerIcon(library.nilumioIcon(), selected, focused, drawerOpen) // nilumio
             }
         },
         trailingContent =
@@ -795,7 +739,7 @@ fun navItemColor(
             }
 
             selected -> {
-                if (theme == AppThemeColors.PURPLE) NordlichtColors.Green else MaterialTheme.colorScheme.border
+                MaterialTheme.colorScheme.border
             }
 
             focused -> {

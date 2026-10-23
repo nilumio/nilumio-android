@@ -50,13 +50,13 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
 import com.github.damontecres.wholphin.R
-import com.github.damontecres.wholphin.ui.components.NilumioColors
 import com.github.damontecres.wholphin.data.model.JellyfinUser
 import com.github.damontecres.wholphin.ui.Cards
 import com.github.damontecres.wholphin.ui.FontAwesome
 import com.github.damontecres.wholphin.ui.PreviewTvSpec
 import com.github.damontecres.wholphin.ui.components.DialogItem
 import com.github.damontecres.wholphin.ui.components.DialogPopup
+import com.github.damontecres.wholphin.ui.components.Nilumio
 import com.github.damontecres.wholphin.ui.isNotNullOrBlank
 import com.github.damontecres.wholphin.ui.theme.WholphinTheme
 import com.github.damontecres.wholphin.ui.toServerString
@@ -195,7 +195,7 @@ private fun UserIconCard(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     // nilumio: feste Personenfarbe wie in SyncPlay
-    val userColor = NilumioColors.avatar(user.user.name ?: user.user.id.toString())
+    val userColor = Nilumio.avatar(user.user.name ?: user.user.id.toString())
 
     // Track image loading errors
     var imageError by remember { mutableStateOf(false) }
@@ -268,7 +268,7 @@ private fun UserIconCard(
                             MaterialTheme.typography.displayLarge.copy(
                                 fontWeight = FontWeight.Bold,
                             ),
-                        color = NilumioColors.onAvatar(userColor),
+                        color = Nilumio.onAvatar(userColor),
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -301,7 +301,7 @@ fun UserIconCardImage(
     alpha: Float = 1f,
 ) {
     var imageError by remember { mutableStateOf(false) }
-    val userColor = NilumioColors.avatar(name ?: id.toString()).copy(alpha = alpha) // nilumio
+    val userColor = rememberIdColor(id, alpha)
     Box(
         modifier =
             modifier.background(
@@ -331,7 +331,7 @@ fun UserIconCardImage(
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                color = NilumioColors.onAvatar(userColor.copy(alpha = 1f)),
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
             )
         }

@@ -1,6 +1,5 @@
 package com.github.damontecres.wholphin.ui.main
 
-import com.github.damontecres.wholphin.ui.components.StartupSignal
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.gestures.LocalBringIntoViewSpec
@@ -71,6 +70,7 @@ import com.github.damontecres.wholphin.ui.components.FocusableItemRow
 import com.github.damontecres.wholphin.ui.components.HeaderUtils
 import com.github.damontecres.wholphin.ui.components.LoadingPage
 import com.github.damontecres.wholphin.ui.components.QuickDetails
+import com.github.damontecres.wholphin.ui.components.StartupSignal
 import com.github.damontecres.wholphin.ui.components.TitleOrLogo
 import com.github.damontecres.wholphin.ui.components.rememberLogoUrl
 import com.github.damontecres.wholphin.ui.data.AddPlaylistViewModel

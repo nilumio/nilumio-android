@@ -30,6 +30,8 @@ import androidx.tv.material3.Text
 import com.github.damontecres.wholphin.data.model.BaseItem
 import com.github.damontecres.wholphin.ui.AspectRatios
 import com.github.damontecres.wholphin.ui.components.ViewOptionImageType
+import com.github.damontecres.wholphin.ui.components.nilumioCardBorder
+import com.github.damontecres.wholphin.ui.components.nilumioCardGlow
 import com.github.damontecres.wholphin.ui.enableMarquee
 import kotlinx.coroutines.delay
 
@@ -73,8 +75,8 @@ fun GridCard(
         modifier = modifier,
     ) {
         Card(
-            border = com.github.damontecres.wholphin.ui.components.nilumioCardBorder(), // nilumio
-            glow = com.github.damontecres.wholphin.ui.components.nilumioCardGlow(),
+            border = nilumioCardBorder(),
+            glow = nilumioCardGlow(),
             modifier = Modifier.fillMaxWidth(),
             onClick = onClick,
             onLongClick = onLongClick,

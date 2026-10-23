@@ -1,5 +1,5 @@
 /*
- * nilumio – SyncPlay („SyncPlay“), Copyright (C) 2026 nilumio, GPL-2.0.
+ * nilumio – SyncPlay, Copyright (C) 2026 nilumio, GPL-2.0.
  *
  * Befehlsplanung (scheduleUnpause/schedulePause/scheduleSeek, Bereit-Meldung nach Laden/Seek/Puffern)
  * portiert aus jellyfin-web src/plugins/syncPlay/core/PlaybackCore.js und QueueCore.js
@@ -20,6 +20,7 @@ import androidx.media3.common.ForwardingSimpleBasePlayer
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import com.github.damontecres.wholphin.services.NavigationManager
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,12 +38,22 @@ import java.util.UUID
 import javax.inject.Inject
 import kotlin.math.abs
 
+/** Abweichung, ab der vor dem Abspielen bzw. nach dem Pausieren auf die Gruppenposition gesprungen wird. */
+private const val UNPAUSE_TOLERANCE_MS = 400L
+private const val PAUSE_TOLERANCE_MS = 50L
+
+/** So lange nach einem Serverbefehl gilt Puffern als Folge des Befehls, nicht als Stocken. */
+private const val BUFFERING_GRACE_MS = 2_000L
+
+/** Nach einem Server-Seek „bereit“ melden, falls der Player gar nicht erst puffert. */
+private const val SEEK_READY_FALLBACK_MS = 300L
+
 @HiltViewModel
 class SyncPlayViewModel
     @Inject
     constructor(
         val manager: SyncPlayManager,
-        val navigationManager: com.github.damontecres.wholphin.services.NavigationManager,
+        val navigationManager: NavigationManager,
     ) : ViewModel()
 
 /**
@@ -149,16 +160,16 @@ class SyncPlayPlayer(
         commandJob =
             scope.launch {
                 val waitMs = (manager.serverToLocalMs(command.`when`) - System.currentTimeMillis()).coerceAtLeast(0)
-                val positionMs = (command.positionTicks ?: 0) / 10_000
-                ignoreBufferingUntil = System.currentTimeMillis() + waitMs + 2_000
+                val positionMs = (command.positionTicks ?: 0) / TICKS_PER_MS
+                ignoreBufferingUntil = System.currentTimeMillis() + waitMs + BUFFERING_GRACE_MS
                 when (command.command) {
                     SendCommandType.UNPAUSE -> {
                         pendingReady = false
                         if (waitMs > 0) {
-                            seekIfOff(positionMs, 400)
+                            seekIfOff(positionMs, UNPAUSE_TOLERANCE_MS)
                             delay(waitMs)
                         } else {
-                            seekIfOff(manager.estimatePositionMs(command.positionTicks ?: 0, command.`when`), 400)
+                            seekIfOff(manager.estimatePositionMs(command.positionTicks ?: 0, command.`when`), UNPAUSE_TOLERANCE_MS)
                         }
                         raw.play()
                     }
@@ -167,7 +178,7 @@ class SyncPlayPlayer(
                         pendingReady = false
                         delay(waitMs)
                         raw.pause()
-                        seekIfOff(positionMs, 50)
+                        seekIfOff(positionMs, PAUSE_TOLERANCE_MS)
                     }
 
                     SendCommandType.SEEK -> {
@@ -176,7 +187,7 @@ class SyncPlayPlayer(
                         raw.seekTo(positionMs)
                         pendingReady = true
                         pauseWhenReady = true
-                        delay(300) // falls der Player gar nicht erst puffert
+                        delay(SEEK_READY_FALLBACK_MS)
                         sendReadyIfPending()
                     }
 

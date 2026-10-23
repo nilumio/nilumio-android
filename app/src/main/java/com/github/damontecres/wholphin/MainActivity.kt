@@ -1,11 +1,5 @@
 package com.github.damontecres.wholphin
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.core.tween
-import androidx.compose.runtime.saveable.rememberSaveable
-import com.github.damontecres.wholphin.ui.components.StartupIntro
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -17,6 +11,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -65,6 +64,7 @@ import com.github.damontecres.wholphin.ui.CoilConfig
 import com.github.damontecres.wholphin.ui.LocalImageUrlService
 import com.github.damontecres.wholphin.ui.collectLatestIn
 import com.github.damontecres.wholphin.ui.components.LoadingPage
+import com.github.damontecres.wholphin.ui.components.StartupIntro
 import com.github.damontecres.wholphin.ui.launchDefault
 import com.github.damontecres.wholphin.ui.nav.Destination
 import com.github.damontecres.wholphin.ui.playback.PlayExternalViewModel

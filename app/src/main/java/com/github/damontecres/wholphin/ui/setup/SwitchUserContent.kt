@@ -1,6 +1,5 @@
 package com.github.damontecres.wholphin.ui.setup
 
-import com.github.damontecres.wholphin.ui.components.StartupSignal
 import android.widget.Toast
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
@@ -47,6 +46,7 @@ import com.github.damontecres.wholphin.ui.components.CircularProgress
 import com.github.damontecres.wholphin.ui.components.EditTextBox
 import com.github.damontecres.wholphin.ui.components.ErrorMessage
 import com.github.damontecres.wholphin.ui.components.LoadingPage
+import com.github.damontecres.wholphin.ui.components.StartupSignal
 import com.github.damontecres.wholphin.ui.components.TextButton
 import com.github.damontecres.wholphin.ui.dimAndBlur
 import com.github.damontecres.wholphin.ui.isNotNullOrBlank

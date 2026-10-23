@@ -1,15 +1,6 @@
 package com.github.damontecres.wholphin.ui.components
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.CompositingStrategy
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.tv.material3.NavigationDrawerItemColors
-import androidx.tv.material3.NavigationDrawerItemDefaults
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
@@ -18,11 +9,12 @@ import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.unit.dp
 
 /**
- * Feine Strich-Icons für die Seitenleiste (24er-Raster, dünne runde Linien).
- * Jede Zeile ist ein SVG-Pfad mit optionaler Deckkraft; eingefärbt wird über den Icon-Tint.
+ * Feine Strich-Icons für Seitenleiste und eigene Seiten (24er-Raster, runde Linien).
+ * Jede Zeile ist ein SVG-Pfad mit Deckkraft; eingefärbt wird über den Icon-Tint.
  */
-object NordlichtIcons {
+object NilumioIcons {
     private const val STROKE = 1.3f
+    private const val STROKE_BOLD = 2.2f
 
     private fun icon(
         name: String,
@@ -30,7 +22,7 @@ object NordlichtIcons {
         strokeWidth: Float = STROKE,
     ): ImageVector =
         ImageVector
-            .Builder(name = name, defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 24f, viewportHeight = 24f)
+            .Builder(name, defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 24f, viewportHeight = 24f)
             .apply {
                 paths.forEach { (d, alpha) ->
                     addPath(
@@ -140,7 +132,7 @@ object NordlichtIcons {
             "nl_leave",
             "M14,4h-7.5a1.5,1.5 0 0,0 -1.5,1.5v13a1.5,1.5 0 0,0 1.5,1.5h7.5" to 1f,
             "M11,12h9.5M17.5,8.5l3.5,3.5l-3.5,3.5" to 1f,
-            strokeWidth = 2.2f,
+            strokeWidth = STROKE_BOLD,
         )
 
     /** Zufall: Würfel mit fünf Augen. */
@@ -149,14 +141,14 @@ object NordlichtIcons {
             "nl_dice",
             "M6.5,4h11a2.5,2.5 0 0,1 2.5,2.5v11a2.5,2.5 0 0,1 -2.5,2.5h-11a2.5,2.5 0 0,1 -2.5,-2.5v-11a2.5,2.5 0 0,1 2.5,-2.5z" to 1f,
             "M8.6,8.6h0.01M15.4,8.6h0.01M12,12h0.01M8.6,15.4h0.01M15.4,15.4h0.01" to 1f,
-            strokeWidth = 2.2f,
+            strokeWidth = STROKE_BOLD,
         )
 
     /** Menü-Editor: Pfeile zum Verschieben und Umsortieren. */
-    val ArrowRight = icon("nl_arrow_right", "M5,12h14M13,6l6,6l-6,6" to 1f, strokeWidth = 2.2f)
-    val ArrowLeft = icon("nl_arrow_left", "M19,12h-14M11,6l-6,6l6,6" to 1f, strokeWidth = 2.2f)
-    val ChevronUp = icon("nl_chevron_up", "M6,15l6,-6l6,6" to 1f, strokeWidth = 2.2f)
-    val ChevronDown = icon("nl_chevron_down", "M6,9l6,6l6,-6" to 1f, strokeWidth = 2.2f)
+    val ArrowRight = icon("nl_arrow_right", "M5,12h14M13,6l6,6l-6,6" to 1f, strokeWidth = STROKE_BOLD)
+    val ArrowLeft = icon("nl_arrow_left", "M19,12h-14M11,6l-6,6l6,6" to 1f, strokeWidth = STROKE_BOLD)
+    val ChevronUp = icon("nl_chevron_up", "M6,15l6,-6l6,6" to 1f, strokeWidth = STROKE_BOLD)
+    val ChevronDown = icon("nl_chevron_down", "M6,9l6,6l6,-6" to 1f, strokeWidth = STROKE_BOLD)
 
     /** SyncPlay: zwei Personen. */
     val WatchTogether =
@@ -168,39 +160,3 @@ object NordlichtIcons {
             "M15.4,14.2c2.6,-0.3 4.6,1.6 4.6,4.8" to .7f,
         )
 }
-
-/** Färbt den Inhalt (z. B. ein weiß getöntes Icon) im nordlicht-Verlauf Grün → Türkis → Lila ein. */
-fun Modifier.nordlichtGradient(enabled: Boolean): Modifier =
-    if (!enabled) {
-        this
-    } else {
-        this
-            .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
-            .drawWithCache {
-                val brush =
-                    Brush.linearGradient(
-                        listOf(NordlichtColors.Green, NordlichtColors.Teal, NordlichtColors.Violet),
-                        start = androidx.compose.ui.geometry.Offset.Zero,
-                        end = androidx.compose.ui.geometry.Offset(size.width, size.height),
-                    )
-                onDrawWithContent {
-                    drawContent()
-                    drawRect(brush, blendMode = BlendMode.SrcIn)
-                }
-            }
-    }
-
-/** Design A: dunkelgraue statt weiße Hinterlegung, Schrift bleibt hell. */
-@Composable
-fun nordlichtDrawerItemColors(containerColor: Color = Color.Transparent): NavigationDrawerItemColors =
-    NavigationDrawerItemDefaults.colors(
-        containerColor = containerColor,
-        focusedContainerColor = Color.White.copy(alpha = 0.10f),
-        focusedContentColor = Color.White,
-        pressedContainerColor = Color.White.copy(alpha = 0.14f),
-        pressedContentColor = Color.White,
-        selectedContainerColor = Color.White.copy(alpha = 0.06f),
-        selectedContentColor = Color.White,
-        focusedSelectedContainerColor = Color.White.copy(alpha = 0.12f),
-        focusedSelectedContentColor = Color.White,
-    )

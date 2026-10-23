@@ -12,6 +12,7 @@ import com.github.damontecres.wholphin.ui.launchDefault
 import com.github.damontecres.wholphin.ui.main.settings.Library
 import com.github.damontecres.wholphin.ui.nav.Destination
 import com.github.damontecres.wholphin.ui.nav.NavDrawerItem
+import com.github.damontecres.wholphin.ui.nav.NilumioNavDrawerItem
 import com.github.damontecres.wholphin.ui.nav.ServerNavDrawerItem
 import com.github.damontecres.wholphin.ui.showToast
 import com.github.damontecres.wholphin.util.WholphinDispatchers
@@ -219,7 +220,7 @@ class NavDrawerService
                         )
                     }
             // nilumio: Zufall und SyncPlay standardmäßig angeheftet, hinten
-            val allItems = builtins + libraries + listOf(NavDrawerItem.Shuffle, NavDrawerItem.SyncPlay)
+            val allItems = builtins + libraries + listOf(NilumioNavDrawerItem.Shuffle, NilumioNavDrawerItem.SyncPlay)
 
             val navDrawerPins =
                 withContext(WholphinDispatchers.IO) {

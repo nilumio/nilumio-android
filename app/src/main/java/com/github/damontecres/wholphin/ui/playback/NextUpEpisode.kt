@@ -49,6 +49,8 @@ import com.github.damontecres.wholphin.R
 import com.github.damontecres.wholphin.ui.AppColors
 import com.github.damontecres.wholphin.ui.AspectRatios
 import com.github.damontecres.wholphin.ui.PreviewTvSpec
+import com.github.damontecres.wholphin.ui.components.nilumioCardBorder
+import com.github.damontecres.wholphin.ui.components.nilumioCardGlow
 import com.github.damontecres.wholphin.ui.dot
 import com.github.damontecres.wholphin.ui.formatDuration
 import com.github.damontecres.wholphin.ui.formatTime
@@ -177,8 +179,8 @@ fun NextUpCard(
     modifier: Modifier = Modifier,
 ) {
     Card(
-        border = com.github.damontecres.wholphin.ui.components.nilumioCardBorder(), // nilumio
-        glow = com.github.damontecres.wholphin.ui.components.nilumioCardGlow(),
+        border = nilumioCardBorder(),
+        glow = nilumioCardGlow(),
         modifier = modifier,
         onClick = onClick,
         interactionSource = interactionSource,

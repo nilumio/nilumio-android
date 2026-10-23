@@ -1,16 +1,5 @@
 package com.github.damontecres.wholphin.ui.playback.overlay
 
-import android.content.res.Resources
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalResources
-import androidx.compose.ui.text.font.FontWeight
-import com.github.damontecres.wholphin.ui.components.NilumioOutfit
-import com.github.damontecres.wholphin.ui.formatDuration
-import com.github.damontecres.wholphin.ui.joinNotBlank
-import com.github.damontecres.wholphin.ui.seasonEpisodePadded
-import org.jellyfin.sdk.model.api.BaseItemKind
-import org.jellyfin.sdk.model.extensions.ticks
-import kotlin.time.Duration.Companion.minutes
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.animateDpAsState
@@ -20,6 +9,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -31,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
@@ -40,6 +31,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.Player
+import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.github.damontecres.wholphin.R
 import com.github.damontecres.wholphin.data.model.BaseItem
@@ -75,16 +67,13 @@ fun PlaybackController(
     modifier: Modifier = Modifier,
     seekBarInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
-    // nilumio „Lichtkante“: Inhalt 40 dp vom Rand, Metazeile statt Wholphin-Untertitel
-    val resources = LocalResources.current
-    val meta = remember(item) { item?.let { playerMeta(it, resources) } }
     Column(
         verticalArrangement = Arrangement.spacedBy(0.dp),
-        modifier = modifier.padding(horizontal = LichtkanteEdge),
+        modifier = modifier.padding(horizontal = LichtkanteEdge), // nilumio: Inhalt 40 dp vom Rand
     ) {
         Controller(
             title = item?.title,
-            subtitle = meta,
+            subtitle = rememberPlayerMeta(item), // nilumio: Metazeile statt Wholphin-Untertitel
             player = player,
             controllerViewState = controllerViewState,
             showPlay = showPlay,
@@ -102,20 +91,8 @@ fun PlaybackController(
             modifier = Modifier,
         )
         when (nextState) {
-            OverlayViewState.CHAPTERS -> {
-                // nilumio: kein sichtbarer Hinweis, nur Fokusziel für ↓
-                Spacer(
-                    modifier =
-                        Modifier
-                            .size(1.dp)
-                            .onFocusChanged {
-                                if (it.isFocused) onChangeState.invoke(nextState)
-                            }.focusable(),
-                )
-            }
-
-            OverlayViewState.QUEUE -> {
-                // nilumio: kein sichtbarer Hinweis, nur Fokusziel für ↓
+            // nilumio: kein sichtbarer Hinweis auf Kapitel bzw. Warteschlange, nur Fokusziel für ↓
+            OverlayViewState.CHAPTERS, OverlayViewState.QUEUE -> {
                 Spacer(
                     modifier =
                         Modifier
@@ -174,38 +151,10 @@ fun Controller(
     )
 
     Column(
-        verticalArrangement = Arrangement.spacedBy((20f + 6.48f * LICHTKANTE_K).dp),
+        verticalArrangement = Arrangement.spacedBy(LichtkanteTitleGap), // nilumio
         modifier = modifier,
     ) {
-        // nilumio „Lichtkante“: Titel groß und leicht, darunter gedämpfte Metazeile (ohne Endzeit)
-        Column(
-            modifier = Modifier.offset(y = verticalOffset),
-        ) {
-            title?.let {
-                Text(
-                    text = it,
-                    color = Color(0xFFEEF2F8),
-                    fontFamily = NilumioOutfit,
-                    fontWeight = FontWeight.Light,
-                    fontSize = titleTextSize,
-                    lineHeight = titleTextSize * 1.05f,
-                    letterSpacing = titleTextSize * .005f,
-                    maxLines = 1,
-                    overflow = TextOverflow.MiddleEllipsis,
-                    modifier = Modifier.fillMaxWidth(.75f),
-                )
-            }
-            if (subtitle != null) Text(
-                text = subtitle,
-                color = LichtkanteMuted,
-                fontFamily = NilumioOutfit,
-                fontSize = subtitleTextSize,
-                lineHeight = subtitleTextSize * 1.45f,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(top = (.75f * LICHTKANTE_K).dp).fillMaxWidth(.75f),
-            )
-        }
+        LichtkanteTitle(title, subtitle, Modifier.offset(y = verticalOffset)) // nilumio
         PlaybackControls(
             modifier = Modifier.fillMaxWidth(),
             player = player,
@@ -228,22 +177,3 @@ fun Controller(
         )
     }
 }
-
-/** nilumio: Serie „S08F04 · Folgentitel“, sonst „Jahr · Genre · Dauer“. */
-private fun playerMeta(
-    item: BaseItem,
-    resources: Resources,
-): String? =
-    if (item.type == BaseItemKind.EPISODE) {
-        listOf(item.data.seasonEpisodePadded, item.name).joinNotBlank(" · ")
-    } else {
-        listOf(
-            item.data.productionYear?.toString(),
-            item.data.genres?.firstOrNull(),
-            item.data.runTimeTicks
-                ?.ticks
-                ?.inWholeMinutes
-                ?.takeIf { it > 0 }
-                ?.let { resources.formatDuration(it.minutes) },
-        ).joinNotBlank(" · ")
-    }

@@ -1,8 +1,5 @@
 package com.github.damontecres.wholphin.ui.main.settings
 
-import com.github.damontecres.wholphin.data.model.HomeGetItemsFilter
-import org.jellyfin.sdk.model.api.ItemSortBy
-import org.jellyfin.sdk.api.client.extensions.genresApi
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.runtime.Immutable
@@ -416,58 +413,27 @@ class HomeSettingsViewModel
                 fetchRowData()
             }
 
+        // nilumio: Reihen nach Genre (HomeSettingsGenreList.kt)
         private val _genres = MutableStateFlow<List<GenreOption>?>(null)
         val genres: StateFlow<List<GenreOption>?> = _genres
 
-        /** Lädt alle Genres von Filmen und Serien des aktuellen Benutzers. */
         fun loadGenres() {
             if (_genres.value != null) return
-            viewModelScope.launchIO {
-                val userId = serverRepository.currentUser?.id
-                _genres.value =
-                    try {
-                        api.genresApi
-                            .getGenres(
-                                userId = userId,
-                                includeItemTypes = listOf(BaseItemKind.MOVIE, BaseItemKind.SERIES),
-                                sortBy = listOf(ItemSortBy.SORT_NAME),
-                            ).content.items
-                            .mapNotNull { dto -> dto.name?.let { GenreOption(it, dto.id) } }
-                    } catch (ex: Exception) {
-                        Timber.w(ex, "Could not load genres")
-                        emptyList()
-                    }
-            }
+            viewModelScope.launchIO { _genres.value = api.loadGenreOptions(serverRepository.currentUser?.id) }
         }
 
-        /** Je ausgewähltem Genre eine Reihe mit Filmen und Serien, jedes Mal neu gemischt. */
         fun addGenreRows(genres: List<GenreOption>): Job =
             viewModelScope.launchIO {
                 Timber.v("Adding %d genre rows", genres.size)
                 val newRows =
-                    genres.map { genre ->
+                    genres.map {
                         HomeRowConfigDisplay(
                             id = idCounter++,
-                            title = StringStringProvider(genre.name),
-                            config =
-                                HomeRowConfig.GetItems(
-                                    name = genre.name,
-                                    filter =
-                                        HomeGetItemsFilter(
-                                            genreIds = listOf(genre.id),
-                                            recursive = true,
-                                            includeItemTypes = listOf(BaseItemKind.MOVIE, BaseItemKind.SERIES),
-                                            sortBy = listOf(ItemSortBy.RANDOM),
-                                        ),
-                                ),
+                            title = StringStringProvider(it.name),
+                            config = it.rowConfig(),
                         )
                     }
-                updateState {
-                    it.copy(
-                        loading = LoadingState.Loading,
-                        rows = it.rows + newRows,
-                    )
-                }
+                updateState { it.copy(loading = LoadingState.Loading, rows = it.rows + newRows) }
                 fetchRowData()
             }
 

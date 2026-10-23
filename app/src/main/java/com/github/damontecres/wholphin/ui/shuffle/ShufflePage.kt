@@ -1,27 +1,25 @@
 /*
- * nilumio – Seite „Zufall“: zufällige Folge einer Serie, kürzlich Gesehenes kommt selten dran.
+ * nilumio – Seite „Zufall“: zufälliger Film oder zufällige Folge, kürzlich Gesehenes kommt selten dran.
  * Copyright (C) 2026 nilumio, GPL-2.0.
  */
 package com.github.damontecres.wholphin.ui.shuffle
 
-import androidx.compose.foundation.BorderStroke
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -33,15 +31,16 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.tv.material3.Border
-import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Icon
-import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.github.damontecres.wholphin.R
 import com.github.damontecres.wholphin.data.ServerRepository
 import com.github.damontecres.wholphin.services.NavigationManager
-import com.github.damontecres.wholphin.ui.components.NordlichtIcons
+import com.github.damontecres.wholphin.ui.components.Nilumio
+import com.github.damontecres.wholphin.ui.components.NilumioButton
+import com.github.damontecres.wholphin.ui.components.NilumioIcons
+import com.github.damontecres.wholphin.ui.components.NilumioPageHeader
+import com.github.damontecres.wholphin.ui.components.NilumioSectionTitle
 import com.github.damontecres.wholphin.ui.launchIO
 import com.github.damontecres.wholphin.ui.nav.Destination
 import com.github.damontecres.wholphin.ui.tryRequestFocus
@@ -75,6 +74,8 @@ class ShuffleViewModel
         /** Film-Genres; null = lädt. */
         val genres = MutableStateFlow<List<BaseItemDto>?>(null)
 
+        private val userId get() = serverRepository.currentUser?.id
+
         fun load() {
             if (series.value != null) return
             viewModelScope.launchIO {
@@ -82,7 +83,7 @@ class ShuffleViewModel
                     runCatching {
                         api.genresApi
                             .getGenres(
-                                userId = serverRepository.currentUser?.id,
+                                userId = userId,
                                 includeItemTypes = listOf(BaseItemKind.MOVIE),
                                 sortBy = listOf(ItemSortBy.SORT_NAME),
                             ).content.items
@@ -93,7 +94,7 @@ class ShuffleViewModel
                     runCatching {
                         api.itemsApi
                             .getItems(
-                                userId = serverRepository.currentUser?.id,
+                                userId = userId,
                                 includeItemTypes = listOf(BaseItemKind.SERIES),
                                 recursive = true,
                                 sortBy = listOf(ItemSortBy.DATE_PLAYED, ItemSortBy.SORT_NAME),
@@ -105,63 +106,66 @@ class ShuffleViewModel
         }
 
         /** Spielt eine gewichtet zufällige Folge der Serie (oder einer zufälligen Serie). */
-        fun playRandom(seriesId: UUID?) {
-            viewModelScope.launchIO {
-                val id = seriesId ?: series.value?.randomOrNull()?.id ?: return@launchIO
-                runCatching {
-                    val episodes =
-                        api.itemsApi
-                            .getItems(
-                                userId = serverRepository.currentUser?.id,
-                                parentId = id,
-                                includeItemTypes = listOf(BaseItemKind.EPISODE),
-                                recursive = true,
-                                enableUserData = true,
-                            ).content.items
-                    pickWeighted(episodes)?.let { navigationManager.navigateTo(Destination.Playback(it.id, 0L)) }
-                }.onFailure { Timber.w(it, "Zufall: Folge wählen fehlgeschlagen") }
+        fun playRandom(seriesId: UUID?) =
+            playPicked("Folge") {
+                val id = seriesId ?: series.value?.randomOrNull()?.id ?: return@playPicked null
+                val episodes =
+                    api.itemsApi
+                        .getItems(
+                            userId = userId,
+                            parentId = id,
+                            includeItemTypes = listOf(BaseItemKind.EPISODE),
+                            recursive = true,
+                            enableUserData = true,
+                        ).content.items
+                pickWeighted(episodes)
             }
-        }
 
         /** Startet Staffel 1, Folge 1 einer zufälligen Serie (kürzlich Geschautes seltener). */
-        fun playRandomFirstEpisode() {
-            viewModelScope.launchIO {
-                val pick = pickWeighted(series.value.orEmpty()) ?: return@launchIO
-                runCatching {
-                    val first =
-                        api.itemsApi
-                            .getItems(
-                                userId = serverRepository.currentUser?.id,
-                                parentId = pick.id,
-                                includeItemTypes = listOf(BaseItemKind.EPISODE),
-                                recursive = true,
-                                sortBy = listOf(ItemSortBy.PARENT_INDEX_NUMBER, ItemSortBy.INDEX_NUMBER),
-                            ).content.items
-                            .firstOrNull { it.parentIndexNumber == 1 } ?: return@launchIO
-                    navigationManager.navigateTo(Destination.Playback(first.id, 0L))
-                }.onFailure { Timber.w(it, "Zufall: erste Folge wählen fehlgeschlagen") }
+        fun playRandomFirstEpisode() =
+            playPicked("erste Folge") {
+                val pick = pickWeighted(series.value.orEmpty()) ?: return@playPicked null
+                api.itemsApi
+                    .getItems(
+                        userId = userId,
+                        parentId = pick.id,
+                        includeItemTypes = listOf(BaseItemKind.EPISODE),
+                        recursive = true,
+                        sortBy = listOf(ItemSortBy.PARENT_INDEX_NUMBER, ItemSortBy.INDEX_NUMBER),
+                    ).content.items
+                    .firstOrNull { it.parentIndexNumber == 1 }
             }
-        }
 
         /** Spielt einen gewichtet zufälligen Film, optional aus einem Genre. */
-        fun playRandomMovie(genreId: UUID?) {
-            viewModelScope.launchIO {
-                runCatching {
-                    val movies =
-                        api.itemsApi
-                            .getItems(
-                                userId = serverRepository.currentUser?.id,
-                                includeItemTypes = listOf(BaseItemKind.MOVIE),
-                                genreIds = genreId?.let { listOf(it) },
-                                recursive = true,
-                                enableUserData = true,
-                            ).content.items
-                    pickWeighted(movies)?.let { navigationManager.navigateTo(Destination.Playback(it.id, 0L)) }
-                }.onFailure { Timber.w(it, "Zufall: Film wählen fehlgeschlagen") }
+        fun playRandomMovie(genreId: UUID?) =
+            playPicked("Film") {
+                val movies =
+                    api.itemsApi
+                        .getItems(
+                            userId = userId,
+                            includeItemTypes = listOf(BaseItemKind.MOVIE),
+                            genreIds = genreId?.let { listOf(it) },
+                            recursive = true,
+                            enableUserData = true,
+                        ).content.items
+                pickWeighted(movies)
             }
+
+        /** Wählt im Hintergrund etwas aus und spielt es von vorn ab; Fehler landen nur im Log. */
+        private fun playPicked(
+            what: String,
+            pick: suspend () -> BaseItemDto?,
+        ) = viewModelScope.launchIO {
+            runCatching { pick()?.let { navigationManager.navigateTo(Destination.Playback(it.id, 0L)) } }
+                .onFailure { Timber.w(it, "Zufall: %s wählen fehlgeschlagen", what) }
         }
 
         companion object {
+            private const val BLOCKED_DAYS = 14
+            private const val BLOCKED_WEIGHT = 0.01
+            private const val RETURN_START_WEIGHT = 0.05
+            private const val FULL_WEIGHT_DAYS = 180.0
+
             /**
              * Gewicht je Folge: nie gesehen = 1. Gesehen in den letzten 14 Tagen = fast nie,
              * danach steigt das Gewicht langsam wieder an und ist nach etwa einem halben Jahr voll.
@@ -172,29 +176,26 @@ class ShuffleViewModel
             ): Double {
                 if (lastPlayed == null) return 1.0
                 val days = Duration.between(lastPlayed, now).toDays().coerceAtLeast(0)
-                if (days < 14) return 0.01
-                return (0.05 + (days / 180.0)).coerceAtMost(1.0)
+                if (days < BLOCKED_DAYS) return BLOCKED_WEIGHT
+                return (RETURN_START_WEIGHT + days / FULL_WEIGHT_DAYS).coerceAtMost(1.0)
             }
 
+            /** Zieht ein Objekt, Wahrscheinlichkeit proportional zu [weight] des zuletzt Gesehenen. */
             fun pickWeighted(
-                episodes: List<BaseItemDto>,
+                items: List<BaseItemDto>,
                 random: Random = Random.Default,
             ): BaseItemDto? {
-                if (episodes.isEmpty()) return null
-                val weights = episodes.map { weight(it.userData?.lastPlayedDate) }
+                if (items.isEmpty()) return null
+                val weights = items.map { weight(it.userData?.lastPlayedDate) }
                 var r = random.nextDouble() * weights.sum()
-                episodes.forEachIndexed { i, e ->
+                items.forEachIndexed { i, item ->
                     r -= weights[i]
-                    if (r <= 0) return e
+                    if (r <= 0) return item
                 }
-                return episodes.last()
+                return items.last()
             }
         }
     }
-
-private val Panel = Color(0xFF111726)
-private val Muted = Color(0xFF8E9AB0)
-private val FocusRing = Color.White
 
 @Composable
 fun ShufflePage(
@@ -213,44 +214,41 @@ fun ShufflePage(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier.padding(top = 40.dp, end = 48.dp, bottom = 32.dp),
     ) {
-        item {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.padding(bottom = 12.dp)) {
-                Text(stringResource(R.string.shuffle_title), fontSize = 34.sp, color = Color.White)
-                Text(stringResource(R.string.shuffle_subtitle), color = Muted, fontSize = 16.sp)
-            }
-        }
-        // Drei Wege oben, darunter die Liste zum gewählten Weg
+        item { NilumioPageHeader(R.string.shuffle_title, R.string.shuffle_subtitle, Modifier.padding(bottom = 12.dp)) }
+        // Zwei Wege oben, darunter die Liste zum gewählten Weg
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                ShuffleRow(stringResource(R.string.shuffle_movies_button), big = true, Modifier.focusRequester(focus), selected = mode == ShuffleMode.MOVIES) {
+                ShuffleButton(R.string.shuffle_movies_button, mode == ShuffleMode.MOVIES, Modifier.focusRequester(focus)) {
                     mode = ShuffleMode.MOVIES
                 }
-                ShuffleRow(stringResource(R.string.shuffle_series), big = true, selected = mode == ShuffleMode.SERIES) { mode = ShuffleMode.SERIES }
+                ShuffleButton(R.string.shuffle_series, mode == ShuffleMode.SERIES) { mode = ShuffleMode.SERIES }
             }
         }
         when (mode) {
             ShuffleMode.MOVIES -> {
-                item { SectionTitle(stringResource(R.string.shuffle_movies)) }
-                item { ShuffleRow(stringResource(R.string.shuffle_any_movie), big = false, wide = true) { viewModel.playRandomMovie(null) } }
+                item { SectionTitle(R.string.shuffle_movies) }
+                item { ShuffleRow(stringResource(R.string.shuffle_any_movie)) { viewModel.playRandomMovie(null) } }
                 items(genres.orEmpty(), key = { "g" + it.id }) { g ->
-                    ShuffleRow(g.name ?: "", big = false, wide = true) { viewModel.playRandomMovie(g.id) }
+                    ShuffleRow(g.name.orEmpty()) { viewModel.playRandomMovie(g.id) }
                 }
             }
 
             ShuffleMode.SERIES -> {
-                item { SectionTitle(stringResource(R.string.shuffle_series)) }
-                item { ShuffleRow(stringResource(R.string.shuffle_first_episode), big = false, wide = true) { viewModel.playRandomFirstEpisode() } }
+                item { SectionTitle(R.string.shuffle_series) }
+                item { ShuffleRow(stringResource(R.string.shuffle_first_episode)) { viewModel.playRandomFirstEpisode() } }
                 val list = series
                 if (list == null) {
-                    item { Text(stringResource(R.string.loading), color = Muted) }
+                    item { Text(stringResource(R.string.loading), color = Nilumio.Muted) }
                 } else {
                     items(list, key = { "s" + it.id }) { s ->
-                        ShuffleRow(s.name ?: "", big = false, wide = true) { viewModel.playRandom(s.id) }
+                        ShuffleRow(s.name.orEmpty()) { viewModel.playRandom(s.id) }
                     }
                 }
             }
 
-            null -> Unit
+            null -> {
+                Unit
+            }
         }
     }
 }
@@ -258,38 +256,40 @@ fun ShufflePage(
 private enum class ShuffleMode { MOVIES, SERIES }
 
 @Composable
-private fun SectionTitle(text: String) =
-    Text(text.uppercase(), color = Muted, fontSize = 13.sp, letterSpacing = 1.sp, modifier = Modifier.padding(top = 16.dp))
+private fun SectionTitle(
+    @StringRes text: Int,
+) = NilumioSectionTitle(stringResource(text), Modifier.padding(top = 16.dp))
 
+/** Großer Knopf für einen der beiden Wege; der gewählte ist lila hinterlegt. */
+@Composable
+private fun ShuffleButton(
+    @StringRes text: Int,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) = NilumioButton(
+    onClick = onClick,
+    containerColor = if (selected) Nilumio.CardRaised else Nilumio.Panel,
+    focusedContainerColor = if (selected) Nilumio.CardFocused else Nilumio.PanelFocused,
+    modifier = modifier,
+) { DiceLabel(stringResource(text), big = true) }
+
+/** Zeile der Liste: startet sofort etwas Zufälliges. */
 @Composable
 private fun ShuffleRow(
     text: String,
-    big: Boolean,
-    modifier: Modifier = Modifier,
-    selected: Boolean = false,
-    wide: Boolean = false,
     onClick: () -> Unit,
+) = NilumioButton(onClick = onClick, modifier = Modifier.fillMaxWidth(.6f)) { DiceLabel(text, big = false) }
+
+@Composable
+private fun DiceLabel(
+    text: String,
+    big: Boolean,
+) = Row(
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.spacedBy(14.dp),
+    modifier = Modifier.padding(horizontal = 18.dp, vertical = if (big) 18.dp else 12.dp),
 ) {
-    val shape = RoundedCornerShape(14.dp)
-    Surface(
-        onClick = onClick,
-        shape = ClickableSurfaceDefaults.shape(shape),
-        colors =
-            ClickableSurfaceDefaults.colors(
-                containerColor = if (selected) Color(0xFF29224F) else Panel,
-                focusedContainerColor = if (selected) Color(0xFF392D76) else Color(0xFF182033),
-            ),
-        border = ClickableSurfaceDefaults.border(focusedBorder = Border(BorderStroke(1.5.dp, FocusRing), inset = 0.dp, shape = shape)),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.02f),
-        modifier = if (wide) modifier.fillMaxWidth(.6f) else modifier,
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
-            modifier = Modifier.padding(horizontal = 18.dp, vertical = if (big) 18.dp else 12.dp),
-        ) {
-            Icon(NordlichtIcons.Dice, contentDescription = null, tint = Color.White, modifier = Modifier.size(if (big) 28.dp else 20.dp))
-            Text(text, fontSize = if (big) 22.sp else 18.sp, color = Color.White)
-        }
-    }
+    Icon(NilumioIcons.Dice, contentDescription = null, tint = Color.White, modifier = Modifier.size(if (big) 28.dp else 20.dp))
+    Text(text, fontSize = if (big) 22.sp else 18.sp, color = Color.White)
 }

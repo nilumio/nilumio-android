@@ -44,6 +44,8 @@ import com.github.damontecres.wholphin.ui.AspectRatios
 import com.github.damontecres.wholphin.ui.Cards
 import com.github.damontecres.wholphin.ui.FontAwesome
 import com.github.damontecres.wholphin.ui.PreviewTvSpec
+import com.github.damontecres.wholphin.ui.components.nilumioCardBorder
+import com.github.damontecres.wholphin.ui.components.nilumioCardGlow
 import com.github.damontecres.wholphin.ui.enableMarquee
 import com.github.damontecres.wholphin.ui.theme.WholphinTheme
 import kotlinx.coroutines.delay
@@ -80,8 +82,8 @@ fun DiscoverItemCard(
         modifier = modifier.size(width, Dp.Unspecified),
     ) {
         Card(
-            border = com.github.damontecres.wholphin.ui.components.nilumioCardBorder(), // nilumio
-            glow = com.github.damontecres.wholphin.ui.components.nilumioCardGlow(),
+            border = nilumioCardBorder(),
+            glow = nilumioCardGlow(),
             modifier =
                 Modifier
                     .size(width, Dp.Unspecified)

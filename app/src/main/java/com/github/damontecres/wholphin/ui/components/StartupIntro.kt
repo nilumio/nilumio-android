@@ -120,7 +120,7 @@ fun StartupIntro(
             onFinished()
         }
     }
-    Box(modifier = modifier.fillMaxSize().background(NilumioColors.Night)) {
+    Box(modifier = modifier.fillMaxSize().background(Nilumio.Night)) {
         if (!videoDone) {
             AndroidView(
                 factory = { ctx -> SurfaceView(ctx).also { player.setVideoSurfaceView(it) } },

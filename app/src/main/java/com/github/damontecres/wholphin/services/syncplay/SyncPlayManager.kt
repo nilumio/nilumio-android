@@ -1,5 +1,5 @@
 /*
- * nilumio – SyncPlay („SyncPlay“), Copyright (C) 2026 nilumio, GPL-2.0.
+ * nilumio – SyncPlay, Copyright (C) 2026 nilumio, GPL-2.0.
  *
  * Herkunft (siehe THIRD_PARTY_NOTICES.md):
  * - Protokollablauf, Zeitabgleich (TimeSync: Messung mit kleinster Verzögerung aus den letzten 8,
@@ -13,6 +13,7 @@
 package com.github.damontecres.wholphin.services.syncplay
 
 import android.content.Context
+import androidx.annotation.StringRes
 import com.github.damontecres.wholphin.R
 import com.github.damontecres.wholphin.data.ServerRepository
 import com.github.damontecres.wholphin.services.NavigationManager
@@ -36,6 +37,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.jellyfin.sdk.api.client.ApiClient
+import org.jellyfin.sdk.api.client.HttpClientOptions
 import org.jellyfin.sdk.api.client.extensions.syncPlayApi
 import org.jellyfin.sdk.api.client.extensions.timeSyncApi
 import org.jellyfin.sdk.api.client.util.ApiSerializer
@@ -61,11 +63,25 @@ import timber.log.Timber
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val TICKS_PER_MS = 10_000L
+internal const val TICKS_PER_MS = 10_000L
+
+/** Zeitabgleich: Messungen, aus denen die mit kleinster Verzögerung zählt; erst schnelle Pings, dann selten. */
+private const val TIME_SAMPLES = 8
+private const val FAST_PINGS = 3
+private const val FAST_PING_MS = 1_000L
+private const val SLOW_PING_MS = 60_000L
+
+/** Nach Erstellen/Beitreten so oft auf die eigene Gruppe warten (siehe adoptGroup). */
+private const val ADOPT_ATTEMPTS = 6
+private const val ADOPT_RETRY_MS = 500L
+
+/** Warteschlangen-Änderungen, die nichts neu starten. */
+private val QueueOnlyReasons = setOf(PlayQueueUpdateReason.MOVE_ITEM, PlayQueueUpdateReason.QUEUE, PlayQueueUpdateReason.QUEUE_NEXT)
 
 /**
  * Verwaltet die SyncPlay-Gruppe: Gruppenliste, beitreten/verlassen, Zeitabgleich mit dem Server,
@@ -96,7 +112,7 @@ class SyncPlayManager
 
         /** Serverzeit minus lokale Zeit in ms. */
         private var timeOffsetMs = 0L
-        private val measurements = ArrayDeque<Pair<Long, Long>>() // (Verzögerung, Versatz)
+        private val samples = ArrayDeque<TimeSample>()
         private var groupJob: Job? = null
 
         init {
@@ -114,16 +130,7 @@ class SyncPlayManager
             request(R.string.syncplay_error) {
                 listen()
                 val name = (serverRepository.currentUser?.name ?: "nilumio").replaceFirstChar { it.uppercase() }
-                // „Schnicks Lobby“: deutscher Genitiv ohne Apostroph, außer bei s/ß/x/z am Ende („Jonas’ Lobby“)
-                val owner =
-                    if (java.util.Locale.getDefault().language != "de") {
-                        name
-                    } else if (name.lowercase().last() in "sßxz") {
-                        "$name’"
-                    } else {
-                        "${name}s"
-                    }
-                val groupName = context.getString(R.string.syncplay_group_of, owner)
+                val groupName = context.getString(R.string.syncplay_group_of, lobbyOwner(name, Locale.getDefault().language))
                 api.syncPlayApi.syncPlayCreateGroup(NewGroupRequestDto(groupName))
                 adoptGroup { it.groupName == groupName && name in it.participants }
             }
@@ -140,8 +147,8 @@ class SyncPlayManager
          * die eigene Gruppe aus der Gruppenliste des Servers übernehmen.
          */
         private suspend fun adoptGroup(match: (GroupInfoDto) -> Boolean) {
-            repeat(6) {
-                delay(500)
+            repeat(ADOPT_ATTEMPTS) {
+                delay(ADOPT_RETRY_MS)
                 if (group.value != null) return
                 val list = api.syncPlayApi.syncPlayGetGroups().content
                 groups.value = list
@@ -153,22 +160,22 @@ class SyncPlayManager
         }
 
         fun leaveGroup() =
-            request(null) {
+            request {
                 api.syncPlayApi.syncPlayLeaveGroup()
                 reset()
             }
 
-        fun requestPause() = request(null) { api.syncPlayApi.syncPlayPause() }
+        fun requestPause() = request { api.syncPlayApi.syncPlayPause() }
 
-        fun requestUnpause() = request(null) { api.syncPlayApi.syncPlayUnpause() }
+        fun requestUnpause() = request { api.syncPlayApi.syncPlayUnpause() }
 
-        fun requestSeek(positionMs: Long) = request(null) { api.syncPlayApi.syncPlaySeek(SeekRequestDto(positionMs * TICKS_PER_MS)) }
+        fun requestSeek(positionMs: Long) = request { api.syncPlayApi.syncPlaySeek(SeekRequestDto(positionMs * TICKS_PER_MS)) }
 
         /** Neues Objekt für die ganze Gruppe starten (wir haben lokal etwas anderes gestartet). */
         fun setNewQueue(
             itemId: UUID,
             positionMs: Long,
-        ) = request(null) {
+        ) = request {
             api.syncPlayApi.syncPlaySetNewQueue(PlayRequestDto(listOf(itemId), 0, positionMs * TICKS_PER_MS))
         }
 
@@ -181,7 +188,7 @@ class SyncPlayManager
             val playlistItemId = currentQueueItem()?.playlistItemId ?: return
             val now = toServerDate(System.currentTimeMillis() + timeOffsetMs)
             val ticks = positionMs * TICKS_PER_MS
-            request(null) {
+            request {
                 if (ready) {
                     api.syncPlayApi.syncPlayReady(ReadyRequestDto(now, ticks, isPlaying, playlistItemId))
                 } else {
@@ -199,10 +206,10 @@ class SyncPlayManager
         fun estimatePositionMs(
             positionTicks: Long,
             whenDate: LocalDateTime,
-        ) = positionTicks / TICKS_PER_MS + (System.currentTimeMillis() - serverToLocalMs(whenDate))
+        ) = extrapolatePositionMs(positionTicks, serverToLocalMs(whenDate), System.currentTimeMillis())
 
         private fun request(
-            errorMessage: Int?,
+            @StringRes errorMessage: Int? = null,
             block: suspend () -> Unit,
         ) = scope.launch {
             runCatching { block() }.onFailure {
@@ -227,7 +234,7 @@ class SyncPlayManager
                             runCatching { syncTime() }.onFailure { Timber.w(it, "SyncPlay: Zeitabgleich fehlgeschlagen") }
                             pings++
                         }
-                        delay(if (pings <= 3) 1_000 else 60_000)
+                        delay(if (pings <= FAST_PINGS) FAST_PING_MS else SLOW_PING_MS)
                     }
                 }
         }
@@ -237,22 +244,20 @@ class SyncPlayManager
             val sent = System.currentTimeMillis()
             val response = api.timeSyncApi.getUtcTime().content
             val received = System.currentTimeMillis()
-            val serverReceived = response.requestReceptionTime.toEpochMs()
-            val serverSent = response.responseTransmissionTime.toEpochMs()
-            val offset = ((serverReceived - sent) + (serverSent - received)) / 2
-            val roundTrip = (received - sent) - (serverSent - serverReceived)
-            measurements.addLast(roundTrip to offset)
-            if (measurements.size > 8) measurements.removeFirst()
-            val best = measurements.minBy { it.first }
-            timeOffsetMs = best.second
-            api.syncPlayApi.syncPlayPing(PingRequestDto(best.first / 2))
+            samples.addLast(
+                TimeSample.of(sent, response.requestReceptionTime.toEpochMs(), response.responseTransmissionTime.toEpochMs(), received),
+            )
+            if (samples.size > TIME_SAMPLES) samples.removeFirst()
+            val best = samples.minBy { it.roundTripMs }
+            timeOffsetMs = best.offsetMs
+            api.syncPlayApi.syncPlayPing(PingRequestDto(best.roundTripMs / 2))
         }
 
         private fun reset() {
             group.value = null
             playQueue.value = null
             lastCommand.value = null
-            measurements.clear()
+            samples.clear()
             groupJob?.cancel()
             refreshGroups()
         }
@@ -263,48 +268,56 @@ class SyncPlayManager
             val json = ApiSerializer.json
             Timber.d("SyncPlay: Gruppen-Update %s", type)
             when (type) {
-                GroupUpdateType.GROUP_JOINED -> {
-                    group.value = json.decodeFromJsonElement(GroupInfoDto.serializer(), data!!)
-                    showToast(context, context.getString(R.string.syncplay_joined, group.value?.groupName))
-                }
-
-                GroupUpdateType.USER_JOINED, GroupUpdateType.USER_LEFT -> {
-                    val user = data?.jsonPrimitive?.content ?: return
-                    val joined = type == GroupUpdateType.USER_JOINED
-                    group.update { g -> g?.copy(participants = if (joined) g.participants + user else g.participants - user) }
-                    showToast(context, context.getString(if (joined) R.string.syncplay_user_joined else R.string.syncplay_user_left, user))
-                }
-
+                GroupUpdateType.GROUP_JOINED -> onJoined(json.decodeFromJsonElement(GroupInfoDto.serializer(), data!!))
+                GroupUpdateType.USER_JOINED -> onMemberChange(data?.jsonPrimitive?.content, joined = true)
+                GroupUpdateType.USER_LEFT -> onMemberChange(data?.jsonPrimitive?.content, joined = false)
                 GroupUpdateType.GROUP_LEFT, GroupUpdateType.NOT_IN_GROUP -> reset()
-
                 GroupUpdateType.PLAY_QUEUE -> onPlayQueue(json.decodeFromJsonElement(PlayQueueUpdate.serializer(), data!!))
-
                 GroupUpdateType.STATE_UPDATE -> Unit
-
                 else -> showToast(context, context.getString(R.string.syncplay_error) + " ($type)")
             }
         }
+
+        private suspend fun onJoined(info: GroupInfoDto) {
+            group.value = info
+            showToast(context, context.getString(R.string.syncplay_joined, info.groupName))
+        }
+
+        private suspend fun onMemberChange(
+            user: String?,
+            joined: Boolean,
+        ) {
+            if (user == null) return
+            group.update { g -> g?.copy(participants = if (joined) g.participants + user else g.participants - user) }
+            showToast(context, context.getString(if (joined) R.string.syncplay_user_joined else R.string.syncplay_user_left, user))
+        }
+
+        /** Position eines Serverbefehls jetzt: nach „weiter“ seit dem Befehl weitergezählt, sonst fest. */
+        private fun SendCommand.positionNowMs() =
+            if (command == SendCommandType.UNPAUSE) estimatePositionMs(positionTicks ?: 0, `when`) else (positionTicks ?: 0) / TICKS_PER_MS
 
         /** Wie QueueCore.updatePlayQueue/startPlayback in jellyfin-web: Gruppenobjekt hier ebenfalls starten. */
         private suspend fun onPlayQueue(queue: PlayQueueUpdate) {
             val previous = playQueue.value
             if (previous != null && queue.lastUpdate <= previous.lastUpdate) return
             playQueue.value = queue
-            if (queue.reason in listOf(PlayQueueUpdateReason.MOVE_ITEM, PlayQueueUpdateReason.QUEUE, PlayQueueUpdateReason.QUEUE_NEXT)) return
+            if (queue.reason in QueueOnlyReasons) return
             val item = currentQueueItem() ?: return
             val command = lastCommand.value
             val positionMs =
                 when {
-                    command != null && command.playlistItemId == item.playlistItemId && command.emittedAt >= queue.lastUpdate ->
-                        if (command.command == SendCommandType.UNPAUSE) {
-                            estimatePositionMs(command.positionTicks ?: 0, command.`when`)
-                        } else {
-                            (command.positionTicks ?: 0) / TICKS_PER_MS
-                        }
+                    command != null && command.playlistItemId == item.playlistItemId && command.emittedAt >= queue.lastUpdate -> {
+                        command
+                            .positionNowMs()
+                    }
 
-                    queue.isPlaying -> estimatePositionMs(queue.startPositionTicks, queue.lastUpdate)
+                    queue.isPlaying -> {
+                        estimatePositionMs(queue.startPositionTicks, queue.lastUpdate)
+                    }
 
-                    else -> queue.startPositionTicks / TICKS_PER_MS
+                    else -> {
+                        queue.startPositionTicks / TICKS_PER_MS
+                    }
                 }
             withContext(Dispatchers.Main) {
                 val stack = navigationManager.backStack
@@ -320,9 +333,46 @@ class SyncPlayManager
         }
     }
 
-private fun LocalDateTime.toEpochMs() = atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+internal fun LocalDateTime.toEpochMs() = atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
-private fun toServerDate(epochMs: Long) = LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMs), ZoneId.systemDefault())
+internal fun toServerDate(epochMs: Long): LocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMs), ZoneId.systemDefault())
+
+/** Position (ms) zum Zeitpunkt [nowMs], wenn zur lokalen Zeit [startedAtMs] bei [positionTicks] gestartet wurde. */
+internal fun extrapolatePositionMs(
+    positionTicks: Long,
+    startedAtMs: Long,
+    nowMs: Long,
+) = positionTicks / TICKS_PER_MS + (nowMs - startedAtMs)
+
+/** „Schnicks Lobby“: deutscher Genitiv ohne Apostroph, außer bei s/ß/x/z am Ende („Jonas’ Lobby“); andere Sprachen unverändert. */
+internal fun lobbyOwner(
+    name: String,
+    language: String,
+) = when {
+    language != "de" -> name
+    name.lowercase().last() in "sßxz" -> "$name’"
+    else -> "${name}s"
+}
+
+/** Eine NTP-artige Zeitmessung wie TimeSync in jellyfin-web, alle Werte in ms. */
+internal data class TimeSample(
+    /** Umlaufzeit ohne die Bearbeitungszeit des Servers. */
+    val roundTripMs: Long,
+    /** Serverzeit minus lokale Zeit. */
+    val offsetMs: Long,
+) {
+    companion object {
+        fun of(
+            sent: Long,
+            serverReceived: Long,
+            serverSent: Long,
+            received: Long,
+        ) = TimeSample(
+            roundTripMs = (received - sent) - (serverSent - serverReceived),
+            offsetMs = ((serverReceived - sent) + (serverSent - received)) / 2,
+        )
+    }
+}
 
 /**
  * Das Jellyfin-SDK verwirft beim SyncPlay-Gruppen-Update die eigentlichen Daten (Warteschlange,
@@ -333,7 +383,7 @@ class SyncPlaySocketTap(
     private val delegate: SocketConnectionFactory,
 ) : SocketConnectionFactory {
     override fun create(
-        clientOptions: org.jellyfin.sdk.api.client.HttpClientOptions,
+        clientOptions: HttpClientOptions,
         scope: CoroutineScope,
     ): SocketConnection {
         val connection = delegate.create(clientOptions, scope)

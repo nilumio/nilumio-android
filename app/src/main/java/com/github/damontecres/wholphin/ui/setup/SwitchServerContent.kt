@@ -1,6 +1,5 @@
 package com.github.damontecres.wholphin.ui.setup
 
-import com.github.damontecres.wholphin.ui.components.StartupSignal
 import android.Manifest
 import android.content.res.Resources
 import android.os.Build
@@ -65,6 +64,7 @@ import com.github.damontecres.wholphin.ui.components.DialogPopup
 import com.github.damontecres.wholphin.ui.components.EditTextBox
 import com.github.damontecres.wholphin.ui.components.ErrorMessage
 import com.github.damontecres.wholphin.ui.components.LoadingPage
+import com.github.damontecres.wholphin.ui.components.StartupSignal
 import com.github.damontecres.wholphin.ui.components.TextButton
 import com.github.damontecres.wholphin.ui.dimAndBlur
 import com.github.damontecres.wholphin.ui.ifElse

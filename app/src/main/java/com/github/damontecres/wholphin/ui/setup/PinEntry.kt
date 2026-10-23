@@ -1,7 +1,5 @@
 package com.github.damontecres.wholphin.ui.setup
 
-import androidx.compose.runtime.LaunchedEffect
-import com.github.damontecres.wholphin.ui.components.StartupSignal
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
@@ -14,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +35,7 @@ import com.github.damontecres.wholphin.R
 import com.github.damontecres.wholphin.ui.FontAwesome
 import com.github.damontecres.wholphin.ui.PreviewTvSpec
 import com.github.damontecres.wholphin.ui.components.BasicDialog
+import com.github.damontecres.wholphin.ui.components.StartupSignal
 import com.github.damontecres.wholphin.ui.components.TextButton
 import com.github.damontecres.wholphin.ui.playback.isEnterKey
 import com.github.damontecres.wholphin.ui.theme.WholphinTheme

@@ -6,7 +6,7 @@ import androidx.tv.material3.Typography
 
 private val base = Typography()
 
-// Nordlicht: kräftige, eng gesetzte Titel für die Fernseh-Distanz
+// nilumio: kräftige, eng gesetzte Titel für die Fernseh-Distanz
 val AppTypography =
     base.copy(
         displayLarge = base.displayLarge.copy(fontWeight = FontWeight.Black, letterSpacing = (-0.02).em),

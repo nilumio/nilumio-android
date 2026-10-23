@@ -1,5 +1,5 @@
 /*
- * nilumio – Seite „SyncPlay“ (SyncPlay), Copyright (C) 2026 nilumio, GPL-2.0.
+ * nilumio – Seite „SyncPlay“, Copyright (C) 2026 nilumio, GPL-2.0.
  * Aufbau angelehnt an die Gruppenauswahl von jellyfin-web (src/plugins/syncPlay/ui/groupSelectionMenu.js, GPL-2.0).
  * Design „Lounge“: große Karte zum Erstellen, offene Gruppen als Karten mit Gesichtern.
  */
@@ -15,76 +15,67 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.border
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.runtime.key
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.foundation.BorderStroke
-import com.github.damontecres.wholphin.ui.components.NordlichtIcons
-import androidx.tv.material3.LocalContentColor
-import androidx.tv.material3.Icon
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.tv.material3.Border
-import androidx.tv.material3.ClickableSurfaceDefaults
-import androidx.tv.material3.Surface
+import androidx.tv.material3.Icon
+import androidx.tv.material3.LocalContentColor
 import androidx.tv.material3.Text
 import com.github.damontecres.wholphin.R
 import com.github.damontecres.wholphin.services.syncplay.SyncPlayViewModel
-import com.github.damontecres.wholphin.ui.components.NilumioColors
+import com.github.damontecres.wholphin.ui.components.Nilumio
+import com.github.damontecres.wholphin.ui.components.NilumioButton
+import com.github.damontecres.wholphin.ui.components.NilumioIcons
 import com.github.damontecres.wholphin.ui.components.NilumioMark
+import com.github.damontecres.wholphin.ui.components.NilumioPageHeader
+import com.github.damontecres.wholphin.ui.components.NilumioSectionTitle
 import com.github.damontecres.wholphin.ui.tryRequestFocus
 import kotlinx.coroutines.delay
 import org.jellyfin.sdk.model.api.GroupInfoDto
 import org.jellyfin.sdk.model.api.GroupStateType
 import kotlin.time.Duration.Companion.seconds
 
-private val Panel = Color(0xFF111726)
-private val Muted = Color(0xFF8E9AB0)
-private val FocusRing = Color(0xFF22ABD8).copy(alpha = .62f)
+/** So oft wird die Gruppenliste neu geladen, solange die Seite offen ist. */
+private val GroupsRefreshInterval = 5.seconds
 
-// Kartenfarben (Farbton 250, nilumio-Lila)
-private val Card = Color(0xFF1E1938)
-private val Card2 = Color(0xFF29224F)
-private val Card3 = Color(0xFF392D76)
-private val CardRing = Color(0xFF927EF1).copy(alpha = .7f)
-private val CardMuted = Color(0xFFB5AFCF)
-private val CardFree = Color(0xFF5C5095)
-private val CardGlowA = Color(0xFF8A75F0)
-private val CardGlowB = Color(0xFFD55EED)
+/** Höchstens so viele Gesichter je Gruppenkarte. */
+private const val MAX_FACES = 4
 
 @Composable
 fun SyncPlayPage(
@@ -97,10 +88,9 @@ fun SyncPlayPage(
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(group) {
         focusRequester.tryRequestFocus()
-        // Gruppenliste laufend aktuell halten, solange die Seite offen ist
         while (true) {
             manager.refreshGroups()
-            delay(5.seconds)
+            delay(GroupsRefreshInterval)
         }
     }
     val current = group
@@ -109,26 +99,23 @@ fun SyncPlayPage(
         verticalArrangement = Arrangement.spacedBy(24.dp),
         modifier = modifier.verticalScroll(rememberScrollState()).padding(top = 40.dp, end = 48.dp, bottom = 32.dp),
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(stringResource(R.string.syncplay_title), fontSize = 34.sp, color = Color.White)
-            Text(stringResource(R.string.syncplay_subtitle), color = Muted, fontSize = 16.sp)
-        }
+        NilumioPageHeader(R.string.syncplay_title, R.string.syncplay_subtitle)
         Row(horizontalArrangement = Arrangement.spacedBy(36.dp), modifier = Modifier.fillMaxWidth()) {
             LobbyCard(
                 group = current,
-                onCreate = { manager.createGroup() },
-                onChoose = { viewModel.navigationManager.goToHome() },
-                onLeave = { manager.leaveGroup() },
+                onCreate = manager::createGroup,
+                onChoose = viewModel.navigationManager::goToHome,
+                onLeave = manager::leaveGroup,
                 focusRequester = focusRequester,
                 modifier = Modifier.weight(1.15f),
             )
             Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(stringResource(R.string.syncplay_join).uppercase(), color = Muted, fontSize = 13.sp, letterSpacing = 1.sp)
+                    NilumioSectionTitle(stringResource(R.string.syncplay_join))
                     LiveLabel(stringResource(R.string.syncplay_live))
                 }
                 if (groups.isEmpty()) {
-                    Text(stringResource(R.string.syncplay_no_groups), color = Muted, fontSize = 16.sp)
+                    Text(stringResource(R.string.syncplay_no_groups), color = Nilumio.Muted, fontSize = 16.sp)
                 }
                 // eigene Lobby zuerst und hervorgehoben
                 groups.sortedByDescending { it.groupId == current?.groupId }.forEach {
@@ -144,7 +131,7 @@ fun SyncPlayPage(
     }
 }
 
-/** Linke Karte: „Neue Gruppe starten“; nach dem Erstellen verschwindet der Inhalt ins Logo und die Lobby erscheint. */
+/** Linke Karte: „Neue Lobby erstellen“; nach dem Erstellen verschwindet der Inhalt ins Logo und die Lobby erscheint. */
 @Composable
 private fun LobbyCard(
     group: GroupInfoDto?,
@@ -166,57 +153,80 @@ private fun LobbyCard(
     Box(
         modifier
             .heightIn(min = 300.dp)
-            .background(Card, shape)
-            .background(Brush.radialGradient(listOf(CardGlowA.copy(alpha = .16f), Color.Transparent), Offset(0f, 0f), 700f), shape)
-            .background(Brush.radialGradient(listOf(CardGlowB.copy(alpha = .18f), Color.Transparent), Offset(1400f, 900f), 900f), shape)
-            .padding(28.dp),
+            .background(Nilumio.Card, shape)
+            .background(Brush.radialGradient(listOf(Nilumio.CardGlowStart.copy(alpha = .16f), Color.Transparent), Offset.Zero, 700f), shape)
+            .background(
+                Brush.radialGradient(listOf(Nilumio.CardGlowEnd.copy(alpha = .18f), Color.Transparent), Offset(1400f, 900f), 900f),
+                shape,
+            ).padding(28.dp),
     ) {
-        NilumioMark(modifier = Modifier.size(56.dp).graphicsLayer { scaleX = gulp.value; scaleY = gulp.value })
+        NilumioMark(
+            modifier =
+                Modifier.size(56.dp).graphicsLayer {
+                    scaleX = gulp.value
+                    scaleY = gulp.value
+                },
+        )
         AnimatedContent(
             targetState = group,
             contentKey = { it != null },
             transitionSpec = {
                 // Inhalt wird ins Logo oben links gesaugt, die Lobby blendet danach auf
-                (fadeIn(tween(450, delayMillis = 450)))
-                    .togetherWith(
-                        scaleOut(tween(550, easing = FastOutLinearInEasing), targetScale = .05f, transformOrigin = TransformOrigin(0f, 0f)) +
-                            fadeOut(tween(550)),
-                    )
+                fadeIn(tween(450, delayMillis = 450)).togetherWith(
+                    scaleOut(tween(550, easing = FastOutLinearInEasing), targetScale = .05f, transformOrigin = TransformOrigin(0f, 0f)) +
+                        fadeOut(tween(550)),
+                )
             },
             label = "lobby",
         ) { g ->
             if (g == null) {
                 CardButton(onCreate, Modifier.fillMaxWidth().padding(top = 72.dp).focusRequester(focusRequester), plain = true) {
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp)) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp),
+                    ) {
                         Text(stringResource(R.string.syncplay_create), fontSize = 28.sp, color = Color.White)
-                        Text(stringResource(R.string.syncplay_create_hint), fontSize = 16.sp, color = CardMuted)
+                        Text(stringResource(R.string.syncplay_create_hint), fontSize = 16.sp, color = Nilumio.CardMuted)
                     }
                 }
             } else {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.padding(start = 76.dp)) {
-                    LiveLabel(stringResource(R.string.syncplay_lobby_open))
-                    Text(g.groupName, fontSize = 28.sp, color = Color.White)
-                    Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
-                        g.participants.forEach { name ->
-                            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                Avatar(name, 50.dp)
-                                Text(name, color = Color.White, fontSize = 14.sp)
-                            }
-                        }
-                    }
-                    // Knöpfe untereinander, gleich breit
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.width(IntrinsicSize.Max)) {
-                        CardButton(onChoose, Modifier.fillMaxWidth().focusRequester(focusRequester)) {
-                            ButtonLabel(NordlichtIcons.NowPlaying, stringResource(R.string.syncplay_choose))
-                        }
-                        CardButton(onLeave, Modifier.fillMaxWidth()) { ButtonLabel(NordlichtIcons.Leave, stringResource(R.string.syncplay_leave)) }
-                    }
-                    val alone = g.participants.size <= 1
-                    Text(stringResource(if (alone) R.string.syncplay_lobby_hint else R.string.syncplay_hint), color = CardMuted, fontSize = 14.sp, lineHeight = 20.sp)
-                }
+                Lobby(g, onChoose, onLeave, focusRequester)
             }
         }
     }
+}
+
+@Composable
+private fun Lobby(
+    group: GroupInfoDto,
+    onChoose: () -> Unit,
+    onLeave: () -> Unit,
+    focusRequester: FocusRequester,
+) = Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.padding(start = 76.dp)) {
+    LiveLabel(stringResource(R.string.syncplay_lobby_open))
+    Text(group.groupName, fontSize = 28.sp, color = Color.White)
+    Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
+        group.participants.forEach { name ->
+            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Avatar(name, 50.dp)
+                Text(name, color = Color.White, fontSize = 14.sp)
+            }
+        }
+    }
+    // Knöpfe untereinander, gleich breit
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.width(IntrinsicSize.Max)) {
+        CardButton(onChoose, Modifier.fillMaxWidth().focusRequester(focusRequester)) {
+            ButtonLabel(NilumioIcons.NowPlaying, stringResource(R.string.syncplay_choose))
+        }
+        CardButton(onLeave, Modifier.fillMaxWidth()) { ButtonLabel(NilumioIcons.Leave, stringResource(R.string.syncplay_leave)) }
+    }
+    val alone = group.participants.size <= 1
+    Text(
+        stringResource(if (alone) R.string.syncplay_lobby_hint else R.string.syncplay_hint),
+        color = Nilumio.CardMuted,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+    )
 }
 
 @Composable
@@ -239,23 +249,15 @@ private fun CardButton(
     modifier: Modifier = Modifier,
     plain: Boolean = false,
     content: @Composable () -> Unit,
-) {
-    val shape = RoundedCornerShape(12.dp)
-    Surface(
-        onClick = onClick,
-        shape = ClickableSurfaceDefaults.shape(shape),
-        colors =
-            ClickableSurfaceDefaults.colors(
-                containerColor = if (plain) Color.Transparent else Card2,
-                contentColor = Color.White,
-                focusedContainerColor = Card3,
-                focusedContentColor = Color.White,
-            ),
-        border = ClickableSurfaceDefaults.border(focusedBorder = Border(BorderStroke(3.dp, CardRing), inset = 0.dp, shape = shape)),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.03f),
-        modifier = modifier,
-    ) { content() }
-}
+) = NilumioButton(
+    onClick = onClick,
+    shape = RoundedCornerShape(12.dp),
+    containerColor = if (plain) Color.Transparent else Nilumio.CardRaised,
+    focusedContainerColor = Nilumio.CardFocused,
+    ring = BorderStroke(3.dp, Nilumio.CardRing),
+    focusedScale = 1.03f,
+    modifier = modifier,
+) { content() }
 
 @Composable
 private fun GroupCard(
@@ -263,37 +265,27 @@ private fun GroupCard(
     mine: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+) = NilumioButton(
+    onClick = onClick,
+    containerColor = if (mine) Nilumio.CardRaised else Nilumio.Panel,
+    focusedContainerColor = if (mine) Nilumio.CardFocused else Nilumio.PanelFocused,
+    ring = BorderStroke(3.dp, Nilumio.FocusRing),
+    modifier = modifier.fillMaxWidth(),
 ) {
-    val shape = RoundedCornerShape(14.dp)
-    Surface(
-        onClick = onClick,
-        shape = ClickableSurfaceDefaults.shape(shape),
-        colors =
-            ClickableSurfaceDefaults.colors(
-                containerColor = if (mine) Card2 else Panel,
-                focusedContainerColor = if (mine) Card3 else Color(0xFF182033),
-            ),
-        border = ClickableSurfaceDefaults.border(focusedBorder = Border(BorderStroke(3.dp, FocusRing), inset = 0.dp, shape = shape)),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.02f),
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp)) {
-            Column(Modifier.weight(1f)) {
-                Text(group.groupName, fontSize = 19.sp, color = Color.White)
-                Text(
-                    when {
-                        mine -> stringResource(R.string.syncplay_state_mine)
-                        group.state == GroupStateType.PLAYING -> stringResource(R.string.syncplay_state_playing)
-                        else -> stringResource(R.string.syncplay_state_waiting)
-                    },
-                    fontSize = 14.sp,
-                    color = Muted,
-                )
-            }
-            Row {
-                group.participants.take(4).forEachIndexed { i, name ->
-                    Avatar(name, 34.dp, Modifier.offset(x = (-10 * i).dp))
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp)) {
+        Column(Modifier.weight(1f)) {
+            Text(group.groupName, fontSize = 19.sp, color = Color.White)
+            val state =
+                when {
+                    mine -> R.string.syncplay_state_mine
+                    group.state == GroupStateType.PLAYING -> R.string.syncplay_state_playing
+                    else -> R.string.syncplay_state_waiting
                 }
+            Text(stringResource(state), fontSize = 14.sp, color = Nilumio.Muted)
+        }
+        Row {
+            group.participants.take(MAX_FACES).forEachIndexed { i, name ->
+                Avatar(name, 34.dp, Modifier.offset(x = (-10 * i).dp))
             }
         }
     }
@@ -305,14 +297,11 @@ private fun Avatar(
     size: Dp,
     modifier: Modifier = Modifier,
 ) {
-    val color = NilumioColors.avatar(name)
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier.size(size).background(color, CircleShape),
-    ) {
+    val color = Nilumio.avatar(name)
+    Box(contentAlignment = Alignment.Center, modifier = modifier.size(size).background(color, CircleShape)) {
         Text(
             name.firstOrNull()?.uppercase() ?: "?",
-            color = NilumioColors.onAvatar(color),
+            color = Nilumio.onAvatar(color),
             fontWeight = FontWeight.SemiBold,
             fontSize = (size.value * .4f).sp,
         )
@@ -320,9 +309,8 @@ private fun Avatar(
 }
 
 @Composable
-private fun LiveLabel(text: String) {
+private fun LiveLabel(text: String) =
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        Box(Modifier.size(8.dp).background(NilumioColors.Mint, CircleShape))
-        Text(text, color = NilumioColors.Mint, fontSize = 14.sp)
+        Box(Modifier.size(8.dp).background(Nilumio.Mint, CircleShape))
+        Text(text, color = Nilumio.Mint, fontSize = 14.sp)
     }
-}

@@ -1,8 +1,11 @@
+/*
+ * nilumio – Startseite: Reihen nach Genre hinzufügen. Copyright (C) 2026 nilumio, GPL-2.0.
+ */
 package com.github.damontecres.wholphin.ui.main.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -17,13 +20,48 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.tv.material3.Text
 import com.github.damontecres.wholphin.R
+import com.github.damontecres.wholphin.data.model.HomeGetItemsFilter
+import com.github.damontecres.wholphin.data.model.HomeRowConfig
 import com.github.damontecres.wholphin.ui.tryRequestFocus
+import org.jellyfin.sdk.api.client.ApiClient
+import org.jellyfin.sdk.api.client.extensions.genresApi
+import org.jellyfin.sdk.model.api.BaseItemKind
+import org.jellyfin.sdk.model.api.ItemSortBy
+import timber.log.Timber
 import java.util.UUID
 
 data class GenreOption(
     val name: String,
     val id: UUID,
 )
+
+/** Alle Genres von Filmen und Serien des Benutzers; bei einem Fehler leer. */
+suspend fun ApiClient.loadGenreOptions(userId: UUID?): List<GenreOption> =
+    try {
+        genresApi
+            .getGenres(
+                userId = userId,
+                includeItemTypes = listOf(BaseItemKind.MOVIE, BaseItemKind.SERIES),
+                sortBy = listOf(ItemSortBy.SORT_NAME),
+            ).content.items
+            .mapNotNull { dto -> dto.name?.let { GenreOption(it, dto.id) } }
+    } catch (ex: Exception) {
+        Timber.w(ex, "Could not load genres")
+        emptyList()
+    }
+
+/** Reihe mit Filmen und Serien des Genres, jedes Mal neu gemischt. */
+fun GenreOption.rowConfig() =
+    HomeRowConfig.GetItems(
+        name = name,
+        filter =
+            HomeGetItemsFilter(
+                genreIds = listOf(id),
+                recursive = true,
+                includeItemTypes = listOf(BaseItemKind.MOVIE, BaseItemKind.SERIES),
+                sortBy = listOf(ItemSortBy.RANDOM),
+            ),
+    )
 
 /**
  * Alle Genres des Servers, anfangs alle ausgewählt. Oben legt ein Knopf für jedes
@@ -41,9 +79,15 @@ fun HomeSettingsGenreList(
     Column(modifier = modifier) {
         TitleText(stringResource(R.string.add_row_for, stringResource(R.string.by_genre)))
         when {
-            genres == null -> Text(stringResource(R.string.loading))
-            genres.isEmpty() -> Text(stringResource(R.string.no_results))
-            else ->
+            genres == null -> {
+                Text(stringResource(R.string.loading))
+            }
+
+            genres.isEmpty() -> {
+                Text(stringResource(R.string.no_results))
+            }
+
+            else -> {
                 HomeSettingsLazyColumn(
                     modifier =
                         modifier
@@ -55,7 +99,7 @@ fun HomeSettingsGenreList(
                             selected = false,
                             enabled = selected.isNotEmpty(),
                             headlineText = pluralStringResource(R.plurals.add_genre_rows, selected.size, selected.size),
-                            onClick = { onAdd.invoke(genres.filter { it.id in selected }) },
+                            onClick = { onAdd(genres.filter { it.id in selected }) },
                             modifier = Modifier.focusRequester(firstFocus),
                         )
                     }
@@ -67,7 +111,7 @@ fun HomeSettingsGenreList(
                             onClick = { selected = if (all) emptySet() else genres.map { it.id }.toSet() },
                         )
                     }
-                    itemsIndexed(genres) { _, genre ->
+                    items(genres) { genre ->
                         val isOn = genre.id in selected
                         HomeSettingsListItem(
                             selected = isOn,
@@ -77,6 +121,7 @@ fun HomeSettingsGenreList(
                         )
                     }
                 }
+            }
         }
     }
 }

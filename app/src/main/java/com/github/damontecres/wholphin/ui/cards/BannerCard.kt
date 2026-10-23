@@ -40,13 +40,15 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
 import com.github.damontecres.wholphin.R
-import com.github.damontecres.wholphin.ui.components.lichtkanteProgress
 import com.github.damontecres.wholphin.data.model.BaseItem
 import com.github.damontecres.wholphin.ui.AppColors
 import com.github.damontecres.wholphin.ui.AspectRatios
 import com.github.damontecres.wholphin.ui.Cards
 import com.github.damontecres.wholphin.ui.FontAwesome
 import com.github.damontecres.wholphin.ui.LocalImageUrlService
+import com.github.damontecres.wholphin.ui.components.lichtkanteProgress
+import com.github.damontecres.wholphin.ui.components.nilumioCardBorder
+import com.github.damontecres.wholphin.ui.components.nilumioCardGlow
 import com.github.damontecres.wholphin.ui.enableMarquee
 import org.jellyfin.sdk.model.api.ImageType
 
@@ -105,10 +107,8 @@ fun BannerCard(
     val currentOnLongClick by rememberUpdatedState(onLongClick)
 
     Card(
-
-        border = com.github.damontecres.wholphin.ui.components.nilumioCardBorder(), // nilumio
-
-        glow = com.github.damontecres.wholphin.ui.components.nilumioCardGlow(),
+        border = nilumioCardBorder(),
+        glow = nilumioCardGlow(),
         modifier = modifier.size(cardHeight * aspectRatio, cardHeight),
         onClick = { currentOnClick() },
         onLongClick = { currentOnLongClick() },
