@@ -1,6 +1,5 @@
 package com.github.damontecres.wholphin.ui.cards
 
-import com.github.damontecres.wholphin.ui.components.NordlichtColors
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +34,7 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
 import com.github.damontecres.wholphin.R
+import com.github.damontecres.wholphin.ui.components.lichtkanteProgress
 import com.github.damontecres.wholphin.data.model.BaseItem
 import com.github.damontecres.wholphin.ui.AppColors
 import com.github.damontecres.wholphin.ui.Cards
@@ -271,11 +271,9 @@ fun ItemCardImageOverlay(
                 modifier =
                     Modifier
                         .align(Alignment.BottomStart)
-                        .background(
-                            NordlichtColors.Progress,
-                        ).clip(RectangleShape)
                         .height(Cards.playedPercentHeight)
-                        .fillMaxWidth((watchedPercent / 100.0).toFloat()),
+                        // nilumio: Lichtkante-Verlauf statt Lila
+                        .lichtkanteProgress((watchedPercent / 100.0).toFloat()),
             )
         }
     }

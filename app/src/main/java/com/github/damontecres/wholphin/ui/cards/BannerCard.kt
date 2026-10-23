@@ -1,6 +1,5 @@
 package com.github.damontecres.wholphin.ui.cards
 
-import com.github.damontecres.wholphin.ui.components.NordlichtColors
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -41,6 +40,7 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
 import com.github.damontecres.wholphin.R
+import com.github.damontecres.wholphin.ui.components.lichtkanteProgress
 import com.github.damontecres.wholphin.data.model.BaseItem
 import com.github.damontecres.wholphin.ui.AppColors
 import com.github.damontecres.wholphin.ui.AspectRatios
@@ -192,11 +192,9 @@ fun BannerCard(
                     modifier =
                         Modifier
                             .align(Alignment.BottomStart)
-                            .background(
-                                NordlichtColors.Progress,
-                            ).clip(RectangleShape)
                             .height(Cards.playedPercentHeight)
-                            .fillMaxWidth((playPercent / 100).toFloat()),
+                            // nilumio: Lichtkante-Verlauf statt Lila
+                            .lichtkanteProgress((playPercent / 100).toFloat()),
                 )
             }
         }

@@ -1,6 +1,8 @@
 package com.github.damontecres.wholphin.ui.components
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -94,3 +96,12 @@ fun nilumioCardGlow() =
     androidx.tv.material3.CardDefaults.glow(
         focusedGlow = androidx.tv.material3.Glow(elevationColor = Color.White.copy(alpha = .25f), elevation = 12.dp),
     )
+
+/** Fortschritt unter Covern im Lichtkante-Verlauf; die Farbe hängt von der Stelle ab (rechts Lila). */
+fun Modifier.lichtkanteProgress(fraction: Float): Modifier =
+    fillMaxWidth().drawBehind {
+        drawRect(
+            Brush.horizontalGradient(listOf(NilumioColors.Mint, NilumioColors.Sky, NilumioColors.Lilac), endX = size.width),
+            size = androidx.compose.ui.geometry.Size(size.width * fraction.coerceIn(0f, 1f), size.height),
+        )
+    }

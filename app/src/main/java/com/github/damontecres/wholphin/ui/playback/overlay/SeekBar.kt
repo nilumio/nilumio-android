@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.lerp
 import com.github.damontecres.wholphin.ui.components.NilumioColors
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -288,8 +289,14 @@ private fun SeekBarDisplay(
                 val yOffset = size.height.div(2)
                 val line = (1.44f * LICHTKANTE_K).dp.toPx() * focusScale * lineScale
                 val end = size.width.times(progress)
-                // Verlauf über den gespielten Teil wie in der Vorlage, Schein weich in drei Lagen
-                val logo = Brush.horizontalGradient(listOf(NilumioColors.Mint, NilumioColors.Sky, NilumioColors.Lilac), endX = end.coerceAtLeast(1f))
+                // Verlauf über die ganze Breite: links Mint, rechts Lila; die Kugel trägt die Farbe ihrer Stelle
+                val logo = Brush.horizontalGradient(listOf(NilumioColors.Mint, NilumioColors.Sky, NilumioColors.Lilac), endX = size.width)
+                val here =
+                    if (progress < .5f) {
+                        lerp(NilumioColors.Mint, NilumioColors.Sky, progress * 2f)
+                    } else {
+                        lerp(NilumioColors.Sky, NilumioColors.Lilac, (progress - .5f) * 2f)
+                    }
                 drawLine(onSurface.copy(alpha = 0.18f), Offset(0f, yOffset), Offset(size.width, yOffset), line, StrokeCap.Round)
                 drawLine(onSurface.copy(alpha = 0.1f), Offset(0f, yOffset), Offset(size.width.times(bufferedProgress), yOffset), line, StrokeCap.Round)
                 // Schein im selben Verlauf, damit die Leiste nicht bläulich wirkt
@@ -297,16 +304,16 @@ private fun SeekBarDisplay(
                     drawLine(logo, Offset(0f, yOffset), Offset(end, yOffset), w.dp.toPx() * lineScale, StrokeCap.Round, alpha = a)
                 }
                 drawLine(logo, Offset(0f, yOffset), Offset(end, yOffset), line, StrokeCap.Round)
-                val r = (4f * LICHTKANTE_K).dp.toPx() * focusScale
+                // kleinere Kugel, passend zur Linienstärke
+                val r = (2.6f * LICHTKANTE_K).dp.toPx() * focusScale
                 val c = Offset(end, yOffset)
-                drawCircle(Brush.radialGradient(listOf(NilumioColors.Sky.copy(alpha = .6f), Color.Transparent), c, r + 12.8.dp.toPx()), r + 12.8.dp.toPx(), c)
+                drawCircle(Brush.radialGradient(listOf(here.copy(alpha = .55f), Color.Transparent), c, r * 2.6f), r * 2.6f, c)
                 drawCircle(
                     Brush.radialGradient(
-                        0f to NilumioColors.Mint,
-                        .45f to NilumioColors.Sky,
-                        1f to NilumioColors.Lilac,
-                        center = Offset(c.x - r * .2f, c.y - r * .3f),
-                        radius = r * 1.77f,
+                        0f to lerp(here, Color.White, .45f),
+                        1f to here,
+                        center = Offset(c.x - r * .25f, c.y - r * .3f),
+                        radius = r * 1.4f,
                     ),
                     r,
                     c,
