@@ -11,7 +11,7 @@ Stand 22.10.2026. Grundlage ist der Code auf Branch `nordlicht`, Flavor `appstor
 | minSdk | 23 (Android 6.0) |
 | Signatur | Upload-Schlüssel aus einer lokalen `keystore.properties` außerhalb des Repos (siehe `app/build.gradle.kts`); Play App Signing beim ersten Upload aktivieren |
 | Datenschutzerklärung | `store/website/datenschutz/index.html`, muss öffentlich erreichbar sein, z. B. `https://nilumio.com/datenschutz/` |
-| Anschrift im Impressum/Datenschutz | **offen** (Platzhalter, siehe Abschnitt 9) |
+| Anschrift im Impressum/Datenschutz | erledigt: c/o Impressumservice Dein-Impressum, Stettiner Str. 41, 35410 Hungen |
 | TV-Screenshots | **offen** (Abschnitt 7) |
 | Demo-Zugang für Prüfer | Vorschlag in Abschnitt 4, **vorher mit nilumio testen** |
 
