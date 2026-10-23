@@ -40,8 +40,8 @@ likely hot spots are:
 
 Rules of thumb:
 
-- Inside a marked block (`// nilumio`, `// Nordlicht`, `<!-- nilumio -->`) keep ours, everywhere else take upstream.
-- Files that only nilumio added (for example `services/syncplay/`, `ui/components/Nordlicht*`, `StartupIntro.kt`) never conflict, but may need adapting when upstream changes an API.
+- Inside a marked block (`// nilumio`, `<!-- nilumio -->`) or on a line that calls nilumio code (`Nilumio…`, `Lichtkante…`) keep ours, everywhere else take upstream.
+- Files that only nilumio added (for example `services/syncplay/`, `ui/components/Nilumio*.kt`, `ui/nav/NilumioDrawer.kt`, `ui/playback/overlay/Lichtkante.kt`, `ui/preferences/NavMenuEditor.kt`, `StartupIntro.kt`) never conflict, but may need adapting when upstream changes an API.
 - Translations: take upstream's version, then re-apply the few nilumio strings.
 - If a nilumio feature now exists upstream (for example SyncPlay), prefer upstream's version and remove ours.
 

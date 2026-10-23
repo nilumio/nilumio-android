@@ -5,7 +5,7 @@ Thank you for helping. A few rules keep this fork easy to maintain:
 
 1. **Upstream first.** If a bug or idea also concerns Wholphin itself, please report it to [Wholphin](https://github.com/damontecres/Wholphin) first. Fixes that land there reach nilumio with the next upstream merge.
 2. **Small changes.** One topic per pull request, with a short description of what you tested and on which device.
-3. **Own code separate.** New nilumio features go into new files where possible. When a Wholphin file has to change, keep the change small and mark it with a `// nilumio` or `// Nordlicht` comment, so upstream merges stay simple (see [docs/UPSTREAM.md](docs/UPSTREAM.md)).
+3. **Own code separate.** New nilumio features go into new files where possible. When a Wholphin file has to change, keep the change small (ideally just a call into an own file) and mark it with a `// nilumio` comment, so upstream merges stay simple (see [docs/UPSTREAM.md](docs/UPSTREAM.md)).
 4. **Record changes.** If you add or modify a file, regenerate [NILUMIO_CHANGES.md](NILUMIO_CHANGES.md) with `python3 docs/tools/nilumio_changes.py list > /tmp/list.md` and update the table. Code from other projects goes into [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) with its licence.
 5. **Licence.** By submitting a pull request you agree that your contribution is licensed under the [GPL-2.0](LICENSE).
 6. **No secrets.** Never commit keystores, passwords, `local.properties`, personal paths or e-mail addresses.
