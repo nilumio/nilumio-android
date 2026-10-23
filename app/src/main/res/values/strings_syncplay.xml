@@ -29,6 +29,6 @@
     <string name="shuffle_any">Surprise me</string>
     <string name="shuffle_movies">Films by genre</string>
     <string name="shuffle_any_movie">Any film</string>
-    <string name="shuffle_series">Random series</string>
+    <string name="shuffle_series">Random episode</string>
     <string name="syncplay_pick_hint">Select your lobby to choose a film.</string>
 </resources>
