@@ -432,6 +432,7 @@ fun PlaybackButtons(
             PlaybackButton(
                 modifier = Modifier.focusRequester(initialFocusRequester),
                 iconRes = if (showPlay) R.drawable.nilumio_player_play else R.drawable.nilumio_player_pause,
+                big = true,
                 onClick = {
                     onControllerInteraction.invoke()
                     if (showPlay) {
@@ -475,10 +476,11 @@ fun PlaybackButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource? = null,
+    big: Boolean = false,
 ) {
     val source = interactionSource ?: remember { MutableInteractionSource() }
     val focused by source.collectIsFocusedAsState()
-    LichtkanteButton(onClick, onControllerInteraction, modifier, enabled, source) {
+    LichtkanteButton(onClick, onControllerInteraction, modifier, enabled, source, big) {
         LichtkanteIcon(iconRes = iconRes, focused = focused, modifier = Modifier.fillMaxSize())
     }
 }
@@ -491,28 +493,30 @@ private fun LichtkanteButton(
     modifier: Modifier,
     enabled: Boolean,
     interactionSource: MutableInteractionSource,
+    big: Boolean = false,
     content: @Composable () -> Unit,
 ) {
+    // nilumio: grau hinterlegter Kreis hinter jedem Symbol, Play/Pause größer
     Button(
         enabled = enabled,
         onClick = onClick,
         colors =
             ClickableSurfaceDefaults.colors(
-                containerColor = Color.Transparent,
-                contentColor = LichtkanteMuted,
-                focusedContainerColor = Color.Transparent,
+                containerColor = Color.White.copy(alpha = .14f),
+                contentColor = Color.White.copy(alpha = .85f),
+                focusedContainerColor = Color.White.copy(alpha = .32f),
                 focusedContentColor = Color.White,
-                pressedContainerColor = Color.Transparent,
+                pressedContainerColor = Color.White.copy(alpha = .4f),
                 pressedContentColor = Color.White,
                 disabledContainerColor = Color.Transparent,
                 disabledContentColor = Color.White.copy(alpha = .25f),
             ),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
-        contentPadding = PaddingValues((2.5f * LICHTKANTE_BUTTON_K).dp),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.08f),
+        contentPadding = PaddingValues(((if (big) 9.5f else 7f) * LICHTKANTE_BUTTON_K).dp),
         interactionSource = interactionSource,
         modifier =
             modifier
-                .size((22.6f * LICHTKANTE_BUTTON_K).dp)
+                .size(((if (big) 38f else 30f) * LICHTKANTE_BUTTON_K).dp)
                 .onFocusChanged { onControllerInteraction.invoke() },
     ) {
         content()
