@@ -115,6 +115,13 @@ class AppUpgradeHandler
                     Version.fromString(newVersion),
                     appPreferences,
                 )
+                // nilumio: einmalig 30 s vor → 10 s, damit links und rechts gleich weit springen
+                if (!prefs.getBoolean("nilumio_skip_10s", false)) {
+                    appPreferences.updateData {
+                        if (it.playbackPreferences.skipForwardMs == 30_000L) it.updatePlaybackPreferences { skipForwardMs = 10_000L } else it
+                    }
+                    prefs.edit { putBoolean("nilumio_skip_10s", true) }
+                }
             } catch (ex: Exception) {
                 Timber.e(ex, "Exception during app upgrade")
             }

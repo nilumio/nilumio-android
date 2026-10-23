@@ -128,6 +128,8 @@ fun StaticSeekBarImpl(
         onRight = {},
         interactionSource = remember { MutableInteractionSource() },
         modifier = modifier,
+        // nilumio: Leiste beim reinen Spulen unten am Rand kräftiger
+        lineScale = 1.8f,
     )
 }
 
@@ -200,6 +202,7 @@ private fun SeekBarDisplay(
     interactionSource: MutableInteractionSource,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    lineScale: Float = 1f,
 ) {
     val onSurface = MaterialTheme.colorScheme.onSurface
 
@@ -283,14 +286,15 @@ private fun SeekBarDisplay(
             onDraw = {
                 // nilumio „Lichtkante“: dünne Linie, Fortschritt im Logo-Verlauf mit Schein, Position als Kugel
                 val yOffset = size.height.div(2)
-                val line = (1.44f * LICHTKANTE_K).dp.toPx() * focusScale
+                val line = (1.44f * LICHTKANTE_K).dp.toPx() * focusScale * lineScale
                 val end = size.width.times(progress)
                 // Verlauf über den gespielten Teil wie in der Vorlage, Schein weich in drei Lagen
                 val logo = Brush.horizontalGradient(listOf(NilumioColors.Mint, NilumioColors.Sky, NilumioColors.Lilac), endX = end.coerceAtLeast(1f))
                 drawLine(onSurface.copy(alpha = 0.18f), Offset(0f, yOffset), Offset(size.width, yOffset), line, StrokeCap.Round)
                 drawLine(onSurface.copy(alpha = 0.1f), Offset(0f, yOffset), Offset(size.width.times(bufferedProgress), yOffset), line, StrokeCap.Round)
-                for ((w, a) in listOf(12f to .07f, 7.5f to .12f, 5f to .2f)) {
-                    drawLine(NilumioColors.Sky, Offset(0f, yOffset), Offset(end, yOffset), w.dp.toPx(), StrokeCap.Round, alpha = a)
+                // Schein im selben Verlauf, damit die Leiste nicht bläulich wirkt
+                for ((w, a) in listOf(12f to .06f, 7.5f to .1f, 5f to .16f)) {
+                    drawLine(logo, Offset(0f, yOffset), Offset(end, yOffset), w.dp.toPx() * lineScale, StrokeCap.Round, alpha = a)
                 }
                 drawLine(logo, Offset(0f, yOffset), Offset(end, yOffset), line, StrokeCap.Round)
                 val r = (4f * LICHTKANTE_K).dp.toPx() * focusScale

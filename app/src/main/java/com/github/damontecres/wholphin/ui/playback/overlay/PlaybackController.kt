@@ -20,9 +20,11 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -101,14 +103,11 @@ fun PlaybackController(
         )
         when (nextState) {
             OverlayViewState.CHAPTERS -> {
-                Text(
-                    text = stringResource(R.string.chapters),
-                    // nilumio: dezenter Hinweis auf ↓ statt großer Überschrift
-                    color = LichtkanteMuted,
-                    fontFamily = NilumioOutfit,
-                    fontSize = 12.sp,
+                // nilumio: kein sichtbarer Hinweis, nur Fokusziel für ↓
+                Spacer(
                     modifier =
                         Modifier
+                            .size(1.dp)
                             .onFocusChanged {
                                 if (it.isFocused) onChangeState.invoke(nextState)
                             }.focusable(),
@@ -116,14 +115,11 @@ fun PlaybackController(
             }
 
             OverlayViewState.QUEUE -> {
-                Text(
-                    text = stringResource(R.string.queue),
-                    // nilumio: dezenter Hinweis auf ↓ statt großer Überschrift
-                    color = LichtkanteMuted,
-                    fontFamily = NilumioOutfit,
-                    fontSize = 12.sp,
+                // nilumio: kein sichtbarer Hinweis, nur Fokusziel für ↓
+                Spacer(
                     modifier =
                         Modifier
+                            .size(1.dp)
                             .onFocusChanged {
                                 if (it.isFocused) onChangeState.invoke(nextState)
                             }.focusable(),
@@ -139,7 +135,7 @@ fun PlaybackController(
 
 // nilumio: Größen der Vorlage „Lichtkante groß“ (Titel 2,6 em × k, Metazeile 1 em × k)
 internal val titleTextSize = (20.8f * LICHTKANTE_K).sp
-internal val subtitleTextSize = (8f * LICHTKANTE_K).sp
+internal val subtitleTextSize = (9.6f * LICHTKANTE_K).sp
 
 /**
  * A wrapper for the playback controls to show title and other information, plus the actual controls
@@ -181,21 +177,7 @@ fun Controller(
         verticalArrangement = Arrangement.spacedBy((20f + 6.48f * LICHTKANTE_K).dp),
         modifier = modifier,
     ) {
-        val context = LocalContext.current
-        var endTimeStr by remember { mutableStateOf("...") }
-        LaunchedEffect(player, context) {
-            while (isActive) {
-                val remaining =
-                    (player.duration - player.currentPosition)
-                        .div(player.playbackParameters.speed)
-                        .toLong()
-                        .milliseconds
-                val endTime = LocalTime.now().plusSeconds(remaining.inWholeSeconds)
-                endTimeStr = formatTime(context, endTime)
-                delay(1.seconds)
-            }
-        }
-        // nilumio „Lichtkante“: Titel groß und leicht, darunter gedämpfte Metazeile mit Endzeit
+        // nilumio „Lichtkante“: Titel groß und leicht, darunter gedämpfte Metazeile (ohne Endzeit)
         Column(
             modifier = Modifier.offset(y = verticalOffset),
         ) {
@@ -213,8 +195,8 @@ fun Controller(
                     modifier = Modifier.fillMaxWidth(.75f),
                 )
             }
-            Text(
-                text = listOfNotNull(subtitle, stringResource(R.string.ends_at, endTimeStr)).joinToString(" · "),
+            if (subtitle != null) Text(
+                text = subtitle,
                 color = LichtkanteMuted,
                 fontFamily = NilumioOutfit,
                 fontSize = subtitleTextSize,

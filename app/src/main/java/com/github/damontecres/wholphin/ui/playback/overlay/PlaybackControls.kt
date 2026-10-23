@@ -312,7 +312,7 @@ fun SeekTimecodes(
             text = text,
             color = LichtkanteMuted,
             fontFamily = NilumioOutfit,
-            fontSize = (8.8f * LICHTKANTE_BUTTON_K).sp,
+            fontSize = (10.56f * LICHTKANTE_BUTTON_K).sp, // nilumio: 20 % größer
             style = TextStyle(fontFeatureSettings = "tnum"),
             modifier = modifier,
         )
