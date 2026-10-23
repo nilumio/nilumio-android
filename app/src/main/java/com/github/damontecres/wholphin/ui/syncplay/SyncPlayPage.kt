@@ -122,7 +122,8 @@ fun SyncPlayPage(
                     key(it.groupId) {
                         val mine = it.groupId == current?.groupId
                         GroupCard(it, mine, Modifier.animateContentSize()) {
-                            if (mine) viewModel.navigationManager.goToHome() else manager.joinGroup(it.groupId)
+                            // eigene Lobby ist links schon offen
+                            if (!mine) manager.joinGroup(it.groupId)
                         }
                     }
                 }
