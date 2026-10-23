@@ -104,8 +104,11 @@ private const val BUTTON_SKIP_SECONDS = 30
 
 private const val POSITION_POLL_MS = 250L
 
-/** Schein unter dem Fortschritt: Breite in dp und Deckkraft, von außen nach innen. */
-private val SeekGlow = listOf(12f to .06f, 7.5f to .1f, 5f to .16f)
+/** Schein unter dem Fortschritt: Breite in dp und Deckkraft, von außen nach innen (passend zum abgedunkelten Verlauf). */
+private val SeekGlow = listOf(12f to .045f, 7.5f to .075f, 5f to .12f)
+
+/** Deckkraft des Hofs um die Kugel. */
+private const val KNOB_HALO_ALPHA = .4f
 
 /** Lässt das Element links und rechts um [edge] über den Rand hinausragen (randlose Zeitleiste). */
 internal fun Modifier.bleedHorizontally(edge: Dp) =
@@ -238,7 +241,7 @@ internal fun DrawScope.drawLichtkanteSeekBar(
     val start = Offset(0f, y)
     val end = Offset(size.width * progress, y)
     // Verlauf über die ganze Breite: links Mint, rechts Lila
-    val logo = Brush.horizontalGradient(Nilumio.Gradient, endX = size.width)
+    val logo = Brush.horizontalGradient(Nilumio.ProgressGradient, endX = size.width)
     drawLine(trackColor.copy(alpha = 0.18f), start, Offset(size.width, y), line, StrokeCap.Round)
     drawLine(trackColor.copy(alpha = 0.1f), start, Offset(size.width * bufferedProgress, y), line, StrokeCap.Round)
     // Schein im selben Verlauf, damit die Leiste nicht bläulich wirkt
@@ -246,9 +249,9 @@ internal fun DrawScope.drawLichtkanteSeekBar(
         drawLine(logo, start, end, width.dp.toPx() * lineScale, StrokeCap.Round, alpha = alpha)
     }
     drawLine(logo, start, end, line, StrokeCap.Round)
-    val here = Nilumio.gradientAt(progress)
+    val here = Nilumio.progressColorAt(progress)
     val r = (2.6f * LICHTKANTE_K).dp.toPx() * focusScale
-    drawCircle(Brush.radialGradient(listOf(here.copy(alpha = .55f), Color.Transparent), end, r * 2.6f), r * 2.6f, end)
+    drawCircle(Brush.radialGradient(listOf(here.copy(alpha = KNOB_HALO_ALPHA), Color.Transparent), end, r * 2.6f), r * 2.6f, end)
     drawCircle(
         Brush.radialGradient(
             0f to lerp(here, Color.White, .45f),

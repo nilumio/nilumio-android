@@ -42,12 +42,18 @@ object Nilumio {
     val Lilac = Color(0xFF8079FF)
     val Gradient = listOf(Mint, Sky, Lilac)
 
-    /** Kräftigerer Verlauf für die Symbole der Seitenleiste. */
-    val DrawerGradient = listOf(Color(0xFF3DFFB0), Color(0xFF22C7D9), Color(0xFF7B6CFF))
-
     val Earth = Color(0xFF0B0F16)
     val Night = Color(0xFF070A12)
     val Gold = Color(0xFFF2C97D)
+
+    /** Anteil Nachtblau im Verlauf der Fortschrittsbalken, damit sie nicht grell wirken. */
+    private const val PROGRESS_DIM = .28f
+
+    /** Logo-Verlauf, abgedunkelt: Fortschritt unter Covern, Zeitleiste und Spul-Leiste im Player. */
+    val ProgressGradient = Gradient.map { lerp(it, Night, PROGRESS_DIM) }
+
+    /** Kräftigerer Verlauf für die Symbole der Seitenleiste. */
+    val DrawerGradient = listOf(Color(0xFF3DFFB0), Color(0xFF22C7D9), Color(0xFF7B6CFF))
 
     // Dunkle Flächen der eigenen Seiten (SyncPlay, Zufall, Menü-Editor)
     val Panel = Color(0xFF111726)
@@ -79,8 +85,11 @@ object Nilumio {
 
     fun onAvatar(color: Color): Color = if (color == Lilac) Color.White else Night
 
-    /** Farbe des Logo-Verlaufs an der Stelle [fraction] (0 = Mint, 1 = Lila). */
-    fun gradientAt(fraction: Float): Color = if (fraction < .5f) lerp(Mint, Sky, fraction * 2f) else lerp(Sky, Lilac, (fraction - .5f) * 2f)
+    /** Farbe von [ProgressGradient] an der Stelle [fraction] (0 = links, 1 = rechts). */
+    fun progressColorAt(fraction: Float): Color {
+        val (start, middle, end) = ProgressGradient
+        return if (fraction < .5f) lerp(start, middle, fraction * 2f) else lerp(middle, end, (fraction - .5f) * 2f)
+    }
 }
 
 /** Fokusrahmen für Cover: weiß, 1,5 dp, mit leichtem Schein. */
@@ -93,11 +102,11 @@ fun nilumioCardBorder() =
 @Composable
 fun nilumioCardGlow() = CardDefaults.glow(focusedGlow = Glow(elevationColor = Color.White.copy(alpha = .25f), elevation = 12.dp))
 
-/** Fortschritt unter Covern im Logo-Verlauf; die Farbe hängt von der Stelle ab (rechts Lila). */
+/** Fortschritt unter Covern im (abgedunkelten) Logo-Verlauf; die Farbe hängt von der Stelle ab (rechts Lila). */
 fun Modifier.lichtkanteProgress(fraction: Float): Modifier =
     fillMaxWidth().drawBehind {
         drawRect(
-            Brush.horizontalGradient(Nilumio.Gradient, endX = size.width),
+            Brush.horizontalGradient(Nilumio.ProgressGradient, endX = size.width),
             size = Size(size.width * fraction.coerceIn(0f, 1f), size.height),
         )
     }

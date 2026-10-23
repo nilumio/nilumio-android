@@ -446,7 +446,7 @@ fun PlaybackPageContent(
                                         .fillMaxWidth(percent)
                                         .height(6.dp)
                                         .background(
-                                            Brush.horizontalGradient(Nilumio.Gradient),
+                                            Brush.horizontalGradient(Nilumio.ProgressGradient),
                                         ),
                             )
                         }
