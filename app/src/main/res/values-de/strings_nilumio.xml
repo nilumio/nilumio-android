@@ -49,5 +49,5 @@
     <string name="shuffle_any_movie">Irgendein Film</string>
     <string name="shuffle_series">Zufällige Serienepisode</string>
     <string name="shuffle_movies_button">Zufällige Filme</string>
-    <string name="shuffle_first_episode">Erste Episode einer Serie</string>
+    <string name="shuffle_first_episode">Erste Episode einer zufälligen Serie</string>
 </resources>
