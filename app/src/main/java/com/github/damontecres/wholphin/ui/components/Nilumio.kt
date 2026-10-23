@@ -53,7 +53,8 @@ object Nilumio {
     val ProgressGradient = Gradient.map { lerp(it, Night, PROGRESS_DIM) }
 
     /** Kräftigerer Verlauf für die Symbole der Seitenleiste. */
-    val DrawerGradient = listOf(Color(0xFF3DFFB0), Color(0xFF22C7D9), Color(0xFF7B6CFF))
+    // Aktives Menü-Icon: Grün → Türkis → Lila, gedämpft wie der Fortschritt
+    val DrawerGradient = listOf(Color(0xFF3DFFB0), Color(0xFF22C7D9), Color(0xFF7B6CFF)).map { lerp(it, Night, PROGRESS_DIM) }
 
     // Dunkle Flächen der eigenen Seiten (SyncPlay, Zufall, Menü-Editor)
     val Panel = Color(0xFF111726)
