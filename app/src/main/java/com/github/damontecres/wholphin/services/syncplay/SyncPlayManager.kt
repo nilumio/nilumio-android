@@ -129,10 +129,12 @@ class SyncPlayManager
         fun createGroup() =
             request(R.string.syncplay_error) {
                 listen()
-                val name = (serverRepository.currentUser?.name ?: "nilumio").replaceFirstChar { it.uppercase() }
-                val groupName = context.getString(R.string.syncplay_group_of, lobbyOwner(name, Locale.getDefault().language))
+                val user = serverRepository.currentUser?.name ?: "nilumio"
+                val owner = lobbyOwner(user.replaceFirstChar { it.uppercase() }, Locale.getDefault().language)
+                val groupName = context.getString(R.string.syncplay_group_of, owner)
                 api.syncPlayApi.syncPlayCreateGroup(NewGroupRequestDto(groupName))
-                adoptGroup { it.groupName == groupName && name in it.participants }
+                // Teilnehmer heißen wie das Konto (Groß-/Kleinschreibung egal), der Lobby-Name ist großgeschrieben
+                adoptGroup { g -> g.groupName == groupName && g.participants.any { it.equals(user, ignoreCase = true) } }
             }
 
         fun joinGroup(groupId: UUID) =

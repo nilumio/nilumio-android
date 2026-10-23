@@ -39,7 +39,7 @@
     <string name="syncplay_choose">Film auswählen</string>
     <string name="syncplay_state_playing">schaut gerade</string>
     <string name="syncplay_state_waiting">wartet auf einen Film</string>
-    <string name="syncplay_lobby_hint">Du bist in der Lobby. Andere Nutzer dieses Servers finden deine Lobby bei sich unter SyncPlay und können beitreten. Du kannst schon mal nach einem Film schauen und jederzeit in die Lobby zurückkommen.</string>
+    <string name="syncplay_lobby_hint">Du bist in der Lobby. Andere Nutzer dieses Servers finden deine Lobby bei sich unter SyncPlay und können beitreten. Du kannst schon mal nach einem Film schauen. Die Lobby bleibt geöffnet.</string>
     <string name="syncplay_lobby_open">Lobby offen</string>
     <string name="syncplay_state_mine">deine Lobby · wartet auf Mitglieder</string>
     <!-- Zufall -->

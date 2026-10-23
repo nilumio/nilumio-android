@@ -180,14 +180,16 @@ private fun LobbyCard(
             label = "lobby",
         ) { g ->
             if (g == null) {
-                CardButton(onCreate, Modifier.fillMaxWidth().padding(top = 72.dp).focusRequester(focusRequester), plain = true) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(10.dp),
-                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp),
-                    ) {
-                        Text(stringResource(R.string.syncplay_create), fontSize = 28.sp, color = Color.White)
-                        Text(stringResource(R.string.syncplay_create_hint), fontSize = 16.sp, color = Nilumio.CardMuted)
+                // Nur der Titel ist der Knopf, die Erklärung steht darunter
+                Column(verticalArrangement = Arrangement.spacedBy(14.dp), modifier = Modifier.padding(top = 72.dp)) {
+                    CardButton(onCreate, Modifier.focusRequester(focusRequester)) {
+                        Text(
+                            stringResource(R.string.syncplay_create),
+                            fontSize = 24.sp,
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+                        )
                     }
+                    Text(stringResource(R.string.syncplay_create_hint), fontSize = 16.sp, color = Nilumio.CardMuted)
                 }
             } else {
                 Lobby(g, onChoose, onLeave, focusRequester)
