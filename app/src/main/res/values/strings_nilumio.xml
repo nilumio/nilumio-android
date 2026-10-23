@@ -43,8 +43,8 @@
     <string name="syncplay_lobby_open">Lobby open</string>
     <string name="syncplay_state_mine">your lobby · waiting for members</string>
     <!-- Zufall -->
-    <string name="shuffle_title">Shuffle</string>
-    <string name="shuffle_subtitle">A random film or episode. Anything you have watched recently only comes up again much later.</string>
+    <string name="shuffle_title">Shuffle*</string>
+    <string name="shuffle_subtitle">A not-quite-random pick of a film or an episode. It takes into account what you have watched recently and will probably show you something you have not seen for a while.</string>
     <string name="shuffle_movies">Films by genre</string>
     <string name="shuffle_any_movie">Any film</string>
     <string name="shuffle_series">Random episode</string>
