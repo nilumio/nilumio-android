@@ -123,6 +123,26 @@ class ShuffleViewModel
             }
         }
 
+        /** Startet Staffel 1, Folge 1 einer zufälligen Serie (kürzlich Geschautes seltener). */
+        fun playRandomFirstEpisode() {
+            viewModelScope.launchIO {
+                val pick = pickWeighted(series.value.orEmpty()) ?: return@launchIO
+                runCatching {
+                    val first =
+                        api.itemsApi
+                            .getItems(
+                                userId = serverRepository.currentUser?.id,
+                                parentId = pick.id,
+                                includeItemTypes = listOf(BaseItemKind.EPISODE),
+                                recursive = true,
+                                sortBy = listOf(ItemSortBy.PARENT_INDEX_NUMBER, ItemSortBy.INDEX_NUMBER),
+                            ).content.items
+                            .firstOrNull { it.parentIndexNumber == 1 } ?: return@launchIO
+                    navigationManager.navigateTo(Destination.Playback(first.id, 0L))
+                }.onFailure { Timber.w(it, "Zufall: erste Folge wählen fehlgeschlagen") }
+            }
+        }
+
         /** Spielt einen gewichtet zufälligen Film, optional aus einem Genre. */
         fun playRandomMovie(genreId: UUID?) {
             viewModelScope.launchIO {
@@ -202,11 +222,9 @@ fun ShufflePage(
         // Drei Wege oben, darunter die Liste zum gewählten Weg
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                ShuffleRow(stringResource(R.string.shuffle_any), big = true, Modifier.focusRequester(focus)) {
-                    // Überrasch mich: Film oder Folge, je zur Hälfte
-                    if (Random.nextBoolean()) viewModel.playRandom(null) else viewModel.playRandomMovie(null)
+                ShuffleRow(stringResource(R.string.shuffle_movies_button), big = true, Modifier.focusRequester(focus), selected = mode == ShuffleMode.MOVIES) {
+                    mode = ShuffleMode.MOVIES
                 }
-                ShuffleRow(stringResource(R.string.shuffle_movies), big = true, selected = mode == ShuffleMode.MOVIES) { mode = ShuffleMode.MOVIES }
                 ShuffleRow(stringResource(R.string.shuffle_series), big = true, selected = mode == ShuffleMode.SERIES) { mode = ShuffleMode.SERIES }
             }
         }
@@ -221,6 +239,7 @@ fun ShufflePage(
 
             ShuffleMode.SERIES -> {
                 item { SectionTitle(stringResource(R.string.shuffle_series)) }
+                item { ShuffleRow(stringResource(R.string.shuffle_first_episode), big = false, wide = true) { viewModel.playRandomFirstEpisode() } }
                 val list = series
                 if (list == null) {
                     item { Text(stringResource(R.string.loading), color = Muted) }

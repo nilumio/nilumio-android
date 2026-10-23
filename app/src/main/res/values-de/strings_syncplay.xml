@@ -26,9 +26,10 @@
     <string name="syncplay_state_mine">deine Lobby · wartet auf Mitglieder</string>
     <string name="shuffle_title">Zufall</string>
     <string name="shuffle_subtitle">Ein zufälliger Film oder eine zufällige Folge. Was du kürzlich gesehen hast, kommt erst viel später wieder dran.</string>
-    <string name="shuffle_any">Überrasch mich</string>
     <string name="shuffle_movies">Filme nach Genre</string>
     <string name="shuffle_any_movie">Irgendein Film</string>
     <string name="shuffle_series">Zufällige Serienepisode</string>
     <string name="syncplay_pick_hint">Klicke auf deine Lobby, um einen Film auszuwählen.</string>
+    <string name="shuffle_movies_button">Zufällige Filme</string>
+    <string name="shuffle_first_episode">Zufällige erste Episode einer Serie</string>
 </resources>
