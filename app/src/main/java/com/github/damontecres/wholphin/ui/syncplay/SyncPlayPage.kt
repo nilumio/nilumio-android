@@ -112,9 +112,6 @@ fun SyncPlayPage(
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(stringResource(R.string.syncplay_title), fontSize = 34.sp, color = Color.White)
             Text(stringResource(R.string.syncplay_subtitle), color = Muted, fontSize = 16.sp)
-            if (current != null) {
-                Text(stringResource(R.string.syncplay_pick_hint), color = NilumioColors.Mint, fontSize = 16.sp)
-            }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(36.dp), modifier = Modifier.fillMaxWidth()) {
             LobbyCard(
