@@ -24,6 +24,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.foundation.BorderStroke
+import com.github.damontecres.wholphin.ui.components.NordlichtIcons
+import androidx.tv.material3.LocalContentColor
+import androidx.tv.material3.Icon
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -106,6 +112,9 @@ fun SyncPlayPage(
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(stringResource(R.string.syncplay_title), fontSize = 34.sp, color = Color.White)
             Text(stringResource(R.string.syncplay_subtitle), color = Muted, fontSize = 16.sp)
+            if (current != null) {
+                Text(stringResource(R.string.syncplay_pick_hint), color = NilumioColors.Mint, fontSize = 16.sp)
+            }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(36.dp), modifier = Modifier.fillMaxWidth()) {
             LobbyCard(
@@ -128,7 +137,9 @@ fun SyncPlayPage(
                 groups.sortedByDescending { it.groupId == current?.groupId }.forEach {
                     key(it.groupId) {
                         val mine = it.groupId == current?.groupId
-                        GroupCard(it, mine, Modifier.animateContentSize()) { if (!mine) manager.joinGroup(it.groupId) }
+                        GroupCard(it, mine, Modifier.animateContentSize()) {
+                            if (mine) viewModel.navigationManager.goToHome() else manager.joinGroup(it.groupId)
+                        }
                     }
                 }
             }
@@ -196,9 +207,12 @@ private fun LobbyCard(
                             }
                         }
                     }
-                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        CardButton(onChoose, Modifier.focusRequester(focusRequester)) { ButtonLabel("▶  " + stringResource(R.string.syncplay_choose)) }
-                        CardButton(onLeave) { ButtonLabel("↩  " + stringResource(R.string.syncplay_leave)) }
+                    // Knöpfe untereinander, gleich breit
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.width(IntrinsicSize.Max)) {
+                        CardButton(onChoose, Modifier.fillMaxWidth().focusRequester(focusRequester)) {
+                            ButtonLabel(NordlichtIcons.NowPlaying, stringResource(R.string.syncplay_choose))
+                        }
+                        CardButton(onLeave, Modifier.fillMaxWidth()) { ButtonLabel(NordlichtIcons.Leave, stringResource(R.string.syncplay_leave)) }
                     }
                     val alone = g.participants.size <= 1
                     Text(stringResource(if (alone) R.string.syncplay_lobby_hint else R.string.syncplay_hint), color = CardMuted, fontSize = 14.sp, lineHeight = 20.sp)
@@ -209,7 +223,17 @@ private fun LobbyCard(
 }
 
 @Composable
-private fun ButtonLabel(text: String) = Text(text, fontSize = 17.sp, modifier = Modifier.padding(horizontal = 20.dp, vertical = 11.dp))
+private fun ButtonLabel(
+    icon: ImageVector,
+    text: String,
+) = Row(
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.spacedBy(12.dp),
+    modifier = Modifier.padding(horizontal = 20.dp, vertical = 11.dp),
+) {
+    Icon(icon, contentDescription = null, tint = LocalContentColor.current, modifier = Modifier.size(22.dp))
+    Text(text, fontSize = 17.sp)
+}
 
 /** Knöpfe im Farbton der Karte: Ton in Ton, ausgewählt heller mit Ring. */
 @Composable

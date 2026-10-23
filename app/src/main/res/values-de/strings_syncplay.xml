@@ -2,9 +2,9 @@
 <!-- nilumio: SyncPlay („SyncPlay“) -->
 <resources>
     <string name="syncplay_title">SyncPlay</string>
-    <string name="syncplay_create">Neue Gruppe starten</string>
-    <string name="syncplay_join">Offene Gruppen</string>
-    <string name="syncplay_no_groups">Noch keine Gruppen auf dem Server</string>
+    <string name="syncplay_create">Neue Lobby erstellen</string>
+    <string name="syncplay_join">Offene Lobbys</string>
+    <string name="syncplay_no_groups">Noch keine offenen Lobbys</string>
     <string name="syncplay_refresh">Aktualisieren</string>
     <string name="syncplay_leave">Lobby verlassen</string>
     <string name="syncplay_participants">Mitglieder: %1$s</string>
@@ -14,7 +14,7 @@
     <string name="syncplay_user_joined">%1$s ist beigetreten</string>
     <string name="syncplay_user_left">%1$s hat die Gruppe verlassen</string>
     <string name="syncplay_error">SyncPlay: Der Server hat die Anfrage abgelehnt</string>
-    <string name="syncplay_subtitle">Alle sehen dasselbe zur selben Zeit, auch auf anderen Geräten.</string>
+    <string name="syncplay_subtitle">Alle sehen dasselbe zur selben Zeit, auch an anderen Geräten dieses Servers.</string>
     <string name="syncplay_create_hint">Danach einfach einen Film auswählen. Wer beitritt, schaut mit.</string>
     <string name="syncplay_live">live</string>
     <string name="syncplay_active">Gruppe aktiv</string>
@@ -29,5 +29,6 @@
     <string name="shuffle_any">Überrasch mich</string>
     <string name="shuffle_movies">Filme nach Genre</string>
     <string name="shuffle_any_movie">Irgendein Film</string>
-    <string name="shuffle_series">Folge einer Serie</string>
+    <string name="shuffle_series">Zufällige Serie</string>
+    <string name="syncplay_pick_hint">Klicke auf deine Lobby, um einen Film auszuwählen.</string>
 </resources>

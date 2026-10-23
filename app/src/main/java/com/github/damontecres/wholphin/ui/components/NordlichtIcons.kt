@@ -134,6 +134,15 @@ object NordlichtIcons {
 
     val NowPlaying = icon("nl_nowplaying", "M8,5.5v13l10,-6.5z" to 1f)
 
+    /** Lobby verlassen: Tür mit Pfeil nach außen, kräftiger Strich. */
+    val Leave =
+        icon(
+            "nl_leave",
+            "M14,4h-7.5a1.5,1.5 0 0,0 -1.5,1.5v13a1.5,1.5 0 0,0 1.5,1.5h7.5" to 1f,
+            "M11,12h9.5M17.5,8.5l3.5,3.5l-3.5,3.5" to 1f,
+            strokeWidth = 2.2f,
+        )
+
     /** Zufall: Würfel mit fünf Augen. */
     val Dice =
         icon(

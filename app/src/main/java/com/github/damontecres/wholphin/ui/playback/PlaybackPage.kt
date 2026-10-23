@@ -45,6 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.key.onKeyEvent
@@ -439,10 +440,18 @@ fun PlaybackPageContent(
                                 modifier =
                                     Modifier
                                         .align(Alignment.BottomStart)
-                                        .background(MaterialTheme.colorScheme.border)
-                                        .clip(RectangleShape)
-                                        .height(3.dp)
-                                        .fillMaxWidth(percent),
+                                        // nilumio: Lichtkante-Verlauf statt Türkis, kräftiger
+                                        .fillMaxWidth(percent)
+                                        .height(6.dp)
+                                        .background(
+                                            Brush.horizontalGradient(
+                                                listOf(
+                                                    com.github.damontecres.wholphin.ui.components.NilumioColors.Mint,
+                                                    com.github.damontecres.wholphin.ui.components.NilumioColors.Sky,
+                                                    com.github.damontecres.wholphin.ui.components.NilumioColors.Lilac,
+                                                ),
+                                            ),
+                                        ),
                             )
                         }
                     }

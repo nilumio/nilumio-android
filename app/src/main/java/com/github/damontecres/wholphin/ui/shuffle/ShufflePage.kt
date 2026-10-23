@@ -19,6 +19,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -180,6 +183,7 @@ fun ShufflePage(
 ) {
     val series by viewModel.series.collectAsState()
     val genres by viewModel.genres.collectAsState()
+    var mode by rememberSaveable { mutableStateOf<ShuffleMode?>(null) }
     val focus = remember { FocusRequester() }
     LaunchedEffect(Unit) {
         viewModel.load()
@@ -195,30 +199,44 @@ fun ShufflePage(
                 Text(stringResource(R.string.shuffle_subtitle), color = Muted, fontSize = 16.sp)
             }
         }
+        // Drei Wege oben, darunter die Liste zum gewählten Weg
         item {
-            // Überrasch mich: Film oder Folge, je zur Hälfte
-            ShuffleRow(stringResource(R.string.shuffle_any), big = true, Modifier.focusRequester(focus)) {
-                if (Random.nextBoolean()) viewModel.playRandom(null) else viewModel.playRandomMovie(null)
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                ShuffleRow(stringResource(R.string.shuffle_any), big = true, Modifier.focusRequester(focus)) {
+                    // Überrasch mich: Film oder Folge, je zur Hälfte
+                    if (Random.nextBoolean()) viewModel.playRandom(null) else viewModel.playRandomMovie(null)
+                }
+                ShuffleRow(stringResource(R.string.shuffle_movies), big = true, selected = mode == ShuffleMode.MOVIES) { mode = ShuffleMode.MOVIES }
+                ShuffleRow(stringResource(R.string.shuffle_series), big = true, selected = mode == ShuffleMode.SERIES) { mode = ShuffleMode.SERIES }
             }
         }
-        // Filme nach Genre
-        item { SectionTitle(stringResource(R.string.shuffle_movies)) }
-        item { ShuffleRow(stringResource(R.string.shuffle_any_movie), big = false) { viewModel.playRandomMovie(null) } }
-        items(genres.orEmpty(), key = { "g" + it.id }) { g ->
-            ShuffleRow(g.name ?: "", big = false) { viewModel.playRandomMovie(g.id) }
-        }
-        // Serien: zufällige Folge
-        item { SectionTitle(stringResource(R.string.shuffle_series)) }
-        val list = series
-        if (list == null) {
-            item { Text(stringResource(R.string.loading), color = Muted) }
-        } else {
-            items(list, key = { "s" + it.id }) { s ->
-                ShuffleRow(s.name ?: "", big = false) { viewModel.playRandom(s.id) }
+        when (mode) {
+            ShuffleMode.MOVIES -> {
+                item { SectionTitle(stringResource(R.string.shuffle_movies)) }
+                item { ShuffleRow(stringResource(R.string.shuffle_any_movie), big = false, wide = true) { viewModel.playRandomMovie(null) } }
+                items(genres.orEmpty(), key = { "g" + it.id }) { g ->
+                    ShuffleRow(g.name ?: "", big = false, wide = true) { viewModel.playRandomMovie(g.id) }
+                }
             }
+
+            ShuffleMode.SERIES -> {
+                item { SectionTitle(stringResource(R.string.shuffle_series)) }
+                val list = series
+                if (list == null) {
+                    item { Text(stringResource(R.string.loading), color = Muted) }
+                } else {
+                    items(list, key = { "s" + it.id }) { s ->
+                        ShuffleRow(s.name ?: "", big = false, wide = true) { viewModel.playRandom(s.id) }
+                    }
+                }
+            }
+
+            null -> Unit
         }
     }
 }
+
+private enum class ShuffleMode { MOVIES, SERIES }
 
 @Composable
 private fun SectionTitle(text: String) =
@@ -229,16 +247,22 @@ private fun ShuffleRow(
     text: String,
     big: Boolean,
     modifier: Modifier = Modifier,
+    selected: Boolean = false,
+    wide: Boolean = false,
     onClick: () -> Unit,
 ) {
     val shape = RoundedCornerShape(14.dp)
     Surface(
         onClick = onClick,
         shape = ClickableSurfaceDefaults.shape(shape),
-        colors = ClickableSurfaceDefaults.colors(containerColor = Panel, focusedContainerColor = Color(0xFF182033)),
+        colors =
+            ClickableSurfaceDefaults.colors(
+                containerColor = if (selected) Color(0xFF29224F) else Panel,
+                focusedContainerColor = if (selected) Color(0xFF392D76) else Color(0xFF182033),
+            ),
         border = ClickableSurfaceDefaults.border(focusedBorder = Border(BorderStroke(1.5.dp, FocusRing), inset = 0.dp, shape = shape)),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1.02f),
-        modifier = modifier.fillMaxWidth(.6f),
+        modifier = if (wide) modifier.fillMaxWidth(.6f) else modifier,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
