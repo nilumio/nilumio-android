@@ -5,6 +5,24 @@
  */
 package com.github.damontecres.wholphin.ui.syncplay
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.border
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.runtime.key
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,8 +33,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -38,7 +54,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
-import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.github.damontecres.wholphin.R
@@ -54,6 +69,16 @@ import kotlin.time.Duration.Companion.seconds
 private val Panel = Color(0xFF111726)
 private val Muted = Color(0xFF8E9AB0)
 private val FocusRing = Color(0xFF22ABD8).copy(alpha = .62f)
+
+// Kartenfarben (Farbton 250, nilumio-Lila)
+private val Card = Color(0xFF1E1938)
+private val Card2 = Color(0xFF29224F)
+private val Card3 = Color(0xFF392D76)
+private val CardRing = Color(0xFF927EF1).copy(alpha = .7f)
+private val CardMuted = Color(0xFFB5AFCF)
+private val CardFree = Color(0xFF5C5095)
+private val CardGlowA = Color(0xFF8A75F0)
+private val CardGlowB = Color(0xFFD55EED)
 
 @Composable
 fun SyncPlayPage(
@@ -73,53 +98,37 @@ fun SyncPlayPage(
         }
     }
     val current = group
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        modifier = modifier.padding(top = 40.dp, end = 48.dp),
+    // Die Seite bleibt beim Erstellen offen: links wird die Karte zur Lobby, rechts steht die eigene Lobby in der Liste
+    Column(
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+        modifier = modifier.verticalScroll(rememberScrollState()).padding(top = 40.dp, end = 48.dp, bottom = 32.dp),
     ) {
-        if (current != null) {
-            item { LiveLabel(stringResource(R.string.syncplay_active)) }
-            item { Text(current.groupName, fontSize = 34.sp, color = Color.White) }
-            item {
-                // Allein in der Gruppe: Lobby-Hinweis, sonst Hinweis zum gemeinsamen Start
-                val alone = current.participants.size <= 1
-                Text(stringResource(if (alone) R.string.syncplay_lobby_hint else R.string.syncplay_hint), color = Muted, fontSize = 16.sp)
-            }
-            item {
-                Row(horizontalArrangement = Arrangement.spacedBy(28.dp), modifier = Modifier.padding(vertical = 12.dp)) {
-                    current.participants.forEachIndexed { i, name ->
-                        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Avatar(name, 72.dp)
-                            Text(name, color = Color.White, fontSize = 15.sp)
-                        }
-                    }
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text(stringResource(R.string.syncplay_title), fontSize = 34.sp, color = Color.White)
+            Text(stringResource(R.string.syncplay_subtitle), color = Muted, fontSize = 16.sp)
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(36.dp), modifier = Modifier.fillMaxWidth()) {
+            LobbyCard(
+                group = current,
+                onCreate = { manager.createGroup() },
+                onChoose = { viewModel.navigationManager.goToHome() },
+                onLeave = { manager.leaveGroup() },
+                focusRequester = focusRequester,
+                modifier = Modifier.weight(1.15f),
+            )
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(stringResource(R.string.syncplay_join).uppercase(), color = Muted, fontSize = 13.sp, letterSpacing = 1.sp)
+                    LiveLabel(stringResource(R.string.syncplay_live))
                 }
-            }
-            item {
-                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    PillButton(stringResource(R.string.syncplay_choose), { viewModel.navigationManager.goToHome() }, Modifier.focusRequester(focusRequester), primary = true)
-                    PillButton(stringResource(R.string.syncplay_leave), { manager.leaveGroup() })
+                if (groups.isEmpty()) {
+                    Text(stringResource(R.string.syncplay_no_groups), color = Muted, fontSize = 16.sp)
                 }
-            }
-        } else {
-            item {
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text(stringResource(R.string.syncplay_title), fontSize = 34.sp, color = Color.White)
-                    Text(stringResource(R.string.syncplay_subtitle), color = Muted, fontSize = 16.sp)
-                }
-            }
-            item {
-                Row(horizontalArrangement = Arrangement.spacedBy(36.dp), modifier = Modifier.fillMaxWidth()) {
-                    CreateCard({ manager.createGroup() }, Modifier.weight(1.05f).focusRequester(focusRequester))
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.weight(1f)) {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Text(stringResource(R.string.syncplay_join).uppercase(), color = Muted, fontSize = 13.sp, letterSpacing = 1.sp)
-                            LiveLabel(stringResource(R.string.syncplay_live))
-                        }
-                        if (groups.isEmpty()) {
-                            Text(stringResource(R.string.syncplay_no_groups), color = Muted, fontSize = 16.sp)
-                        }
-                        groups.forEach { GroupCard(it) { manager.joinGroup(it.groupId) } }
+                // eigene Lobby zuerst und hervorgehoben
+                groups.sortedByDescending { it.groupId == current?.groupId }.forEach {
+                    key(it.groupId) {
+                        val mine = it.groupId == current?.groupId
+                        GroupCard(it, mine, Modifier.animateContentSize()) { if (!mine) manager.joinGroup(it.groupId) }
                     }
                 }
             }
@@ -127,54 +136,135 @@ fun SyncPlayPage(
     }
 }
 
+/** Linke Karte: „Neue Gruppe starten“; nach dem Erstellen verschwindet der Inhalt ins Logo und die Lobby erscheint. */
 @Composable
-private fun CreateCard(
-    onClick: () -> Unit,
+private fun LobbyCard(
+    group: GroupInfoDto?,
+    onCreate: () -> Unit,
+    onChoose: () -> Unit,
+    onLeave: () -> Unit,
+    focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
-    val shape = RoundedCornerShape(20.dp)
-    Surface(
-        onClick = onClick,
-        shape = ClickableSurfaceDefaults.shape(shape),
-        colors = ClickableSurfaceDefaults.colors(containerColor = Panel, focusedContainerColor = Panel),
-        border = ClickableSurfaceDefaults.border(focusedBorder = Border(BorderStroke(3.dp, FocusRing), inset = 0.dp, shape = shape)),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.02f),
-        modifier = modifier,
+    val shape = RoundedCornerShape(22.dp)
+    // Logo „schluckt“ beim Wechsel kurz auf
+    val gulp = remember { Animatable(1f) }
+    LaunchedEffect(group != null) {
+        if (group != null) {
+            gulp.animateTo(1.5f, tween(260))
+            gulp.animateTo(1f, spring(dampingRatio = .45f))
+        }
+    }
+    Box(
+        modifier
+            .heightIn(min = 300.dp)
+            .background(Card, shape)
+            .background(Brush.radialGradient(listOf(CardGlowA.copy(alpha = .16f), Color.Transparent), Offset(0f, 0f), 700f), shape)
+            .background(Brush.radialGradient(listOf(CardGlowB.copy(alpha = .18f), Color.Transparent), Offset(1400f, 900f), 900f), shape)
+            .padding(28.dp),
     ) {
-        Box(
-            Modifier
-                .background(Brush.radialGradient(listOf(NilumioColors.Mint.copy(alpha = .16f), Color.Transparent), radius = 700f))
-                .background(Brush.linearGradient(listOf(Color.Transparent, NilumioColors.Lilac.copy(alpha = .22f))))
-                .padding(28.dp),
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                NilumioMark(modifier = Modifier.size(56.dp))
-                Text(stringResource(R.string.syncplay_create), fontSize = 26.sp, color = Color.White)
-                Text(stringResource(R.string.syncplay_create_hint), fontSize = 15.sp, color = Muted)
+        NilumioMark(modifier = Modifier.size(56.dp).graphicsLayer { scaleX = gulp.value; scaleY = gulp.value })
+        AnimatedContent(
+            targetState = group,
+            contentKey = { it != null },
+            transitionSpec = {
+                // Inhalt wird ins Logo oben links gesaugt, die Lobby blendet danach auf
+                (fadeIn(tween(450, delayMillis = 450)))
+                    .togetherWith(
+                        scaleOut(tween(550, easing = FastOutLinearInEasing), targetScale = .05f, transformOrigin = TransformOrigin(0f, 0f)) +
+                            fadeOut(tween(550)),
+                    )
+            },
+            label = "lobby",
+        ) { g ->
+            if (g == null) {
+                CardButton(onCreate, Modifier.fillMaxWidth().padding(top = 72.dp).focusRequester(focusRequester), plain = true) {
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp)) {
+                        Text(stringResource(R.string.syncplay_create), fontSize = 28.sp, color = Color.White)
+                        Text(stringResource(R.string.syncplay_create_hint), fontSize = 16.sp, color = CardMuted)
+                    }
+                }
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.padding(start = 76.dp)) {
+                    LiveLabel(stringResource(R.string.syncplay_lobby_open))
+                    Text(g.groupName, fontSize = 28.sp, color = Color.White)
+                    Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
+                        g.participants.forEach { name ->
+                            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                Avatar(name, 50.dp)
+                                Text(name, color = Color.White, fontSize = 14.sp)
+                            }
+                        }
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                        CardButton(onChoose, Modifier.focusRequester(focusRequester)) { ButtonLabel("▶  " + stringResource(R.string.syncplay_choose)) }
+                        CardButton(onLeave) { ButtonLabel("↩  " + stringResource(R.string.syncplay_leave)) }
+                    }
+                    val alone = g.participants.size <= 1
+                    Text(stringResource(if (alone) R.string.syncplay_lobby_hint else R.string.syncplay_hint), color = CardMuted, fontSize = 14.sp, lineHeight = 20.sp)
+                }
             }
         }
     }
+}
+
+@Composable
+private fun ButtonLabel(text: String) = Text(text, fontSize = 17.sp, modifier = Modifier.padding(horizontal = 20.dp, vertical = 11.dp))
+
+/** Knöpfe im Farbton der Karte: Ton in Ton, ausgewählt heller mit Ring. */
+@Composable
+private fun CardButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    plain: Boolean = false,
+    content: @Composable () -> Unit,
+) {
+    val shape = RoundedCornerShape(12.dp)
+    Surface(
+        onClick = onClick,
+        shape = ClickableSurfaceDefaults.shape(shape),
+        colors =
+            ClickableSurfaceDefaults.colors(
+                containerColor = if (plain) Color.Transparent else Card2,
+                contentColor = Color.White,
+                focusedContainerColor = Card3,
+                focusedContentColor = Color.White,
+            ),
+        border = ClickableSurfaceDefaults.border(focusedBorder = Border(BorderStroke(3.dp, CardRing), inset = 0.dp, shape = shape)),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.03f),
+        modifier = modifier,
+    ) { content() }
 }
 
 @Composable
 private fun GroupCard(
     group: GroupInfoDto,
+    mine: Boolean,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     val shape = RoundedCornerShape(14.dp)
     Surface(
         onClick = onClick,
         shape = ClickableSurfaceDefaults.shape(shape),
-        colors = ClickableSurfaceDefaults.colors(containerColor = Panel, focusedContainerColor = Color(0xFF182033)),
+        colors =
+            ClickableSurfaceDefaults.colors(
+                containerColor = if (mine) Card2 else Panel,
+                focusedContainerColor = if (mine) Card3 else Color(0xFF182033),
+            ),
         border = ClickableSurfaceDefaults.border(focusedBorder = Border(BorderStroke(3.dp, FocusRing), inset = 0.dp, shape = shape)),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1.02f),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp)) {
             Column(Modifier.weight(1f)) {
                 Text(group.groupName, fontSize = 19.sp, color = Color.White)
                 Text(
-                    stringResource(if (group.state == GroupStateType.PLAYING) R.string.syncplay_state_playing else R.string.syncplay_state_waiting),
+                    when {
+                        mine -> stringResource(R.string.syncplay_state_mine)
+                        group.state == GroupStateType.PLAYING -> stringResource(R.string.syncplay_state_playing)
+                        else -> stringResource(R.string.syncplay_state_waiting)
+                    },
                     fontSize = 14.sp,
                     color = Muted,
                 )
@@ -213,30 +303,5 @@ private fun LiveLabel(text: String) {
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         Box(Modifier.size(8.dp).background(NilumioColors.Mint, CircleShape))
         Text(text, color = NilumioColors.Mint, fontSize = 14.sp)
-    }
-}
-
-@Composable
-private fun PillButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    primary: Boolean = false,
-) {
-    val shape = RoundedCornerShape(12.dp)
-    Surface(
-        onClick = onClick,
-        shape = ClickableSurfaceDefaults.shape(shape),
-        colors =
-            ClickableSurfaceDefaults.colors(
-                containerColor = if (primary) MaterialTheme.colorScheme.primary.copy(alpha = .9f) else Color(0xFF182033),
-                contentColor = Color.White,
-                focusedContainerColor = Color.White,
-                focusedContentColor = NilumioColors.Night,
-            ),
-        border = ClickableSurfaceDefaults.border(focusedBorder = Border(BorderStroke(3.dp, FocusRing), inset = 0.dp, shape = shape)),
-        modifier = modifier,
-    ) {
-        Text(text, fontSize = 17.sp, modifier = Modifier.padding(horizontal = 22.dp, vertical = 12.dp))
     }
 }

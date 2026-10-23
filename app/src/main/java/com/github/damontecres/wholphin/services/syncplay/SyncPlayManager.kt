@@ -113,7 +113,7 @@ class SyncPlayManager
         fun createGroup() =
             request(R.string.syncplay_error) {
                 listen()
-                val name = serverRepository.currentUser?.name ?: "nilumio"
+                val name = (serverRepository.currentUser?.name ?: "nilumio").replaceFirstChar { it.uppercase() }
                 // „Schnicks Lobby“: deutscher Genitiv ohne Apostroph, außer bei s/ß/x/z am Ende („Jonas’ Lobby“)
                 val owner =
                     if (java.util.Locale.getDefault().language != "de") {
