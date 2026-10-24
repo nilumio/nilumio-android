@@ -624,8 +624,9 @@
     <string name="bold_blue">Bold Blue</string>
     <string name="black">Black</string>
     <string name="brown">Brown</string>
+    <!-- nilumio: Standard-Design heißt nach der App statt „Lila“ -->
     <string-array name="app_theme_colors">
-        <item>@string/purple</item>
+        <item>@string/theme_nilumio</item>
         <item>@string/blue</item>
         <item>@string/green</item>
         <item>@string/orange</item>
