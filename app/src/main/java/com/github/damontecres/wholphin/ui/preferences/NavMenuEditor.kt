@@ -159,7 +159,6 @@ fun NavMenuEditorDialog(
                     }
                 }
             }
-            Text(stringResource(R.string.nav_menu_more_hint), fontSize = 14.sp, color = Nilumio.Muted)
         }
     }
 }

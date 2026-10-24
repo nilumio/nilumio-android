@@ -8,7 +8,6 @@
     <string name="nav_menu_out">Nicht im Menü</string>
     <string name="nav_menu_all_in">Alle Punkte sind im Menü</string>
     <string name="nav_menu_none_in">Das Menü ist leer</string>
-    <string name="nav_menu_more_hint">Punkte, die nicht im Menü sind, findest du unter „Mehr“.</string>
     <string name="nav_menu_move_up">Nach oben</string>
     <string name="nav_menu_move_down">Nach unten</string>
     <string name="nav_menu_remove">Aus dem Menü nehmen</string>

@@ -477,7 +477,8 @@ fun NavDrawer(
                                         ),
                             )
                         }
-                        if (serviceState.moreItems.isNotEmpty()) {
+                        // nilumio: ausgeblendete Punkte fallen ganz weg, kein „Mehr“
+                        if (SHOW_MORE_SECTION && serviceState.moreItems.isNotEmpty()) {
                             item {
                                 val index = serviceState.items.size
                                 val interactionSource = remember { MutableInteractionSource() }
@@ -756,3 +757,6 @@ fun navItemColor(
 val DrawerState.isOpen: Boolean get() = this.currentValue.isOpen
 
 val DrawerValue.isOpen: Boolean get() = this == DrawerValue.Open
+
+// nilumio: Menüpunkte, die nicht im Menü sind, nicht unter „Mehr“ anbieten
+private const val SHOW_MORE_SECTION = false
