@@ -34,7 +34,7 @@
     <string name="syncplay_user_left">%1$s hat die Gruppe verlassen</string>
     <string name="syncplay_error">SyncPlay: Der Server hat die Anfrage abgelehnt</string>
     <string name="syncplay_subtitle">Alle sehen dasselbe zur selben Zeit. Alle Teilnehmer müssen Nutzer desselben Servers sein.</string>
-    <string name="syncplay_create_hint">Danach einfach einen Film auswählen. Wer beitritt, schaut mit.</string>
+    <string name="syncplay_create_hint">Danach einfach einen Film auswählen. Wer beitritt, kann mitschauen.</string>
     <string name="syncplay_live">live</string>
     <string name="syncplay_choose">Film auswählen</string>
     <string name="syncplay_state_playing">schaut gerade</string>
