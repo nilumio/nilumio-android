@@ -39,6 +39,10 @@ import kotlinx.serialization.json.jsonPrimitive
 import org.jellyfin.sdk.api.client.ApiClient
 import org.jellyfin.sdk.api.client.HttpClientOptions
 import org.jellyfin.sdk.api.client.extensions.syncPlayApi
+import org.jellyfin.sdk.model.api.LocationType
+import org.jellyfin.sdk.model.api.BaseItemKind
+import org.jellyfin.sdk.api.client.extensions.userLibraryApi
+import org.jellyfin.sdk.api.client.extensions.tvShowsApi
 import org.jellyfin.sdk.api.client.extensions.timeSyncApi
 import org.jellyfin.sdk.api.client.util.ApiSerializer
 import org.jellyfin.sdk.api.sockets.SocketConnection
@@ -178,7 +182,25 @@ class SyncPlayManager
             itemId: UUID,
             positionMs: Long,
         ) = request {
-            api.syncPlayApi.syncPlaySetNewQueue(PlayRequestDto(listOf(itemId), 0, positionMs * TICKS_PER_MS))
+            api.syncPlayApi.syncPlaySetNewQueue(PlayRequestDto(queueFor(itemId), 0, positionMs * TICKS_PER_MS))
+        }
+
+        /**
+         * Warteschlange wie jellyfin-web sie baut: bei einer Folge alle Folgen der Serie ab dieser.
+         * jellyfin-web erweitert eine einzelne Folge selbst so und scheitert sonst an der kürzeren Liste.
+         */
+        private suspend fun queueFor(itemId: UUID): List<UUID> {
+            val item = api.userLibraryApi.getItem(itemId = itemId).content
+            val seriesId = item.seriesId
+            if (item.type != BaseItemKind.EPISODE || seriesId == null) return listOf(itemId)
+            val episodes =
+                api.tvShowsApi
+                    .getEpisodes(seriesId = seriesId, isMissing = false)
+                    .content.items
+                    .filter { it.locationType != LocationType.VIRTUAL }
+                    .map { it.id }
+            val start = episodes.indexOf(itemId)
+            return if (start < 0) listOf(itemId) else episodes.drop(start)
         }
 
         /** Meldet dem Server „bereit“ bzw. „puffert“ (wie PlaybackCore.sendBufferingRequest in jellyfin-web). */
