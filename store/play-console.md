@@ -12,7 +12,7 @@ Stand 22.10.2026. Grundlage ist der Code auf Branch `nordlicht`, Flavor `appstor
 | Signatur | Upload-Schlüssel aus einer lokalen `keystore.properties` außerhalb des Repos (siehe `app/build.gradle.kts`); Play App Signing beim ersten Upload aktivieren |
 | Datenschutzerklärung | `store/website/datenschutz/index.html`, muss öffentlich erreichbar sein, z. B. `https://nilumio.com/datenschutz/` |
 | Anschrift im Impressum/Datenschutz | erledigt: c/o Impressumservice Dein-Impressum, Stettiner Str. 41, 35410 Hungen |
-| TV-Screenshots | erledigt 26.10.2026: `store/play/screenshots-tv/` (7 Stück, 1920 × 1080, Emulator „nilumio-tv“, Benutzer Wohnzimmer) |
+| TV-Screenshots | erledigt 26.10.2026: `store/play/screenshots-tv/` – Niklas’ Auswahl für alle Stores: 2-film, 5-menue, 6-syncplay, 7-player (übrige in `weitere/`) |
 | Demo-Zugang für Prüfer | Vorschlag in Abschnitt 4, **vorher mit nilumio testen** |
 
 ## 1. Datensicherheit (Data safety)
