@@ -16,15 +16,17 @@ nilumio is not an official Jellyfin or Wholphin product. Website: [nilumio.com](
 
 ## Screenshots
 
-<!-- Screenshots to follow. Use only freely licensed media (for example the Blender open movies), never commercial posters. Put them in docs/screenshots/. -->
-
 <p align="center">
   <img alt="nilumio feature graphic" src="store/play/feature-graphic-1024x500-en.png" width="640"/>
 </p>
 
-| Home | SyncPlay |
+| Film page | Menu |
 |---|---|
-| *(screenshot to follow)* | *(screenshot to follow)* |
+| ![Film page](docs/screenshots/movie.jpg) | ![Side menu over the film library](docs/screenshots/menu.jpg) |
+| **SyncPlay** | **Player** |
+| ![SyncPlay lobby](docs/screenshots/syncplay.jpg) | ![Player controls](docs/screenshots/player.jpg) |
+
+<sub>Screenshots show free Blender open movies (“Big Buck Bunny”, “Sintel”, “Tears of Steel”, “Elephants Dream”, “Cosmos Laundromat”, “Caminandes”; Blender Foundation / Blender Studio, CC BY, <a href="https://studio.blender.org/films/">studio.blender.org</a>) and our own demo titles.</sub>
 
 ## Origin and licence
 
@@ -180,24 +182,3 @@ You can [help translate Wholphin](https://translate.codeberg.org/engage/wholphin
 - Thanks to the official Jellyfin Android TV client developers, some code for creating the device direct play profile is adapted from there
 - Thanks to the Jellyfin Kotlin SDK developers for making it easier to interact with the Jellyfin server API
 - Thanks to numerous other libraries that make app development even possible
-
-## Additional screenshots
-
-### Customized home page
-![customize_home_example](https://github.com/user-attachments/assets/9a4f04b7-9604-4ea7-b352-50f2b15dc2f1)
-
-### Movie library browsing
-![v0_5_1_library](https://github.com/user-attachments/assets/fad0424b-0631-4438-a8bc-d4fbb95a5bf3)
-
-### Movie page
-![v0_5_1_movie](https://github.com/user-attachments/assets/849aad34-49d5-4864-8de7-005bbcb68ac6)
-
-### Series page
-![v0_5_1_series](https://github.com/user-attachments/assets/655389e1-6a6f-43bc-85e1-e2feffb20429)
-
-### Genres in library
-![v0_5_1_genres](https://github.com/user-attachments/assets/5bbcbeb6-edc9-42c7-a1d8-d92fa432a498)
-
-
-### Playlist
-![v0_5_1_playlist](https://github.com/user-attachments/assets/98268f7d-479d-41c6-b47b-3e67bbe661bc)
