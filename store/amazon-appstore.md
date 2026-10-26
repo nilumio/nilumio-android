@@ -1,6 +1,6 @@
 # nilumio – Amazon Appstore (Fire TV)
 
-Stand 22.10.2026. Grundlage ist Branch `nordlicht`, Flavor `firetv`. Anforderungen nach der Amazon-Doku „Step 3: Add Appstore Details“ (developer.amazon.com/docs/app-submission/appstore-details.html) und Berichten zu Vega OS; vor dem Einreichen kurz gegen die Konsole prüfen, Amazon ändert Details ohne Ankündigung.
+Stand 22.10.2026, **eingereicht 26.10.2026** (Version Code 2989, Titel „nilumio“, Support webmaster@nilumio.com, nur Fire TV, Zielgruppe 13+). Grundlage ist Branch `nordlicht`, Flavor `firetv`. Anforderungen nach der Amazon-Doku „Step 3: Add Appstore Details“ (developer.amazon.com/docs/app-submission/appstore-details.html) und Berichten zu Vega OS; vor dem Einreichen kurz gegen die Konsole prüfen, Amazon ändert Details ohne Ankündigung.
 
 ## 1. Was der Flavor `firetv` anders macht
 
